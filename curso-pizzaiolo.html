@@ -105,13 +105,13 @@
     .pizarra-items { list-style: none; display: flex; flex-direction: column; gap: .8rem; }
     .pizarra-items li {
       font-family: var(--chalk);
-      font-size: 1.15rem; color: rgba(245,237,216,.8);
+      font-size: 1.35rem; color: rgba(245,237,216,.8);
       display: flex; align-items: flex-start; gap: .8rem;
-      line-height: 1.3;
+      line-height: 1.35;
     }
     .pizarra-items li .num {
-      font-size: .85rem; color: var(--brasa); font-family: var(--chalk);
-      min-width: 1.2rem; margin-top: .1rem;
+      font-size: 1rem; color: var(--brasa); font-family: var(--chalk);
+      min-width: 1.4rem; margin-top: .1rem;
     }
     .pizarra-footer {
       margin-top: 1.8rem; padding-top: 1.2rem;
@@ -169,6 +169,123 @@
     .modulo.cierre .cierre-icon { font-size: 3rem; }
     .modulo.cierre h3 { font-family: var(--serif); font-size: 1.4rem; color: var(--oro); margin-bottom: .5rem; }
     .modulo.cierre p { font-size: .92rem; color: var(--humo); max-width: 700px; }
+
+    /* ── ADMIN TABS ── */
+    .admin-tabs { display: flex; gap: 2px; margin-bottom: 2rem; flex-wrap: wrap; }
+    .admin-tab {
+      background: var(--ceniza); color: var(--humo); border: none;
+      padding: .6rem 1.2rem; font-family: var(--sans); font-size: .7rem;
+      letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: all .2s;
+    }
+    .admin-tab:hover { color: var(--crema); }
+    .admin-tab.active { background: var(--brasa); color: var(--crema); }
+    .admin-tab-content { display: none; }
+    .admin-tab-content.active { display: block; }
+
+    /* Estado badges */
+    .estado-badge {
+      font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+      padding: .2rem .6rem; border-radius: 2px; font-weight: 600; white-space: nowrap;
+    }
+    .estado-pendiente  { background: rgba(138,122,106,.2); color: var(--humo); }
+    .estado-confirmado { background: rgba(74,124,89,.25); color: #6fbf85; }
+    .estado-cancelado  { background: rgba(200,67,10,.2); color: #e06030; }
+    .pago-sin_pago     { background: rgba(138,122,106,.15); color: var(--humo); }
+    .pago-parcial      { background: rgba(212,168,71,.2); color: var(--oro); }
+    .pago-total        { background: rgba(74,124,89,.25); color: #6fbf85; }
+
+    .inscripto-row { background: var(--carbone); padding: 1rem 1.2rem; margin-bottom: 2px; }
+    .inscripto-row-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .8rem; }
+    .inscripto-nombre { font-size: .95rem; color: var(--crema); font-weight: 500; }
+    .inscripto-fecha-label { font-size: .75rem; color: var(--humo); margin-top: .15rem; }
+    .inscripto-badges { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+    .inscripto-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; align-items: center; }
+    .inscripto-actions select {
+      background: var(--ceniza); border: 1px solid rgba(138,122,106,.25);
+      color: var(--crema); padding: .3rem .6rem; font-family: var(--sans); font-size: .72rem; outline: none; cursor: pointer;
+    }
+    .btn-wsp-admin {
+      background: rgba(37,211,102,.15); color: #25D366; border: 1px solid rgba(37,211,102,.3);
+      padding: .3rem .8rem; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; transition: all .2s;
+    }
+    .btn-wsp-admin:hover { background: rgba(37,211,102,.25); }
+    .inscripto-notas { margin-top: .5rem; }
+    .inscripto-notas input {
+      width: 100%; background: var(--ceniza); border: 1px solid rgba(138,122,106,.15);
+      color: var(--humo); padding: .35rem .7rem; font-family: var(--sans); font-size: .8rem; outline: none;
+    }
+    .inscripto-notas input:focus { border-color: var(--oro); color: var(--crema); }
+    .btn-add-cupo {
+      background: rgba(212,168,71,.15); color: var(--oro); border: 1px solid rgba(212,168,71,.3);
+      padding: .3rem .8rem; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+    }
+    .btn-add-cupo:hover { background: rgba(212,168,71,.25); }
+
+    /* login row vertical */
+    .login-row input { width: 100%; }
+
+    /* ── QUÉ INCLUYE ── */
+    #incluye { background: var(--nero); }
+    .incluye-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 3rem; }
+    .incluye-card {
+      background: var(--carbone); padding: 2.5rem 2rem;
+      border-bottom: 2px solid transparent; transition: border-color .2s;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .incluye-card:hover { border-bottom-color: var(--oro); }
+    .incluye-num { font-family: var(--serif); font-size: 3rem; font-weight: 900; color: rgba(200,67,10,.15); line-height: 1; }
+    .incluye-icon { font-size: 2rem; }
+    .incluye-card h3 { font-family: var(--serif); font-size: 1.15rem; color: var(--oro); line-height: 1.2; }
+    .incluye-card p { font-size: .88rem; color: var(--humo); line-height: 1.7; }
+
+    /* ── PRECIOS ── */
+    #precios { background: var(--carbone); }
+    .precios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+    .precio-card {
+      background: var(--nero); padding: 2.5rem 2rem;
+      border: 1px solid rgba(255,255,255,.06);
+      position: relative; transition: border-color .2s;
+    }
+    .precio-card:hover { border-color: rgba(212,168,71,.2); }
+    .precio-card.featured { border-color: rgba(200,67,10,.35); }
+    .precio-card.featured::before {
+      content: 'MÁS ELEGIDO';
+      position: absolute; top: -1px; right: 1.5rem;
+      font-size: .55rem; letter-spacing: .2em; text-transform: uppercase;
+      background: var(--brasa); color: var(--crema); padding: .25rem .7rem;
+    }
+    .precio-tag { font-size: .62rem; letter-spacing: .25em; text-transform: uppercase; color: var(--brasa); margin-bottom: .8rem; display: block; }
+    .precio-titulo { font-family: var(--serif); font-size: 1.1rem; color: var(--crema); margin-bottom: 1.2rem; }
+    .precio-monto { font-family: var(--serif); font-size: 2.8rem; font-weight: 900; color: var(--oro); line-height: 1; margin-bottom: .3rem; }
+    .precio-sub { font-size: .78rem; color: var(--humo); margin-bottom: 1.2rem; }
+    .precio-detalle { font-size: .85rem; color: var(--humo); line-height: 1.6; }
+    .precio-detalle strong { color: var(--crema); }
+
+    .club-descuento {
+      margin-top: 1.5rem; padding: 1.2rem 1.5rem;
+      background: rgba(212,168,71,.07); border-left: 3px solid var(--oro);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .club-descuento .cd-badge {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 900;
+      color: var(--oro); flex-shrink: 0;
+    }
+    .club-descuento p { font-size: .85rem; color: var(--humo); margin: 0; }
+    .club-descuento p strong { color: var(--crema); }
+
+    /* ── ADMIN PRECIOS ── */
+    .admin-precios-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .8rem;
+      margin-bottom: 1.5rem;
+    }
+    .admin-precio-field { background: var(--carbone); padding: 1rem 1.2rem; display: flex; flex-direction: column; gap: .4rem; }
+    .admin-precio-field label { font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--humo); }
+    .admin-precio-field input {
+      background: var(--ceniza); border: 1px solid rgba(138,122,106,.2);
+      color: var(--crema); padding: .55rem .8rem; font-family: var(--sans); font-size: .9rem; outline: none;
+    }
+    .admin-precio-field input:focus { border-color: var(--brasa); }
 
     /* ── PARA QUIÉN ── */
     #para-quien { background: var(--nero); }
@@ -519,7 +636,8 @@
       <div class="hero-pills">
         <span class="pill">🔥 Horno a leña real</span>
         <span class="pill">🍕 Hacés y comés tu pizza</span>
-        <span class="pill">👨‍👩‍👧 Ideal para grupos</span>
+        <span class="pill">👨‍👩‍👧 Hasta 6 personas</span>
+        <span class="pill">✦ Todas las edades</span>
         <span class="pill">✦ Sin experiencia previa</span>
       </div>
       <div class="hero-ctas">
@@ -602,6 +720,81 @@
     </div>
   </section>
 
+  <!-- QUÉ INCLUYE -->
+  <section id="incluye">
+    <div class="inner">
+      <span class="s-label">Lo que te llevás</span>
+      <h2 class="s-title">¿Qué incluye el taller?</h2>
+      <div class="divider"></div>
+      <div class="incluye-grid">
+
+        <div class="incluye-card">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <span class="incluye-num">01</span>
+            <span class="incluye-icon">🏛️</span>
+          </div>
+          <h3>La historia en tus manos</h3>
+          <p>Un recorrido por los orígenes de la pizza napolitana: desde las calles de Nápoles hasta la AVPN. Entendés por qué esta pizza es diferente a todo lo demás — y eso cambia para siempre la forma en que la comés.</p>
+        </div>
+
+        <div class="incluye-card">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <span class="incluye-num">02</span>
+            <span class="incluye-icon">🌾</span>
+          </div>
+          <h3>Tu propia masa, para llevar</h3>
+          <p>Producís tu propia masa desde cero con la técnica napolitana. Al final del taller <strong style="color:var(--crema)">te la llevás a casa</strong> para que siga fermentando — y con ella podés hacer aproximadamente tres pizzas en tu horno doméstico.</p>
+        </div>
+
+        <div class="incluye-card">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <span class="incluye-num">03</span>
+            <span class="incluye-icon">🎉</span>
+          </div>
+          <h3>Hacés y comés tus pizzas</h3>
+          <p>El cierre del taller es el momento más esperado: cada participante arma y hornea su propia pizza en el horno a leña. Las degustamos todos juntos, y podés traer un invitado — van a sobrar pizzas.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PRECIOS -->
+  <section id="precios">
+    <div class="inner">
+      <span class="s-label">Inversión</span>
+      <h2 class="s-title">Precios</h2>
+      <div class="divider"></div>
+
+      <div class="precios-grid">
+
+        <div class="precio-card">
+          <span class="precio-tag">Por persona</span>
+          <p class="precio-titulo">Tarifa general</p>
+          <div class="precio-monto" id="precio-general-display">$120.000</div>
+          <p class="precio-sub">Con tarjeta</p>
+          <p class="precio-detalle">En <strong>efectivo o transferencia</strong>: <span id="precio-efectivo-display">$100.000</span></p>
+        </div>
+
+        <div class="precio-card featured">
+          <span class="precio-tag">Grupo completo</span>
+          <p class="precio-titulo">Reserva exclusiva (6 personas)</p>
+          <div class="precio-monto" id="precio-grupo-display">$500.000</div>
+          <p class="precio-sub">Grupo completo · precio fijo</p>
+          <p class="precio-detalle">Reservá el taller exclusivo para tu grupo. Ideal para cumpleaños, despedidas, salidas de empresa o grupo de amigos.</p>
+        </div>
+
+      </div>
+
+      <div class="club-descuento">
+        <span class="cd-badge" id="precio-club-display">10% OFF</span>
+        <p><strong>Miembros del Club Vesuvio:</strong> presentá tu código de miembro al momento de reservar y accedés al descuento en cualquier modalidad.</p>
+      </div>
+
+      <p style="margin-top:1.2rem; font-size:.75rem; color:rgba(138,122,106,.6);">* Grupos de hasta 6 personas. En casos excepcionales se aceptan 7 u 8 participantes si son del mismo grupo familiar.</p>
+    </div>
+  </section>
+
   <!-- PARA QUIÉN -->
   <section id="para-quien">
     <div class="inner">
@@ -628,7 +821,7 @@
       <div style="margin-top:2rem; padding:1.5rem 2rem; background:var(--carbone); border-left:3px solid var(--oro); max-width:700px;">
         <p style="color:var(--humo); font-size:.92rem; margin:0;">
           <strong style="color:var(--crema);">Importante:</strong> Este no es un curso profesional de pizzaiolo. El foco está en aprender la historia, pasar un momento divertido en grupo conociendo gente mientras se hace pizza, y llevarse los conocimientos para hacerla en casa.
-          <strong style="color:var(--crema);"> Ideal para una familia, grupo de amigos o salida diferente.</strong>
+          <strong style="color:var(--crema);"> Ideal para una familia, grupo de amigos o salida diferente. Para todas las edades. Grupos de hasta 6 personas</strong> (con excepciones de 7 u 8 si son un solo grupo familiar).
         </p>
       </div>
     </div>
@@ -707,65 +900,112 @@
 
       <div class="admin-header">
         <h2>Panel de Administración</h2>
-        <span class="admin-badge">Solo Vesuvio</span>
+        <span class="admin-badge">Vesuvio Pizzeria</span>
       </div>
 
       <!-- LOGIN -->
       <div id="admin-login">
-        <p>Ingresá la contraseña para acceder al panel.</p>
-        <div class="login-row">
+        <p>Ingresá tu usuario y contraseña.</p>
+        <div class="login-row" style="flex-direction:column; max-width:320px;">
+          <input type="email" id="admin-email" placeholder="Email" style="margin-bottom:.5rem;" onkeydown="if(event.key==='Enter')checkLogin()" />
           <input type="password" id="admin-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkLogin()" />
-          <button onclick="checkLogin()">Entrar</button>
+          <button onclick="checkLogin()" style="margin-top:.5rem;">Entrar</button>
         </div>
-        <div id="login-error">Contraseña incorrecta.</div>
+        <div id="login-error">Usuario o contraseña incorrectos.</div>
       </div>
 
       <!-- CONTENT -->
       <div id="admin-content">
-        <p class="admin-section-title">Agregar fecha disponible</p>
-        <div class="add-fecha-form">
-          <div class="fg">
-            <label>Fecha (sábado o domingo)</label>
-            <input type="date" id="admin-new-date" />
-          </div>
-          <div class="fg">
-            <label>Cupos disponibles</label>
-            <input type="number" id="admin-new-cupos" value="10" min="1" max="50" />
-          </div>
-          <button class="btn-add" onclick="addFecha()">+ Agregar</button>
+
+        <!-- TABS -->
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="switchTab('inscriptos')">Inscriptos</button>
+          <button class="admin-tab" onclick="switchTab('fechas')">Fechas</button>
+          <button class="admin-tab" onclick="switchTab('precios')">Precios</button>
+          <button class="admin-tab" onclick="switchTab('wsp')">WhatsApp</button>
+          <button class="admin-tab" onclick="switchTab('faqs')">FAQs</button>
         </div>
 
-        <p class="admin-section-title">Fechas configuradas</p>
-        <div class="admin-fechas-list" id="admin-fechas-list"></div>
-
-        <!-- FAQs -->
-        <hr class="admin-faq-divider">
-        <p class="admin-section-title">Preguntas frecuentes (FAQ)</p>
-
-        <div class="add-faq-form">
-          <div class="faq-inputs">
-            <div class="fg">
-              <label>Pregunta *</label>
-              <input type="text" id="faq-new-q" placeholder="¿Cuánto dura el taller?" />
-            </div>
-            <div class="fg">
-              <label>Respuesta *</label>
-              <textarea id="faq-new-a" placeholder="El taller dura aproximadamente..."></textarea>
-            </div>
-          </div>
-          <div class="faq-form-footer">
-            <button class="btn-add" onclick="addFaq()">+ Agregar pregunta</button>
-          </div>
-        </div>
-
-        <div class="admin-faq-list" id="admin-faq-list"></div>
-
-        <!-- Inscriptos -->
-        <div class="inscriptos-section">
-          <h3>Inscriptos</h3>
+        <!-- TAB: INSCRIPTOS -->
+        <div id="tab-inscriptos" class="admin-tab-content active">
           <div class="fecha-filter" id="fecha-filter"></div>
           <div class="inscriptos-table-wrap" id="inscriptos-table-wrap"></div>
         </div>
+
+        <!-- TAB: FECHAS -->
+        <div id="tab-fechas" class="admin-tab-content">
+          <p class="admin-section-title" style="margin-top:0">Agregar fecha</p>
+          <div class="add-fecha-form">
+            <div class="fg">
+              <label>Fecha (sábado o domingo)</label>
+              <input type="date" id="admin-new-date" />
+            </div>
+            <div class="fg">
+              <label>Cupos</label>
+              <input type="number" id="admin-new-cupos" value="6" min="1" max="8" />
+            </div>
+            <button class="btn-add" onclick="addFecha()">+ Agregar</button>
+          </div>
+          <p class="admin-section-title">Fechas configuradas</p>
+          <div class="admin-fechas-list" id="admin-fechas-list"></div>
+        </div>
+
+        <!-- TAB: PRECIOS -->
+        <div id="tab-precios" class="admin-tab-content">
+          <p class="admin-section-title" style="margin-top:0">Precios del taller</p>
+          <div class="admin-precios-grid">
+            <div class="admin-precio-field">
+              <label>Precio general (tarjeta)</label>
+              <input type="text" id="admin-precio-general" placeholder="$120.000" />
+            </div>
+            <div class="admin-precio-field">
+              <label>Efectivo / transferencia</label>
+              <input type="text" id="admin-precio-efectivo" placeholder="$100.000" />
+            </div>
+            <div class="admin-precio-field">
+              <label>Grupo completo (6 personas)</label>
+              <input type="text" id="admin-precio-grupo" placeholder="$500.000" />
+            </div>
+            <div class="admin-precio-field">
+              <label>Descuento Club Vesuvio (%)</label>
+              <input type="text" id="admin-precio-club" placeholder="10" />
+            </div>
+          </div>
+          <button class="btn-add" onclick="savePrecios()">Guardar precios</button>
+        </div>
+
+        <!-- TAB: WHATSAPP -->
+        <div id="tab-wsp" class="admin-tab-content">
+          <p class="admin-section-title" style="margin-top:0">Mensaje de WhatsApp al reservar</p>
+          <p style="font-size:.8rem; color:var(--humo); margin-bottom:1rem;">Usá <code style="background:var(--ceniza);padding:.1rem .4rem;">{{fecha}}</code>, <code style="background:var(--ceniza);padding:.1rem .4rem;">{{nombre}}</code>, <code style="background:var(--ceniza);padding:.1rem .4rem;">{{apellido}}</code> como variables.</p>
+          <div class="admin-precio-field" style="margin-bottom:1rem;">
+            <label>Texto del mensaje</label>
+            <textarea id="admin-wsp-msg" rows="8" style="width:100%;background:var(--ceniza);border:1px solid rgba(138,122,106,.2);color:var(--crema);padding:.7rem;font-family:var(--sans);font-size:.88rem;resize:vertical;outline:none;"></textarea>
+          </div>
+          <button class="btn-add" onclick="saveWspMsg()">Guardar mensaje</button>
+        </div>
+
+        <!-- TAB: FAQs -->
+        <div id="tab-faqs" class="admin-tab-content">
+          <p class="admin-section-title" style="margin-top:0">Agregar pregunta</p>
+          <div class="add-faq-form">
+            <div class="faq-inputs">
+              <div class="fg">
+                <label>Pregunta *</label>
+                <input type="text" id="faq-new-q" placeholder="¿Cuánto dura el taller?" />
+              </div>
+              <div class="fg">
+                <label>Respuesta *</label>
+                <textarea id="faq-new-a" placeholder="El taller dura aproximadamente..."></textarea>
+              </div>
+            </div>
+            <div class="faq-form-footer">
+              <button class="btn-add" onclick="addFaq()">+ Agregar pregunta</button>
+            </div>
+          </div>
+          <div class="admin-faq-list" id="admin-faq-list"></div>
+        </div>
+
       </div>
 
     </div>
@@ -784,105 +1024,183 @@
   </footer>
 
   <script>
-    // ─── STORAGE KEYS ───────────────────────────────
-    const KEY_FECHAS = 'vesuvio_curso_fechas';
-    const KEY_FAQS   = 'vesuvio_curso_faqs';
-    const ADMIN_PASS = 'vesuvio2024'; // ← Cambiá esta contraseña
+    // ─── SUPABASE ────────────────────────────────────
+    const SB_URL = 'https://ckivxhxbysimhxmyovuc.supabase.co';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNraXZ4aHhieXNpbWh4bXlvdnVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwOTY1MjMsImV4cCI6MjA5NzY3MjUyM30.w4pCLsQSf1sm2S8jwIF1imVrHgZ7nbEi5qGsQ6o_HzM';
 
-    // ─── STATE ──────────────────────────────────────
-    let fechas = [];       // [{id, date, cupos, inscritos:[]}]
-    let faqs   = [];       // [{id, pregunta, respuesta}]
+    // ─── STATE ───────────────────────────────────────
+    let fechas = [], faqs = [], inscriptos = [], config = {};
+    let precios = { general: '$120.000', efectivo: '$100.000', grupo: '$500.000', club: '10' };
+    let wspMensaje = 'Hola! Me quiero inscribir al taller de pizzaiolo napolitano de Vesuvio.\n\n📅 Fecha: {{fecha}}\n👤 Nombre: {{nombre}} {{apellido}}\n\nQuedo a la espera de confirmación!';
     let selectedFechaId = null;
-    let adminUnlocked = false;
+    let adminSession = null;
     let adminVisible = false;
     let filterFechaId = 'all';
-    let editingFaqId  = null;
+    let editingFaqId = null;
 
-    // ─── LOAD / SAVE ────────────────────────────────
     const DEFAULT_FAQS = [
-      { id: 'fq1', pregunta: '¿Cuánto dura el taller?', respuesta: 'El taller dura aproximadamente 3 horas, incluyendo la degustación final. Es una tarde completa en Vesuvio, sin apuros.' },
-      { id: 'fq2', pregunta: '¿Cuántas personas por fecha?', respuesta: 'Los grupos son pequeños para que la experiencia sea personal y cada uno pueda aprender bien. Cada fecha tiene cupos limitados indicados al momento de inscribirse.' },
-      { id: 'fq3', pregunta: '¿Puedo traer un invitado a comer?', respuesta: 'Sí. Al cierre del taller, en la degustación, cada participante puede traer un invitado a comer. Van a sobrar pizzas — el horno trabaja bastante.' },
-      { id: 'fq4', pregunta: '¿Necesito saber cocinar?', respuesta: 'Para nada. El taller está pensado para personas sin experiencia previa. Vas a tener guía en todo momento y cada paso está explicado desde cero.' },
-      { id: 'fq5', pregunta: '¿Cómo es el proceso después de inscribirme?', respuesta: 'Una vez que completás el formulario, el equipo de Vesuvio te contacta por WhatsApp con todos los detalles: precio, horario exacto, qué traer y cómo llegar al local.' },
-      { id: 'fq6', pregunta: '¿Dónde se hace el taller?', respuesta: 'En el local de Vesuvio Pizzeria, Francia 3285, Santa Fe Capital. El mismo espacio donde funciona la pizzería, con el horno a leña real.' },
+      { id: 'fq1', pregunta: '¿Cuánto dura el taller?', respuesta: 'El taller dura aproximadamente 3 horas, incluyendo la degustación final. Es una tarde completa en Vesuvio, sin apuros.', orden: 0 },
+      { id: 'fq2', pregunta: '¿Cuántas personas por fecha?', respuesta: 'Los grupos son pequeños — hasta 6 personas — para que la experiencia sea personal. Cada fecha tiene cupos limitados.', orden: 1 },
+      { id: 'fq3', pregunta: '¿Puedo traer un invitado a comer?', respuesta: 'Sí. Al cierre del taller cada participante puede traer un invitado a comer. Van a sobrar pizzas.', orden: 2 },
+      { id: 'fq4', pregunta: '¿Necesito saber cocinar?', respuesta: 'Para nada. El taller está pensado para personas sin experiencia previa. Todo se explica desde cero.', orden: 3 },
+      { id: 'fq5', pregunta: '¿Cómo es el proceso después de inscribirme?', respuesta: 'Te contactamos por WhatsApp con todos los detalles: precio, horario exacto, qué traer y cómo llegar.', orden: 4 },
+      { id: 'fq6', pregunta: '¿Dónde se hace el taller?', respuesta: 'En el local de Vesuvio Pizzeria, Francia 3285, Santa Fe Capital, con el horno a leña real.', orden: 5 },
     ];
 
-    function loadData() {
-      try { fechas = JSON.parse(localStorage.getItem(KEY_FECHAS)) || []; } catch(e) { fechas = []; }
-      try {
-        const stored = localStorage.getItem(KEY_FAQS);
-        faqs = stored ? JSON.parse(stored) : DEFAULT_FAQS;
-      } catch(e) { faqs = DEFAULT_FAQS; }
-    }
-    function saveData() {
-      localStorage.setItem(KEY_FECHAS, JSON.stringify(fechas));
-    }
-    function saveFaqs() {
-      localStorage.setItem(KEY_FAQS, JSON.stringify(faqs));
+    // ─── SUPABASE HELPERS ────────────────────────────
+    async function sb(table, method = 'GET', body = null) {
+      const url = `${SB_URL}/rest/v1/${table}`;
+      const headers = {
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${adminSession || SB_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
+      };
+      const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : null });
+      if (method === 'GET' || method === 'POST') {
+        try { return await res.json(); } catch { return []; }
+      }
+      return res.ok;
     }
 
-    // ─── HELPERS ────────────────────────────────────
-    function formatDate(dateStr) {
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
+    async function sbAuth(email, password) {
+      const res = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      return await res.json();
+    }
+
+    async function callEdge(fn, body) {
+      const res = await fetch(`${SB_URL}/functions/v1/${fn}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      return await res.json();
+    }
+
+    // ─── HELPERS ─────────────────────────────────────
+    function formatDate(d) {
+      const [y,m,day] = d.split('-').map(Number);
+      const date = new Date(y, m-1, day);
       const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
       const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-      return `${dias[date.getDay()]} ${d} de ${meses[m-1]} de ${y}`;
+      return `${dias[date.getDay()]} ${day} de ${meses[m-1]} de ${y}`;
     }
-
-    function getTipodia(dateStr) {
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
-      const dow = date.getDay();
-      return dow === 6 ? 'Sábado' : dow === 0 ? 'Domingo' : null;
+    function getTipodia(d) {
+      const [y,m,day] = d.split('-').map(Number);
+      const dow = new Date(y,m-1,day).getDay();
+      return dow===6?'Sábado':dow===0?'Domingo':null;
     }
-
     function getCuposLibres(f) {
-      return f.cupos - (f.inscritos ? f.inscritos.length : 0);
+      return f.cupos - inscriptos.filter(i => i.fecha_id === f.id && i.estado !== 'cancelado').length;
+    }
+    function escHtml(s) {
+      return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function showToast(msg, color='var(--oro)') {
+      let t = document.getElementById('toast');
+      if (!t) {
+        t = document.createElement('div'); t.id='toast';
+        t.style.cssText='position:fixed;bottom:2rem;right:2rem;z-index:9999;background:var(--carbone);border:1px solid;padding:.8rem 1.5rem;font-size:.85rem;transition:opacity .4s;border-radius:2px;';
+        document.body.appendChild(t);
+      }
+      t.style.color=color; t.style.borderColor=color; t.textContent=msg; t.style.opacity='1';
+      clearTimeout(t._to); t._to=setTimeout(()=>t.style.opacity='0',2500);
+    }
+
+    // ─── LOAD DATA ───────────────────────────────────
+    async function loadData() {
+      try {
+        const [fData, iData, faqData, pData, cData] = await Promise.all([
+          sb('curso_fechas?order=date.asc'),
+          sb('curso_inscriptos?order=created_at.asc'),
+          sb('curso_faqs?order=orden.asc'),
+          sb('curso_precios?id=eq.1'),
+          sb('curso_config?id=eq.1'),
+        ]);
+        fechas     = Array.isArray(fData) ? fData : [];
+        inscriptos = Array.isArray(iData) ? iData : [];
+        faqs       = Array.isArray(faqData) && faqData.length ? faqData : DEFAULT_FAQS;
+        if (Array.isArray(pData) && pData.length) precios = { general: pData[0].general, efectivo: pData[0].efectivo, grupo: pData[0].grupo, club: pData[0].club };
+        if (Array.isArray(cData) && cData.length && cData[0].wsp_mensaje) wspMensaje = cData[0].wsp_mensaje;
+      } catch(e) { console.error('Error cargando datos:', e); }
+    }
+
+    // ─── RENDER PRECIOS ──────────────────────────────
+    function renderPrecios() {
+      const g = document.getElementById('precio-general-display');
+      const e = document.getElementById('precio-efectivo-display');
+      const gr = document.getElementById('precio-grupo-display');
+      const cl = document.getElementById('precio-club-display');
+      if (g) g.textContent = precios.general;
+      if (e) e.textContent = precios.efectivo;
+      if (gr) gr.textContent = precios.grupo;
+      if (cl) cl.textContent = precios.club + '% OFF';
+    }
+
+    async function savePrecios() {
+      precios.general  = document.getElementById('admin-precio-general').value.trim() || precios.general;
+      precios.efectivo = document.getElementById('admin-precio-efectivo').value.trim() || precios.efectivo;
+      precios.grupo    = document.getElementById('admin-precio-grupo').value.trim()    || precios.grupo;
+      precios.club     = document.getElementById('admin-precio-club').value.trim()     || precios.club;
+      await sb('curso_precios?id=eq.1', 'PATCH', precios);
+      renderPrecios();
+      showToast('✓ Precios actualizados');
+    }
+
+    function loadAdminPreciosFields() {
+      document.getElementById('admin-precio-general').value  = precios.general;
+      document.getElementById('admin-precio-efectivo').value = precios.efectivo;
+      document.getElementById('admin-precio-grupo').value    = precios.grupo;
+      document.getElementById('admin-precio-club').value     = precios.club;
+    }
+
+    // ─── WSP CONFIG ──────────────────────────────────
+    async function saveWspMsg() {
+      const msg = document.getElementById('admin-wsp-msg').value;
+      await sb('curso_config?id=eq.1', 'PATCH', { wsp_mensaje: msg });
+      wspMensaje = msg;
+      showToast('✓ Mensaje de WhatsApp actualizado');
+    }
+
+    function buildWspMsg(fecha, nombre, apellido) {
+      return wspMensaje
+        .replace(/{{fecha}}/g, fecha)
+        .replace(/{{nombre}}/g, nombre)
+        .replace(/{{apellido}}/g, apellido);
     }
 
     // ─── RENDER FECHAS (público) ─────────────────────
     function renderFechas() {
       const container = document.getElementById('fechas-list');
-      const hoy = new Date();
-      hoy.setHours(0,0,0,0);
-
-      const futuras = fechas
-        .filter(f => {
-          const [y,m,d] = f.date.split('-').map(Number);
-          return new Date(y, m-1, d) >= hoy;
-        })
-        .sort((a,b) => a.date.localeCompare(b.date));
-
-      if (futuras.length === 0) {
+      const hoy = new Date(); hoy.setHours(0,0,0,0);
+      const futuras = fechas.filter(f => {
+        const [y,m,d] = f.date.split('-').map(Number);
+        return new Date(y,m-1,d) >= hoy;
+      });
+      if (!futuras.length) {
         container.innerHTML = `<div class="no-fechas"><p>Por el momento no hay fechas disponibles.<br>Seguí nuestro Instagram para enterarte cuando abran nuevas fechas.</p></div>`;
         return;
       }
-
       container.innerHTML = futuras.map(f => {
         const libres = getCuposLibres(f);
         const agotado = libres <= 0;
-        const pocos = libres > 0 && libres <= 3;
-        const tipo = getTipodia(f.date);
+        const pocos = libres > 0 && libres <= 2;
         const selected = f.id === selectedFechaId;
-
-        let badgeHtml = '';
-        if (agotado) badgeHtml = `<span class="cupos-badge agotado-badge">Sin cupos</span>`;
-        else if (pocos) badgeHtml = `<span class="cupos-badge pocos">Últimos ${libres} lugares</span>`;
-        else badgeHtml = `<span class="cupos-badge disponible">${libres} lugares</span>`;
-
+        const badge = agotado
+          ? `<span class="cupos-badge agotado-badge">Sin cupos</span>`
+          : pocos ? `<span class="cupos-badge pocos">Últimos ${libres} lugares</span>`
+          : `<span class="cupos-badge disponible">${libres} lugares</span>`;
         return `
-          <div class="fecha-slot ${agotado ? 'agotado' : ''} ${selected ? 'selected' : ''}"
-               onclick="${agotado ? '' : `selectFecha('${f.id}')`}">
+          <div class="fecha-slot ${agotado?'agotado':''} ${selected?'selected':''}" onclick="${agotado?'':` selectFecha('${f.id}')`}">
             <div class="fecha-info">
               <span class="fecha-dia">${formatDate(f.date)}</span>
-              <span class="fecha-tipo">${tipo}</span>
+              <span class="fecha-tipo">${getTipodia(f.date)}</span>
             </div>
-            <div class="fecha-cupos">
-              ${badgeHtml}
-              <div class="fecha-radio"></div>
-            </div>
+            <div class="fecha-cupos">${badge}<div class="fecha-radio"></div></div>
           </div>`;
       }).join('');
     }
@@ -896,119 +1214,281 @@
       renderFechas();
     }
 
-    // ─── INSCRIPCIÓN ────────────────────────────────
-    function handleInscripcion() {
-      const nombre = document.getElementById('f-nombre').value.trim();
+    // ─── INSCRIPCIÓN ─────────────────────────────────
+    async function handleInscripcion() {
+      const nombre   = document.getElementById('f-nombre').value.trim();
       const apellido = document.getElementById('f-apellido').value.trim();
-      const wsp = document.getElementById('f-wsp').value.trim();
-
-      if (!selectedFechaId) {
-        alert('Por favor elegí una fecha primero.');
-        return;
-      }
-      if (!nombre || !apellido || !wsp) {
-        alert('Completá todos los campos.');
-        return;
-      }
-
+      const wsp      = document.getElementById('f-wsp').value.trim();
+      if (!selectedFechaId) { alert('Por favor elegí una fecha primero.'); return; }
+      if (!nombre || !apellido || !wsp) { alert('Completá todos los campos.'); return; }
       const f = fechas.find(x => x.id === selectedFechaId);
       if (!f) return;
-      if (getCuposLibres(f) <= 0) {
-        alert('Esta fecha ya no tiene cupos disponibles.');
-        return;
-      }
 
-      if (!f.inscritos) f.inscritos = [];
-      f.inscritos.push({
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true; btn.textContent = 'Guardando...';
+
+      // Guardar en Supabase
+      const result = await sb('curso_inscriptos', 'POST', {
+        fecha_id: f.id, fecha_date: f.date,
         nombre, apellido, wsp,
-        fecha: f.date,
-        timestamp: new Date().toISOString()
+        estado: 'pendiente', pago: 'sin_pago', notas: ''
       });
-      saveData();
 
-      document.getElementById('success-fecha').textContent = formatDate(f.date);
-      document.getElementById('form-fields').style.display = 'none';
-      document.getElementById('form-success').style.display = 'block';
-      renderFechas();
+      if (result && !result.error) {
+        inscriptos.push(Array.isArray(result) ? result[0] : { fecha_id: f.id, fecha_date: f.date, nombre, apellido, wsp, estado: 'pendiente', pago: 'sin_pago' });
+
+        // Enviar email
+        callEdge('send-email-inscripcion', { nombre, apellido, wsp, fecha: formatDate(f.date) });
+
+        // Mostrar éxito
+        document.getElementById('success-fecha').textContent = formatDate(f.date);
+        document.getElementById('form-fields').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+
+        // Abrir WhatsApp
+        const msg = encodeURIComponent(buildWspMsg(formatDate(f.date), nombre, apellido));
+        setTimeout(() => { window.open(`https://wa.me/5493426393012?text=${msg}`, '_blank'); }, 800);
+
+        renderFechas();
+      } else {
+        alert('Hubo un error al guardar. Por favor escribinos por WhatsApp directamente.');
+        btn.disabled = false; btn.textContent = 'Reservar mi lugar';
+      }
     }
 
     // ─── ADMIN TOGGLE ────────────────────────────────
     function toggleAdmin() {
       adminVisible = !adminVisible;
-      const panel = document.getElementById('admin-panel');
-      panel.classList.toggle('visible', adminVisible);
-      if (adminVisible && adminUnlocked) renderAdminContent();
+      document.getElementById('admin-panel').classList.toggle('visible', adminVisible);
+      if (adminVisible && adminSession) renderAdminContent();
     }
 
-    // ─── ADMIN LOGIN ─────────────────────────────────
-    function checkLogin() {
-      const pass = document.getElementById('admin-pass').value;
-      if (pass === ADMIN_PASS) {
-        adminUnlocked = true;
+    // ─── ADMIN LOGIN (Supabase Auth) ─────────────────
+    async function checkLogin() {
+      const email = document.getElementById('admin-email').value.trim();
+      const pass  = document.getElementById('admin-pass').value;
+      const loginErr = document.getElementById('login-error');
+      loginErr.style.display = 'none';
+
+      const data = await sbAuth(email, pass);
+      if (data.access_token) {
+        adminSession = data.access_token;
         document.getElementById('admin-login').style.display = 'none';
         document.getElementById('admin-content').classList.add('visible');
         renderAdminContent();
       } else {
-        document.getElementById('login-error').style.display = 'block';
+        loginErr.style.display = 'block';
       }
+    }
+
+    // ─── ADMIN TABS ──────────────────────────────────
+    function switchTab(name) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.admin-tab[onclick="switchTab('${name}')"]`).classList.add('active');
+      document.getElementById(`tab-${name}`).classList.add('active');
     }
 
     // ─── ADMIN RENDER ────────────────────────────────
     function renderAdminContent() {
+      renderAdminInscriptos();
       renderAdminFechas();
       renderAdminFaqs();
-      renderAdminInscriptos();
+      loadAdminPreciosFields();
+      document.getElementById('admin-wsp-msg').value = wspMensaje;
     }
 
-    // ─── FAQ PÚBLICO ─────────────────────────────────
+    // ─── ADMIN INSCRIPTOS ────────────────────────────
+    function renderAdminInscriptos() {
+      const sorted = [...fechas].sort((a,b) => a.date.localeCompare(b.date));
+
+      // Filtros de fecha
+      const filterEl = document.getElementById('fecha-filter');
+      filterEl.innerHTML =
+        `<button class="fecha-filter-btn ${filterFechaId==='all'?'active':''}" onclick="setFilter('all')">Todos</button>` +
+        sorted.map(f => {
+          const ins = inscriptos.filter(i => i.fecha_id === f.id).length;
+          return `<button class="fecha-filter-btn ${filterFechaId===f.id?'active':''}" onclick="setFilter('${f.id}')">${getTipodia(f.date)} ${f.date.slice(8)} <span style="color:var(--brasa)">(${ins})</span></button>`;
+        }).join('');
+
+      const filtered = filterFechaId === 'all'
+        ? [...inscriptos].sort((a,b) => (a.fecha_date||'').localeCompare(b.fecha_date||''))
+        : inscriptos.filter(i => i.fecha_id === filterFechaId);
+
+      const wrap = document.getElementById('inscriptos-table-wrap');
+      if (!filtered.length) {
+        wrap.innerHTML = '<div class="empty-inscriptos">No hay inscriptos para esta selección.</div>';
+        return;
+      }
+
+      wrap.innerHTML = filtered.map((i, idx) => {
+        const estadoClass = `estado-${i.estado||'pendiente'}`;
+        const pagoClass   = `pago-${i.pago||'sin_pago'}`;
+        const estadoLabel = { pendiente: 'Pendiente', confirmado: 'Confirmado', cancelado: 'Cancelado' }[i.estado] || i.estado;
+        const pagoLabel   = { sin_pago: 'Sin pago', parcial: 'Pago parcial', total: 'Pago total' }[i.pago] || i.pago;
+        const fechaLabel  = i.fecha_date ? formatDate(i.fecha_date) : '—';
+
+        return `
+          <div class="inscripto-row" id="irow-${i.id}">
+            <div class="inscripto-row-top">
+              <div>
+                <div class="inscripto-nombre">${idx+1}. ${escHtml(i.nombre)} ${escHtml(i.apellido)}</div>
+                <div class="inscripto-fecha-label">${fechaLabel} · ${escHtml(i.wsp)}</div>
+              </div>
+              <div class="inscripto-badges">
+                <span class="estado-badge ${estadoClass}">${estadoLabel}</span>
+                <span class="estado-badge ${pagoClass}">${pagoLabel}</span>
+              </div>
+            </div>
+            <div class="inscripto-actions">
+              <a href="https://wa.me/549${(i.wsp||'').replace(/\D/g,'')}" target="_blank" class="btn-wsp-admin">💬 WhatsApp</a>
+              <select onchange="updateEstado('${i.id}','estado',this.value)">
+                <option value="pendiente"  ${i.estado==='pendiente' ?'selected':''}>Pendiente</option>
+                <option value="confirmado" ${i.estado==='confirmado'?'selected':''}>Confirmado</option>
+                <option value="cancelado"  ${i.estado==='cancelado' ?'selected':''}>Cancelado</option>
+              </select>
+              <select onchange="updateEstado('${i.id}','pago',this.value)">
+                <option value="sin_pago" ${i.pago==='sin_pago'?'selected':''}>Sin pago</option>
+                <option value="parcial"  ${i.pago==='parcial' ?'selected':''}>Pago parcial</option>
+                <option value="total"    ${i.pago==='total'   ?'selected':''}>Pago total</option>
+              </select>
+              <button class="btn-delete" onclick="deleteInscripto('${i.id}')">Eliminar</button>
+            </div>
+            <div class="inscripto-notas">
+              <input type="text" placeholder="Notas internas..." value="${escHtml(i.notas||'')}"
+                onblur="updateNota('${i.id}',this.value)" />
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function setFilter(id) { filterFechaId = id; renderAdminInscriptos(); }
+
+    async function updateEstado(id, campo, valor) {
+      await sb(`curso_inscriptos?id=eq.${id}`, 'PATCH', { [campo]: valor });
+      const ins = inscriptos.find(x => x.id === id);
+      if (ins) ins[campo] = valor;
+      renderAdminInscriptos();
+      showToast('✓ Actualizado');
+    }
+
+    async function updateNota(id, nota) {
+      await sb(`curso_inscriptos?id=eq.${id}`, 'PATCH', { notas: nota });
+      const ins = inscriptos.find(x => x.id === id);
+      if (ins) ins.notas = nota;
+    }
+
+    async function deleteInscripto(id) {
+      if (!confirm('¿Eliminar este inscripto?')) return;
+      await sb(`curso_inscriptos?id=eq.${id}`, 'DELETE');
+      inscriptos = inscriptos.filter(x => x.id !== id);
+      renderAdminInscriptos();
+      renderFechas();
+      showToast('Inscripto eliminado', 'var(--brasa)');
+    }
+
+    // ─── ADMIN FECHAS ────────────────────────────────
+    function renderAdminFechas() {
+      const container = document.getElementById('admin-fechas-list');
+      if (!fechas.length) {
+        container.innerHTML = '<p style="color:var(--humo);font-size:.85rem;">No hay fechas cargadas aún.</p>';
+        return;
+      }
+      container.innerHTML = [...fechas].sort((a,b)=>a.date.localeCompare(b.date)).map(f => {
+        const ins = inscriptos.filter(i => i.fecha_id === f.id && i.estado !== 'cancelado').length;
+        const libres = f.cupos - ins;
+        return `
+          <div class="admin-fecha-row">
+            <div class="admin-fecha-info">
+              <span class="afd">${formatDate(f.date)}</span>
+              <span class="afc">${ins} inscripto${ins!==1?'s':''} · ${libres} libre${libres!==1?'s':''} de ${f.cupos}</span>
+            </div>
+            <div class="admin-fecha-actions">
+              <div class="cupos-input-row">
+                <label>Cupos:</label>
+                <input type="number" value="${f.cupos}" min="${ins}" max="8" id="cupos-${f.id}" />
+                <button class="btn-save-cupos" onclick="saveCupos('${f.id}')">Guardar</button>
+              </div>
+              <button class="btn-delete" onclick="deleteFecha('${f.id}')">Eliminar</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    async function addFecha() {
+      const dateVal  = document.getElementById('admin-new-date').value;
+      const cuposVal = parseInt(document.getElementById('admin-new-cupos').value) || 6;
+      if (!dateVal) { alert('Seleccioná una fecha.'); return; }
+      if (!getTipodia(dateVal)) { alert('Solo sábados y domingos.'); return; }
+      if (fechas.find(f => f.date === dateVal)) { alert('Esa fecha ya está cargada.'); return; }
+      const newF = { id: `f_${dateVal.replace(/-/g,'')}`, date: dateVal, cupos: cuposVal };
+      const res = await sb('curso_fechas', 'POST', newF);
+      if (res && !res.error) {
+        fechas.push(Array.isArray(res) ? res[0] : newF);
+        renderFechas(); renderAdminFechas();
+        document.getElementById('admin-new-date').value = '';
+        showToast('✓ Fecha agregada');
+      }
+    }
+
+    async function saveCupos(id) {
+      const input = document.getElementById(`cupos-${id}`);
+      const f = fechas.find(x => x.id === id);
+      if (!f || !input) return;
+      const val = parseInt(input.value);
+      const ins = inscriptos.filter(i => i.fecha_id === id && i.estado !== 'cancelado').length;
+      if (isNaN(val) || val < ins) { alert(`Mínimo ${ins} (inscriptos actuales).`); return; }
+      await sb(`curso_fechas?id=eq.${id}`, 'PATCH', { cupos: val });
+      f.cupos = val;
+      renderFechas(); renderAdminFechas();
+      showToast('✓ Cupos actualizados');
+    }
+
+    async function deleteFecha(id) {
+      const ins = inscriptos.filter(i => i.fecha_id === id).length;
+      if (!confirm(ins > 0 ? `Esta fecha tiene ${ins} inscripto${ins!==1?'s':''}. ¿Eliminar igual?` : '¿Eliminar esta fecha?')) return;
+      await sb(`curso_fechas?id=eq.${id}`, 'DELETE');
+      fechas = fechas.filter(x => x.id !== id);
+      inscriptos = inscriptos.filter(i => i.fecha_id !== id);
+      renderFechas(); renderAdminFechas(); renderAdminInscriptos();
+      showToast('Fecha eliminada', 'var(--brasa)');
+    }
+
+    // ─── FAQs PÚBLICO ────────────────────────────────
     function renderFaqs() {
       const container = document.getElementById('faq-list');
       if (!container) return;
-      if (faqs.length === 0) {
-        container.innerHTML = '<p style="color:var(--humo); font-size:.9rem;">No hay preguntas frecuentes cargadas aún.</p>';
-        return;
-      }
+      if (!faqs.length) { container.innerHTML = '<p style="color:var(--humo)">No hay preguntas cargadas aún.</p>'; return; }
       container.innerHTML = faqs.map(f => `
         <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            ${escHtml(f.pregunta)} <span class="arrow">+</span>
-          </button>
+          <button class="faq-q" onclick="toggleFaq(this)">${escHtml(f.pregunta)} <span class="arrow">+</span></button>
           <div class="faq-a"><div class="faq-a-inner">${escHtml(f.respuesta)}</div></div>
         </div>`).join('');
     }
 
-    function escHtml(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    // ─── FAQ ADMIN ───────────────────────────────────
+    // ─── FAQs ADMIN ──────────────────────────────────
     function renderAdminFaqs() {
       const container = document.getElementById('admin-faq-list');
       if (!container) return;
-      if (faqs.length === 0) {
-        container.innerHTML = '<p style="color:var(--humo); font-size:.85rem; padding:.5rem 0;">No hay preguntas cargadas.</p>';
-        return;
-      }
+      if (!faqs.length) { container.innerHTML = '<p style="color:var(--humo);font-size:.85rem;">No hay preguntas cargadas.</p>'; return; }
       container.innerHTML = faqs.map((f, idx) => {
-        if (editingFaqId === f.id) {
-          return `
-            <div class="admin-faq-row editing">
-              <div class="afq-edit-form">
-                <input type="text" id="edit-faq-q-${f.id}" value="${escHtml(f.pregunta)}" placeholder="Pregunta" />
-                <textarea id="edit-faq-a-${f.id}" placeholder="Respuesta">${escHtml(f.respuesta)}</textarea>
-                <div class="afq-edit-btns">
-                  <button class="btn-save-faq" onclick="saveEditFaq('${f.id}')">Guardar</button>
-                  <button class="btn-cancel-faq" onclick="cancelEditFaq()">Cancelar</button>
-                </div>
+        if (editingFaqId === f.id) return `
+          <div class="admin-faq-row editing">
+            <div class="afq-edit-form">
+              <input type="text" id="edit-faq-q-${f.id}" value="${escHtml(f.pregunta)}" />
+              <textarea id="edit-faq-a-${f.id}">${escHtml(f.respuesta)}</textarea>
+              <div class="afq-edit-btns">
+                <button class="btn-save-faq" onclick="saveEditFaq('${f.id}')">Guardar</button>
+                <button class="btn-cancel-faq" onclick="cancelEditFaq()">Cancelar</button>
               </div>
-              <button class="btn-delete" onclick="deleteFaq('${f.id}')">Eliminar</button>
-            </div>`;
-        }
+            </div>
+            <button class="btn-delete" onclick="deleteFaq('${f.id}')">Eliminar</button>
+          </div>`;
         return `
           <div class="admin-faq-row">
             <div class="afq-move">
-              <button class="btn-move" onclick="moveFaq('${f.id}',-1)" ${idx===0?'disabled':''} title="Subir">▲</button>
-              <button class="btn-move" onclick="moveFaq('${f.id}',1)" ${idx===faqs.length-1?'disabled':''} title="Bajar">▼</button>
+              <button class="btn-move" onclick="moveFaq('${f.id}',-1)" ${idx===0?'disabled':''}>▲</button>
+              <button class="btn-move" onclick="moveFaq('${f.id}',1)" ${idx===faqs.length-1?'disabled':''}>▼</button>
             </div>
             <div class="afq-info">
               <div class="afq-pregunta">${escHtml(f.pregunta)}</div>
@@ -1022,190 +1502,54 @@
       }).join('');
     }
 
-    function addFaq() {
+    async function addFaq() {
       const q = document.getElementById('faq-new-q').value.trim();
       const a = document.getElementById('faq-new-a').value.trim();
-      if (!q || !a) { alert('Completá la pregunta y la respuesta.'); return; }
-      faqs.push({ id: 'fq_' + Date.now(), pregunta: q, respuesta: a });
-      saveFaqs();
-      renderFaqs();
-      renderAdminFaqs();
-      document.getElementById('faq-new-q').value = '';
-      document.getElementById('faq-new-a').value = '';
+      if (!q || !a) { alert('Completá pregunta y respuesta.'); return; }
+      const newF = { id: 'fq_'+Date.now(), pregunta: q, respuesta: a, orden: faqs.length };
+      const res = await sb('curso_faqs', 'POST', newF);
+      if (res && !res.error) {
+        faqs.push(Array.isArray(res) ? res[0] : newF);
+        renderFaqs(); renderAdminFaqs();
+        document.getElementById('faq-new-q').value = '';
+        document.getElementById('faq-new-a').value = '';
+        showToast('✓ Pregunta agregada');
+      }
     }
 
-    function startEditFaq(id) {
-      editingFaqId = id;
-      renderAdminFaqs();
-    }
+    function startEditFaq(id) { editingFaqId = id; renderAdminFaqs(); }
+    function cancelEditFaq()  { editingFaqId = null; renderAdminFaqs(); }
 
-    function cancelEditFaq() {
-      editingFaqId = null;
-      renderAdminFaqs();
-    }
-
-    function saveEditFaq(id) {
+    async function saveEditFaq(id) {
       const q = document.getElementById(`edit-faq-q-${id}`).value.trim();
       const a = document.getElementById(`edit-faq-a-${id}`).value.trim();
-      if (!q || !a) { alert('La pregunta y respuesta no pueden estar vacías.'); return; }
+      if (!q || !a) { alert('No pueden estar vacíos.'); return; }
+      await sb(`curso_faqs?id=eq.${id}`, 'PATCH', { pregunta: q, respuesta: a });
       const f = faqs.find(x => x.id === id);
-      if (!f) return;
-      f.pregunta = q;
-      f.respuesta = a;
+      if (f) { f.pregunta = q; f.respuesta = a; }
       editingFaqId = null;
-      saveFaqs();
-      renderFaqs();
-      renderAdminFaqs();
+      renderFaqs(); renderAdminFaqs();
+      showToast('✓ Pregunta actualizada');
     }
 
-    function deleteFaq(id) {
+    async function deleteFaq(id) {
       if (!confirm('¿Eliminar esta pregunta?')) return;
+      await sb(`curso_faqs?id=eq.${id}`, 'DELETE');
       faqs = faqs.filter(x => x.id !== id);
       if (editingFaqId === id) editingFaqId = null;
-      saveFaqs();
-      renderFaqs();
-      renderAdminFaqs();
+      renderFaqs(); renderAdminFaqs();
     }
 
-    function moveFaq(id, dir) {
+    async function moveFaq(id, dir) {
       const idx = faqs.findIndex(x => x.id === id);
-      const newIdx = idx + dir;
-      if (newIdx < 0 || newIdx >= faqs.length) return;
-      const tmp = faqs[idx];
-      faqs[idx] = faqs[newIdx];
-      faqs[newIdx] = tmp;
-      saveFaqs();
-      renderFaqs();
-      renderAdminFaqs();
+      const ni = idx + dir;
+      if (ni < 0 || ni >= faqs.length) return;
+      [faqs[idx], faqs[ni]] = [faqs[ni], faqs[idx]];
+      await Promise.all(faqs.map((f,i) => sb(`curso_faqs?id=eq.${f.id}`, 'PATCH', { orden: i })));
+      renderFaqs(); renderAdminFaqs();
     }
 
-    function renderAdminFechas() {
-      const container = document.getElementById('admin-fechas-list');
-      if (fechas.length === 0) {
-        container.innerHTML = '<p style="color:var(--humo); font-size:.85rem; padding:.5rem 0;">No hay fechas cargadas aún.</p>';
-        return;
-      }
-      const sorted = [...fechas].sort((a,b) => a.date.localeCompare(b.date));
-      container.innerHTML = sorted.map(f => {
-        const libres = getCuposLibres(f);
-        const total = f.inscritos ? f.inscritos.length : 0;
-        return `
-          <div class="admin-fecha-row">
-            <div class="admin-fecha-info">
-              <span class="afd">${formatDate(f.date)}</span>
-              <span class="afc">${total} inscripto${total !== 1 ? 's' : ''} · ${libres} libre${libres !== 1 ? 's' : ''} de ${f.cupos}</span>
-            </div>
-            <div class="admin-fecha-actions">
-              <div class="cupos-input-row">
-                <label>Cupos:</label>
-                <input type="number" value="${f.cupos}" min="${total}" max="50" id="cupos-${f.id}" />
-                <button class="btn-save-cupos" onclick="saveCupos('${f.id}')">Guardar</button>
-              </div>
-              <button class="btn-delete" onclick="deleteFecha('${f.id}')">Eliminar</button>
-            </div>
-          </div>`;
-      }).join('');
-    }
-
-    function renderAdminInscriptos() {
-      // Build filter
-      const filterEl = document.getElementById('fecha-filter');
-      const sorted = [...fechas].sort((a,b) => a.date.localeCompare(b.date));
-      filterEl.innerHTML = `<button class="fecha-filter-btn ${filterFechaId==='all'?'active':''}" onclick="setFilter('all')">Todos</button>` +
-        sorted.map(f => `<button class="fecha-filter-btn ${filterFechaId===f.id?'active':''}" onclick="setFilter('${f.id}')">${formatDate(f.date).split(' ')[0]} ${f.date.split('-').slice(2).join('/')}</button>`).join('');
-
-      // Build table
-      let allInscritos = [];
-      sorted.forEach(f => {
-        (f.inscritos || []).forEach(i => allInscritos.push({...i, fechaId: f.id, fechaLabel: formatDate(f.date)}));
-      });
-
-      const filtered = filterFechaId === 'all' ? allInscritos : allInscritos.filter(i => i.fechaId === filterFechaId);
-
-      const wrap = document.getElementById('inscriptos-table-wrap');
-      if (filtered.length === 0) {
-        wrap.innerHTML = '<div class="empty-inscriptos">No hay inscriptos para esta selección.</div>';
-        return;
-      }
-
-      wrap.innerHTML = `
-        <table class="inscriptos-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>WhatsApp</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filtered.map((i,idx) => `
-              <tr>
-                <td style="color:var(--humo)">${idx+1}</td>
-                <td>${i.nombre}</td>
-                <td>${i.apellido}</td>
-                <td><a href="https://wa.me/549${i.wsp.replace(/\D/g,'')}" target="_blank" style="color:var(--brasa); text-decoration:none;">${i.wsp}</a></td>
-                <td style="color:var(--humo); font-size:.8rem">${i.fechaLabel}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>`;
-    }
-
-    function setFilter(id) {
-      filterFechaId = id;
-      renderAdminInscriptos();
-    }
-
-    function addFecha() {
-      const dateVal = document.getElementById('admin-new-date').value;
-      const cuposVal = parseInt(document.getElementById('admin-new-cupos').value);
-
-      if (!dateVal) { alert('Seleccioná una fecha.'); return; }
-      const tipo = getTipodia(dateVal);
-      if (!tipo) { alert('Solo se pueden agregar sábados y domingos.'); return; }
-      if (fechas.find(f => f.date === dateVal)) { alert('Esa fecha ya está cargada.'); return; }
-
-      fechas.push({
-        id: `f_${dateVal.replace(/-/g,'')}`,
-        date: dateVal,
-        cupos: cuposVal || 10,
-        inscritos: []
-      });
-      saveData();
-      renderFechas();
-      renderAdminContent();
-      document.getElementById('admin-new-date').value = '';
-    }
-
-    function saveCupos(id) {
-      const input = document.getElementById(`cupos-${id}`);
-      const f = fechas.find(x => x.id === id);
-      if (!f || !input) return;
-      const val = parseInt(input.value);
-      const minVal = f.inscritos ? f.inscritos.length : 0;
-      if (isNaN(val) || val < minVal) { alert(`Los cupos no pueden ser menores a los inscriptos actuales (${minVal}).`); return; }
-      f.cupos = val;
-      saveData();
-      renderFechas();
-      renderAdminContent();
-    }
-
-    function deleteFecha(id) {
-      const f = fechas.find(x => x.id === id);
-      if (!f) return;
-      const ins = f.inscritos ? f.inscritos.length : 0;
-      const msg = ins > 0
-        ? `Esta fecha tiene ${ins} inscripto${ins!==1?'s':''}. ¿Seguro que querés eliminarla?`
-        : '¿Eliminar esta fecha?';
-      if (!confirm(msg)) return;
-      fechas = fechas.filter(x => x.id !== id);
-      saveData();
-      renderFechas();
-      renderAdminContent();
-    }
-
-    // ─── FAQ ────────────────────────────────────────
+    // ─── FAQ TOGGLE ──────────────────────────────────
     function toggleFaq(btn) {
       const item = btn.closest('.faq-item');
       const isOpen = item.classList.contains('open');
@@ -1220,18 +1564,16 @@
     }
 
     // ─── INIT ────────────────────────────────────────
-    loadData();
-    renderFechas();
-    renderFaqs();
-
-    // Restricción de fecha: solo fines de semana en el date picker
-    document.addEventListener('DOMContentLoaded', () => {
+    async function init() {
+      await loadData();
+      renderFechas();
+      renderFaqs();
+      renderPrecios();
       const dp = document.getElementById('admin-new-date');
-      if (dp) {
-        const today = new Date();
-        dp.min = today.toISOString().split('T')[0];
-      }
-    });
+      if (dp) dp.min = new Date().toISOString().split('T')[0];
+    }
+
+    init();
   </script>
 
 </body>
