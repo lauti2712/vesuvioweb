@@ -464,6 +464,26 @@
     .btn-outline { background: transparent; color: var(--oro); border: 1px solid var(--oro); padding: .9rem 2.2rem; font-family: var(--sans); font-size: .75rem; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; text-decoration: none; transition: all .2s; display: inline-block; }
     .btn-outline:hover { background: var(--oro); color: var(--nero); }
 
+    /* ── MULTI PARTICIPANTE ── */
+    #participantes-container { display: flex; flex-direction: column; gap: .8rem; margin-bottom: 0; }
+    .participante-bloque { background: var(--carbone); border: 1px solid rgba(255,255,255,.06); border-left: 3px solid rgba(138,122,106,.25); padding: 1.4rem; transition: border-left-color .2s; }
+    .participante-bloque:first-child { border-left-color: var(--brasa); }
+    .part-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .part-label { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--humo); display: flex; align-items: center; gap: .5rem; }
+    .participante-bloque:first-child .part-label { color: var(--brasa); }
+    .part-num { width: 20px; height: 20px; border-radius: 50%; background: rgba(138,122,106,.2); color: var(--humo); font-size: .65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .participante-bloque:first-child .part-num { background: rgba(200,67,10,.2); color: var(--brasa); }
+    .part-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+    .part-grid .form-group { margin: 0; }
+    .btn-remove-part { background: none; border: 1px solid rgba(138,122,106,.2); color: var(--humo); width: 26px; height: 26px; font-size: .75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all .2s; flex-shrink: 0; }
+    .btn-remove-part:hover { border-color: var(--brasa); color: var(--brasa); background: rgba(200,67,10,.08); }
+    .add-part-row { display: flex; align-items: center; gap: 1rem; padding: .9rem 1rem; border: 1px dashed rgba(138,122,106,.2); margin: .8rem 0 1rem; cursor: pointer; transition: border-color .2s; }
+    .add-part-row:hover { border-color: rgba(200,67,10,.35); }
+    .btn-add-part { background: none; color: var(--brasa); border: none; font-family: var(--sans); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: .6rem; padding: 0; }
+    .btn-add-part:disabled { opacity: .35; cursor: not-allowed; }
+    .add-icon { width: 22px; height: 22px; border-radius: 50%; background: rgba(200,67,10,.15); border: 1px solid rgba(200,67,10,.3); display: flex; align-items: center; justify-content: center; font-size: 1rem; line-height: 1; flex-shrink: 0; }
+    .part-count-info { font-size: .72rem; color: var(--humo); margin-left: auto; }
+
     @media (max-width: 900px) {
       #hero { grid-template-columns: 1fr; min-height: auto; padding-top: 6rem; }
       .pizarra { display: none; }
@@ -502,7 +522,7 @@
         <span class="pill">🔥 Horno a leña real</span>
         <span class="pill">🍕 Hacés y comés tu pizza</span>
         <span class="pill">👨‍👩‍👧 Hasta 6 personas</span>
-        <span class="pill">✦ Todas las edades</span>
+        <span class="pill">✦ Mayores de 9 años</span>
         <span class="pill">✦ Sin experiencia previa</span>
       </div>
       <div class="hero-ctas">
@@ -686,7 +706,7 @@
       <div style="margin-top:2rem; padding:1.5rem 2rem; background:var(--carbone); border-left:3px solid var(--oro); max-width:700px;">
         <p style="color:var(--humo); font-size:.92rem; margin:0;">
           <strong style="color:var(--crema);">Importante:</strong> Este no es un curso profesional de pizzaiolo. El foco está en aprender la historia, pasar un momento divertido en grupo conociendo gente mientras se hace pizza, y llevarse los conocimientos para hacerla en casa.
-          <strong style="color:var(--crema);"> Ideal para una familia, grupo de amigos o salida diferente. Para todas las edades. Grupos de hasta 6 personas</strong> (con excepciones de 7 u 8 si son un solo grupo familiar).
+          <strong style="color:var(--crema);"> Ideal para una familia, grupo de amigos o salida diferente. Para mayores de 9 años. Grupos de hasta 6 personas</strong> (con excepciones de 7 u 8 si son un solo grupo familiar).
         </p>
       </div>
     </div>
@@ -717,32 +737,42 @@
           </div>
           <div id="form-fields">
 
-            <!-- Participante 1 -->
+            <!-- Participantes -->
             <div id="participantes-container">
               <div class="participante-bloque" data-idx="0">
-                <p style="font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--brasa); margin-bottom:.8rem;">Participante 1 (quien reserva)</p>
-                <div class="form-group">
-                  <label>Nombre *</label>
-                  <input type="text" class="p-nombre" placeholder="Nombre" />
+                <div class="part-header">
+                  <div class="part-label">
+                    <span class="part-num">1</span>
+                    Quien reserva
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label>Apellido *</label>
-                  <input type="text" class="p-apellido" placeholder="Apellido" />
-                </div>
-                <div class="form-group">
-                  <label>WhatsApp *</label>
-                  <input type="tel" class="p-wsp" placeholder="342 000 0000" />
-                </div>
-                <div class="form-group">
-                  <label>Edad *</label>
-                  <input type="number" class="p-edad" placeholder="Ej: 32" min="1" max="120" />
+                <div class="part-grid">
+                  <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" class="p-nombre" placeholder="Nombre" />
+                  </div>
+                  <div class="form-group">
+                    <label>Apellido *</label>
+                    <input type="text" class="p-apellido" placeholder="Apellido" />
+                  </div>
+                  <div class="form-group">
+                    <label>WhatsApp *</label>
+                    <input type="tel" class="p-wsp" placeholder="342 000 0000" />
+                  </div>
+                  <div class="form-group">
+                    <label>Edad *</label>
+                    <input type="number" class="p-edad" placeholder="Ej: 12" min="9" max="120" />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div style="display:flex; align-items:center; gap:1rem; margin:.8rem 0 1.2rem;">
-              <button type="button" class="btn-add-part" onclick="addParticipante()">+ Agregar participante</button>
-              <span style="font-size:.75rem; color:var(--humo);" id="part-count-label">1 de 6 máximo</span>
+            <div class="add-part-row" onclick="addParticipante()">
+              <button type="button" class="btn-add-part">
+                <span class="add-icon">+</span>
+                Agregar participante
+              </button>
+              <span class="part-count-info" id="part-count-label">1 de 6 — hasta 8 para grupos familiares</span>
             </div>
 
             <p class="form-note">Te vamos a contactar por WhatsApp con todos los detalles del taller: precio, horario, qué traer y cómo llegar.</p>
@@ -1047,9 +1077,15 @@
     function updatePartLabel() {
       const n = document.querySelectorAll('.participante-bloque').length;
       const label = document.getElementById('part-count-label');
-      if (label) label.textContent = `${n} de 6 máximo`;
+      if (label) label.textContent = `${n} de 6 — hasta 8 para grupos familiares`;
+      const addRow = document.querySelector('.add-part-row');
       const addBtn = document.querySelector('.btn-add-part');
-      if (addBtn) addBtn.disabled = n >= 6;
+      if (n >= 6) {
+        if (addRow) addRow.style.display = 'none';
+      } else {
+        if (addRow) addRow.style.display = 'flex';
+        if (addBtn) addBtn.disabled = false;
+      }
     }
 
     function addParticipante() {
@@ -1060,13 +1096,21 @@
       div.className = 'participante-bloque';
       div.dataset.idx = idx;
       div.innerHTML = `
-        <button class="btn-remove-part" onclick="removeParticipante(this)" title="Quitar">✕</button>
-        <p style="font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--humo); margin-bottom:.8rem;">Participante ${idx + 1}</p>
-        <div class="form-group"><label>Nombre *</label><input type="text" class="p-nombre" placeholder="Nombre" /></div>
-        <div class="form-group"><label>Apellido *</label><input type="text" class="p-apellido" placeholder="Apellido" /></div>
-        <div class="form-group"><label>WhatsApp</label><input type="tel" class="p-wsp" placeholder="342 000 0000 (opcional)" /></div>
-        <div class="form-group"><label>Edad *</label><input type="number" class="p-edad" placeholder="Ej: 10" min="1" max="120" /></div>`;
+        <div class="part-header">
+          <div class="part-label">
+            <span class="part-num">${idx + 1}</span>
+            Participante ${idx + 1}
+          </div>
+          <button class="btn-remove-part" onclick="removeParticipante(this)" title="Quitar">✕</button>
+        </div>
+        <div class="part-grid">
+          <div class="form-group"><label>Nombre *</label><input type="text" class="p-nombre" placeholder="Nombre" /></div>
+          <div class="form-group"><label>Apellido *</label><input type="text" class="p-apellido" placeholder="Apellido" /></div>
+          <div class="form-group"><label>WhatsApp <span style="opacity:.5;font-size:.85em;">(opcional)</span></label><input type="tel" class="p-wsp" placeholder="342 000 0000" /></div>
+          <div class="form-group"><label>Edad *</label><input type="number" class="p-edad" placeholder="Ej: 12" min="9" max="120" /></div>
+        </div>`;
       container.appendChild(div);
+      div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       updatePartLabel();
     }
 
@@ -1074,8 +1118,13 @@
       btn.closest('.participante-bloque').remove();
       // Renumerar
       document.querySelectorAll('.participante-bloque').forEach((b, i) => {
-        const label = b.querySelector('p');
-        if (label && i > 0) label.textContent = `Participante ${i + 1}`;
+        const num = b.querySelector('.part-num');
+        const lbl = b.querySelector('.part-label');
+        if (num) num.textContent = i + 1;
+        if (lbl && i > 0) {
+          const spans = lbl.querySelectorAll('span');
+          if (spans.length) lbl.innerHTML = `<span class="part-num">${i+1}</span> Participante ${i+1}`;
+        }
       });
       updatePartLabel();
     }
@@ -1092,6 +1141,10 @@
         const p = participantes[i];
         if (!p.nombre || !p.apellido || !p.edad) {
           alert(`Completá nombre, apellido y edad del participante ${i + 1}.`);
+          return;
+        }
+        if (parseInt(p.edad) < 9) {
+          alert(`El taller es para mayores de 9 años. Revisá la edad del participante ${i + 1}.`);
           return;
         }
       }
