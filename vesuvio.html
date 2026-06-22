@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vesuvio Pizzeria — Tradición Italiana, Santa Fe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&family=IM+Fell+English:ital@1&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --nero: #0d0a08; --carbone: #1a1410; --ceniza: #2e2620;
+      --brasa: #C8430A; --oro: #D4A847; --crema: #F5EDD8;
+      --humo: #8a7a6a;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+      --italic: 'IM Fell English', Georgia, serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--nero); color: var(--crema); font-family: var(--sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2.5rem;
+      background: rgba(13,10,8,.97);
+      border-bottom: 1px solid rgba(200,67,10,.15);
+    }
+    .nav-logo { font-family: var(--serif); font-size: 1.25rem; font-weight: 900; letter-spacing: .08em; color: var(--oro); text-decoration: none; flex-shrink: 0; }
+    .nav-tabs { display: flex; gap: 0; list-style: none; overflow-x: auto; }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tabs a {
+      display: block; padding: .55rem 1.1rem;
+      font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--humo); text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-tabs a:hover { color: var(--crema); }
+    .nav-tabs a.active { color: var(--oro); border-bottom-color: var(--brasa); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      padding: 6rem 2rem 4rem; position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 80%, rgba(200,67,10,.28) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 30% 60%, rgba(200,67,10,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 80% at 50% 50%, #1a1410 30%, #0d0a08 100%);
+      z-index: 0;
+    }
+    #hero::after {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='600' height='600' viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C8430A' stroke-width='0.5' opacity='0.18'%3E%3Cpath d='M0 300 Q150 200 300 280 Q450 360 600 300'/%3E%3Cpath d='M100 0 Q180 150 220 300 Q260 450 200 600'/%3E%3Cpath d='M400 0 Q350 120 380 250 Q410 380 450 600'/%3E%3Cpath d='M0 150 Q200 130 350 200 Q500 270 600 200'/%3E%3Cpath d='M0 450 Q150 420 280 460 Q400 500 600 440'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: cover; z-index: 0; opacity: .6;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+    .hero-eyebrow { font-size: .68rem; letter-spacing: .35em; text-transform: uppercase; color: var(--brasa); margin-bottom: 1.5rem; display: block; }
+    .hero-title { font-family: var(--serif); font-size: clamp(3.5rem, 9vw, 7.5rem); font-weight: 900; line-height: .95; margin-bottom: 1rem; color: var(--crema); }
+    .hero-title em { font-style: italic; color: var(--oro); display: block; }
+    .hero-tagline { font-family: var(--italic); font-style: italic; font-size: clamp(1rem, 2.5vw, 1.4rem); color: var(--humo); margin-bottom: 2.5rem; }
+    .volcano-separator { width: 60px; height: 2px; background: linear-gradient(to right, transparent, var(--brasa), transparent); margin: 0 auto 2.5rem; }
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .5rem; opacity: .4; }
+    .scroll-hint span { font-size: .6rem; letter-spacing: .25em; text-transform: uppercase; }
+    .scroll-arrow { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--crema), transparent); animation: scrollPulse 2s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.4}50%{opacity:1} }
+
+    /* ── BUTTONS ── */
+    .btn-primary { background: var(--brasa); color: var(--crema); border: none; padding: .85rem 2.2rem; font-family: var(--sans); font-size: .75rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background .2s, transform .1s; display: inline-block; }
+    .btn-primary:hover { background: #e04d10; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--oro); border: 1px solid var(--oro); padding: .85rem 2.2rem; font-family: var(--sans); font-size: .75rem; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; text-decoration: none; transition: background .2s, color .2s; display: inline-block; }
+    .btn-outline:hover { background: var(--oro); color: var(--nero); }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: .65rem; letter-spacing: .35em; text-transform: uppercase; color: var(--brasa); margin-bottom: 1rem; display: block; }
+    .section-title { font-family: var(--serif); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem; color: var(--crema); }
+    .divider { width: 50px; height: 1px; background: var(--brasa); margin-bottom: 2.5rem; }
+
+    /* ── NOSOTROS ── */
+    #nosotros { background: var(--carbone); }
+    .nosotros-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .nosotros-text p { color: var(--humo); font-size: 1.05rem; margin-bottom: 1.5rem; }
+    .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .value-card { border-left: 2px solid var(--brasa); padding: 1rem 1.2rem; background: rgba(200,67,10,.06); }
+    .value-card h4 { font-family: var(--serif); font-size: 1rem; color: var(--oro); margin-bottom: .4rem; }
+    .value-card p { font-size: .85rem; color: var(--humo); line-height: 1.5; margin: 0; }
+
+    /* ── PIZZAS ── */
+    #pizzas { background: var(--nero); }
+    .pizza-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 3rem; }
+    .pillar { background: var(--carbone); padding: 3rem 2.5rem; text-align: center; transition: background .2s; }
+    .pillar:hover { background: var(--ceniza); }
+    .pillar-icon { width: 56px; height: 56px; border: 1px solid var(--brasa); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem; }
+    .pillar h3 { font-family: var(--serif); font-size: 1.2rem; color: var(--oro); margin-bottom: 1rem; font-weight: 700; }
+    .pillar p { font-size: .9rem; color: var(--humo); line-height: 1.6; }
+    .pillar-stat { font-family: var(--serif); font-size: 2.5rem; font-weight: 900; color: var(--brasa); display: block; margin-top: 1rem; }
+
+    /* ── MODALIDADES ── */
+    #modalidades { background: var(--carbone); }
+    .modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .modal-card { border: 1px solid rgba(212,168,71,.15); padding: 2rem 1.5rem; position: relative; overflow: hidden; transition: border-color .2s; }
+    .modal-card:hover { border-color: rgba(212,168,71,.4); }
+    .modal-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .modal-card h3 { font-family: var(--serif); font-size: 1.2rem; color: var(--crema); margin-bottom: .5rem; }
+    .modal-card .horario { font-size: .78rem; color: var(--brasa); letter-spacing: .08em; margin-bottom: .5rem; font-weight: 500; }
+    .modal-card p { font-size: .85rem; color: var(--humo); }
+
+    /* ── CLUB ── */
+    #club { background: linear-gradient(135deg, var(--carbone) 0%, #1e130d 100%); position: relative; overflow: hidden; }
+    #club::before { content: ''; position: absolute; right: -200px; top: 50%; transform: translateY(-50%); width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(200,67,10,.12) 0%, transparent 70%); pointer-events: none; }
+    .club-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .club-text { position: relative; z-index: 1; }
+    .club-text p { font-size: 1.05rem; color: var(--humo); margin-bottom: 2rem; }
+    .club-badge { position: relative; z-index: 1; display: flex; justify-content: center; }
+    .badge-circle { width: 280px; height: 280px; border-radius: 50%; border: 2px solid var(--oro); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; position: relative; }
+    .badge-circle::before { content: ''; position: absolute; inset: 8px; border-radius: 50%; border: 1px solid rgba(212,168,71,.3); }
+    .badge-circle .badge-label { font-size: .6rem; letter-spacing: .3em; text-transform: uppercase; color: var(--brasa); margin-bottom: .5rem; }
+    .badge-circle .badge-name { font-family: var(--serif); font-size: 1.8rem; font-weight: 900; color: var(--oro); line-height: 1; margin-bottom: .5rem; }
+    .badge-circle .badge-desc { font-size: .8rem; color: var(--humo); }
+
+    /* ── CONTACTO ── */
+    #contacto { background: var(--carbone); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
+    .contact-block h3 { font-family: var(--serif); font-size: 1rem; color: var(--oro); margin-bottom: 1.2rem; letter-spacing: .05em; }
+    .contact-item { display: flex; flex-direction: column; gap: .2rem; margin-bottom: 1rem; }
+    .contact-item .label { font-size: .65rem; letter-spacing: .2em; text-transform: uppercase; color: var(--brasa); }
+    .contact-item a, .contact-item span { color: var(--crema); text-decoration: none; font-size: .95rem; }
+    .contact-item a:hover { color: var(--oro); }
+    .map-placeholder { aspect-ratio: 4/3; background: var(--ceniza); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; border: 1px solid rgba(212,168,71,.1); }
+    .map-placeholder span { font-size: .85rem; color: var(--humo); text-align: center; }
+    .map-placeholder .map-icon { font-size: 2rem; }
+
+    /* ── FOOTER ── */
+    footer { background: #080604; padding: 3rem 2rem; text-align: center; border-top: 1px solid rgba(200,67,10,.2); }
+    .footer-logo { font-family: var(--serif); font-size: 2rem; font-weight: 900; color: var(--oro); margin-bottom: .5rem; }
+    .footer-sub { font-size: .7rem; letter-spacing: .3em; text-transform: uppercase; color: var(--humo); margin-bottom: 1.5rem; }
+    .footer-socials { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; }
+    .footer-socials a { font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; color: var(--humo); text-decoration: none; transition: color .2s; }
+    .footer-socials a:hover { color: var(--oro); }
+    .footer-copy { font-size: .72rem; color: rgba(138,122,106,.4); }
+
+    /* ── RESEÑAS ── */
+    #resenas { background: var(--nero); overflow: hidden; }
+    .resenas-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; }
+    .resenas-score { display: flex; align-items: center; gap: 1.5rem; }
+    .score-num { font-family: var(--serif); font-size: 4rem; font-weight: 900; color: var(--oro); line-height: 1; }
+    .score-right { display: flex; flex-direction: column; gap: .3rem; }
+    .score-stars { display: flex; gap: 2px; }
+    .score-stars span { color: #f5b942; font-size: 1.2rem; }
+    .score-total { font-size: .75rem; color: var(--humo); letter-spacing: .05em; }
+    .score-google { font-size: .65rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(138,122,106,.5); }
+    .resenas-nav { display: flex; gap: .6rem; }
+    .res-nav-btn { width: 36px; height: 36px; background: none; border: 1px solid rgba(255,255,255,.1); color: var(--humo); cursor: pointer; font-size: 1rem; transition: all .2s; display: flex; align-items: center; justify-content: center; }
+    .res-nav-btn:hover { border-color: var(--brasa); color: var(--crema); }
+
+    .resenas-track-wrap { overflow: hidden; }
+    .resenas-track { display: flex; gap: 1.5rem; transition: transform .4s cubic-bezier(.25,.46,.45,.94); will-change: transform; }
+
+    .resena-card {
+      background: var(--carbone); padding: 2rem;
+      flex: 0 0 calc(33.333% - 1rem);
+      border: 1px solid rgba(255,255,255,.05);
+      border-top: 2px solid transparent;
+      transition: border-color .2s;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .resena-card:hover { border-top-color: var(--oro); }
+
+    .resena-top { display: flex; align-items: center; gap: .9rem; }
+    .resena-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 1rem; font-weight: 900;
+      flex-shrink: 0; color: #fff;
+    }
+    .resena-meta { display: flex; flex-direction: column; gap: .1rem; }
+    .resena-nombre { font-size: .9rem; color: var(--crema); font-weight: 500; }
+    .resena-tipo { font-size: .68rem; color: var(--humo); }
+
+    .resena-stars { display: flex; gap: 2px; }
+    .resena-stars span { color: #f5b942; font-size: .9rem; }
+
+    .resena-texto { font-size: .88rem; color: var(--humo); line-height: 1.7; flex: 1; }
+    .resena-fecha { font-size: .7rem; color: rgba(138,122,106,.5); letter-spacing: .08em; }
+
+    .resenas-dots { display: flex; justify-content: center; gap: .5rem; margin-top: 2rem; }
+    .res-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.15); cursor: pointer; transition: background .2s, transform .2s; border: none; padding: 0; }
+    .res-dot.active { background: var(--brasa); transform: scale(1.3); }
+
+
+    /* ── TALLER HOME ── */
+    #taller-home { background: var(--nero); position: relative; overflow: hidden; }
+    #taller-home::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 80% 50%, rgba(200,67,10,.1), transparent);
+      pointer-events: none;
+    }
+    .taller-home-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 1; }
+    .taller-home-pills { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.5rem 0; }
+    .taller-home-pill { font-size: .7rem; letter-spacing: .1em; border: 1px solid rgba(200,67,10,.35); color: var(--brasa); padding: .3rem .8rem; }
+    .taller-home-visual {
+      background: #111; border: 2px solid rgba(255,255,255,.05);
+      border-radius: 2px; padding: 2.5rem 2rem; position: relative;
+      box-shadow: 0 0 0 6px #1a1208, 0 0 0 8px rgba(255,255,255,.03);
+    }
+    .taller-home-visual::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 10px; background: #2a1f18; border-radius: 0 0 3px 3px; }
+    .chalk-title { font-family: 'Caveat', cursive; font-size: 1.5rem; color: rgba(245,237,216,.8); text-align: center; margin-bottom: .3rem; }
+    .chalk-sub { font-family: 'Caveat', cursive; font-size: 1rem; color: var(--oro); opacity: .7; text-align: center; margin-bottom: 1.5rem; }
+    .chalk-hr { border: none; border-top: 1px solid rgba(255,255,255,.1); margin-bottom: 1.2rem; }
+    .chalk-items { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .chalk-items li { font-family: 'Caveat', cursive; font-size: 1.2rem; color: rgba(245,237,216,.75); display: flex; gap: .7rem; }
+    .chalk-items li .cn { color: var(--brasa); min-width: 1.2rem; }
+    .chalk-footer { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,.08); text-align: center; font-family: 'Caveat', cursive; font-size: 1rem; color: rgba(245,237,216,.45); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .resena-card { flex: 0 0 calc(100% - 0px); }
+      nav { padding: 1rem 1.2rem; gap: 1rem; }
+      .nav-tabs a { padding: .5rem .7rem; font-size: .62rem; letter-spacing: .1em; }
+      .nosotros-grid, .club-inner, .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .pizza-pillars, .modal-grid { grid-template-columns: 1fr; gap: 2px; }
+      .values-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">VESUVIO</a>
+    <ul class="nav-tabs" id="nav-tabs">
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#pizzas">Pizzas</a></li>
+      <li><a href="#modalidades">Modalidades</a></li>
+      <li><a href="#club">Club</a></li>
+      <li><a href="#resenas">Reseñas</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+      <li><a href="#taller-home">🍕 Taller</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Francia 3285, Santa Fe — Desde 2024</span>
+      <h1 class="hero-title">
+        Vesuvio
+        <em>Pizzeria</em>
+      </h1>
+      <p class="hero-tagline">Tradición italiana, pasión vesuviana.</p>
+      <div class="volcano-separator"></div>
+      <div class="hero-ctas">
+        <a id="btn-pedir" href="https://www.pedidosya.com.ar" target="_blank" class="btn-primary">Pedir ahora</a>
+        <a href="#nosotros" class="btn-outline">Conocer más</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- NOSOTROS -->
+  <section id="nosotros" data-section="nosotros">
+    <div class="section-inner">
+      <div class="nosotros-grid">
+        <div class="nosotros-text">
+          <span class="section-label">Acerca de Vesuvio</span>
+          <h2 class="section-title">Donde la tradición y la innovación se encuentran</h2>
+          <div class="divider"></div>
+          <p>Nuestro nombre, inspirado en el famoso volcán Vesubio, es un homenaje a la ciudad de Nápoles, cuna de la pizza napolitana. Desde el primer día, trabajamos para mantener la autenticidad de nuestras recetas, utilizando ingredientes frescos y técnicas tradicionales.</p>
+          <p>Nuestro espacio clásico y acogedor está diseñado para que te sientas en un auténtico rincón napolitano, mientras disfrutás de nuestras pizzas artesanales cocinadas al estilo tradicional.</p>
+          <div style="margin-top:1.5rem; padding:1.2rem 1.5rem; border-left:3px solid var(--oro); background:rgba(212,168,71,.05);">
+            <p style="margin:0; font-family:var(--italic); font-style:italic; font-size:1.1rem; color:var(--crema);">Misión</p>
+            <p style="margin:.5rem 0 0; font-size:.9rem;">Brindar una experiencia gastronómica auténtica que celebre la tradición napolitana — masa perfectamente fermentada, tomate italiano, y los mejores ingredientes, todo fusionado en un horno a altas temperaturas.</p>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--brasa); margin-bottom:1.2rem;">Nuestros valores</p>
+          <div class="values-grid">
+            <div class="value-card"><h4>Autenticidad</h4><p>Honramos la tradición napolitana en nuestras recetas y procesos.</p></div>
+            <div class="value-card"><h4>Calidad</h4><p>Usamos ingredientes frescos y de primera calidad, importados de Italia.</p></div>
+            <div class="value-card"><h4>Pasión</h4><p>Cocinamos con el alma en cada plato que sale de nuestra cocina.</p></div>
+            <div class="value-card"><h4>Cultura Local</h4><p>Promovemos la cultura y comunidad de la ciudad de Santa Fe.</p></div>
+            <div class="value-card" style="grid-column:1/-1;"><h4>Innovación</h4><p>Buscamos mejorar y expandir nuestra oferta manteniendo nuestras raíces napolitanas.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIZZAS -->
+  <section id="pizzas" data-section="pizzas">
+    <div class="section-inner">
+      <span class="section-label">El arte de la pizza napolitana</span>
+      <h2 class="section-title">Nuestras Pizzas</h2>
+      <div class="divider"></div>
+      <p style="color:var(--humo); max-width:560px; font-size:1rem;">Cada pizza es el resultado de un proceso artesanal riguroso: de la masa al horno, cada detalle está pensado para alcanzar la perfección.</p>
+      <div class="pizza-pillars">
+        <div class="pillar">
+          <div class="pillar-icon">🌾</div>
+          <h3>La Masa</h3>
+          <p>Fermenta a temperatura controlada durante más de 48 horas, creando una pizza fina, suave y esponjosa con una textura inolvidable.</p>
+          <span class="pillar-stat">+48hs</span>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🔥</div>
+          <h3>El Horno</h3>
+          <p>Alcanza los 450 grados de temperatura, horneando nuestras pizzas en tan solo 90 segundos para lograr esa corteza perfecta.</p>
+          <span class="pillar-stat">450°</span>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🇮🇹</div>
+          <h3>Los Ingredientes</h3>
+          <p>Elevan nuestra pizza a la categoría de obra maestra culinaria. De máxima calidad, importados directamente de Italia.</p>
+          <span class="pillar-stat">100% IT</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODALIDADES -->
+  <section id="modalidades" data-section="modalidades">
+    <div class="section-inner">
+      <span class="section-label">Cómo disfrutarla</span>
+      <h2 class="section-title">Modalidades</h2>
+      <div class="divider"></div>
+      <div class="modal-grid">
+        <div class="modal-card">
+          <span class="modal-icon">🛍️</span>
+          <h3>Take Away</h3>
+          <div class="horario">Todos los días · desde las 19:30hs</div>
+          <p>Llevate un trozo de Italia a casa. Pedí y retirá en el local.</p>
+        </div>
+        <div class="modal-card">
+          <span class="modal-icon">📱</span>
+          <h3>PedidosYa</h3>
+          <div class="horario">Todos los días · desde las 19:30hs</div>
+          <p>Encontranos en la app con delivery a tu puerta.</p>
+        </div>
+        <div class="modal-card">
+          <span class="modal-icon">🍷</span>
+          <h3>Bar</h3>
+          <div class="horario">Todos los días · desde las 19:30hs</div>
+          <p>Disfrutá una noche relajada en nuestro espacio hogareño con horno a la vista.</p>
+        </div>
+        <div class="modal-card">
+          <span class="modal-icon">🛵</span>
+          <h3>Delivery Propio</h3>
+          <div class="horario">Todos los días · desde las 19:30hs</div>
+          <p>Delivery directo, sin intermediarios. La pizza llega como tiene que llegar.</p>
+        </div>
+        <div class="modal-card">
+          <span class="modal-icon">❄️</span>
+          <h3>Congeladas</h3>
+          <div class="horario">Disponible en el local</div>
+          <p>Pizzas Vesuvio para cocinar en casa, con toda la calidad napolitana. Ya disponibles.</p>
+        </div>
+        <div class="modal-card">
+          <span class="modal-icon">🎉</span>
+          <h3>Eventos</h3>
+          <div class="horario">Consultar disponibilidad</div>
+          <p>Llevamos nuestro horno a tu evento y nos encargamos de la comida con pizzas individuales. Una experiencia única para tus invitados.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLUB VESUVIO -->
+  <section id="club" data-section="club">
+    <div class="section-inner">
+      <div class="club-inner">
+        <div class="club-text">
+          <span class="section-label">Para los amantes de la pizza napolitana</span>
+          <h2 class="section-title">Club Vesuvio</h2>
+          <div class="divider"></div>
+          <p>Una membresía exclusiva con beneficios reales: descuentos, pizzas sin cargo, delivery bonificado y acceso anticipado a novedades. 5 niveles diseñados para que cada tipo de amante napolitano encuentre su lugar.</p>
+          <p>Suscripción mensual o anual, cobro automático por MercadoPago o en efectivo/tarjetas en el local.</p>
+          <a href="club-vesuvio.html" class="btn-primary">Conocer el Club</a>
+        </div>
+        <div class="club-badge">
+          <div class="badge-circle">
+            <span class="badge-label">Membresía</span>
+            <span class="badge-name">Club<br>Vesuvio</span>
+            <span class="badge-desc">5 niveles · Desde<br>Margherita hasta<br>Vesuvio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- TALLER NAPOLITANO -->
+  <section id="taller-home" data-section="taller">
+    <div class="section-inner">
+      <div class="taller-home-inner">
+        <div>
+          <span class="section-label">Experiencia única</span>
+          <h2 class="section-title">Taller de Pizzaiolo Napolitano</h2>
+          <div class="divider"></div>
+          <p style="color:var(--humo); font-size:1rem;">Aprendé la historia de la pizza napolitana, producí tu propia masa, hornéala en nuestro horno y coméla con tu grupo. Una tarde diferente para toda la familia o amigos, sin experiencia previa necesaria.</p>
+          <div class="taller-home-pills">
+            <span class="taller-home-pill">🔥 Horno real</span>
+            <span class="taller-home-pill">👨‍👩‍👧 Hasta 6 personas</span>
+            <span class="taller-home-pill">✦ Todas las edades</span>
+            <span class="taller-home-pill">🍕 Hacés y comés tu pizza</span>
+          </div>
+          <a href="curso-pizzaiolo.html" class="btn-primary">Ver fechas y reservar</a>
+        </div>
+        <div class="taller-home-visual">
+          <div class="chalk-title">Taller de Pizzaiolo</div>
+          <div class="chalk-sub">— programa del día —</div>
+          <hr class="chalk-hr">
+          <ul class="chalk-items">
+            <li><span class="cn">I.</span>Historia de la Pizza Napoletana</li>
+            <li><span class="cn">II.</span>La Masa: ingredientes y técnica</li>
+            <li><span class="cn">III.</span>El Horno y las Palas</li>
+            <li><span class="cn">IV.</span>La Margherita: armado completo</li>
+            <li><span class="cn">V.</span>Variedades y combinaciones</li>
+          </ul>
+          <div class="chalk-footer">Cierre: hornéamos y degustamos juntos 🍕</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEÑAS -->
+  <section id="resenas" data-section="resenas">
+    <div class="section-inner">
+      <div class="resenas-header">
+        <div>
+          <span class="section-label">Lo que dice la gente</span>
+          <h2 class="section-title">Reseñas en Google</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="resenas-score">
+          <span class="score-num">5.0</span>
+          <div class="score-right">
+            <div class="score-stars">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <span class="score-total">Reseñas verificadas</span>
+            <span class="score-google">Google Maps</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="resenas-track-wrap">
+        <div class="resenas-track" id="resenas-track">
+
+          <div class="resena-card">
+            <div class="resena-top">
+              <div class="resena-avatar" style="background:#6b9e6b;">PB</div>
+              <div class="resena-meta">
+                <span class="resena-nombre">Pamela Bauer</span>
+                <span class="resena-tipo">Local Guide · 70 opiniones</span>
+              </div>
+            </div>
+            <div class="resena-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            <p class="resena-texto">Muy buena experiencia. Destaco especialmente la atención del mozo, súper amable y atento. Las pizzas estaban deliciosas y la masa realmente excelente, se nota la calidad. Un lugar para volver.</p>
+            <span class="resena-fecha">Hace un mes</span>
+          </div>
+
+          <div class="resena-card">
+            <div class="resena-top">
+              <div class="resena-avatar" style="background:#c84a4a;">VP</div>
+              <div class="resena-meta">
+                <span class="resena-nombre">Vanesa Protto</span>
+                <span class="resena-tipo">Local Guide · 7 opiniones</span>
+              </div>
+            </div>
+            <div class="resena-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            <p class="resena-texto">me comí una pizza entera sola. LAS MEJORES DE SF</p>
+            <span class="resena-fecha">Hace 22 horas</span>
+          </div>
+
+          <div class="resena-card">
+            <div class="resena-top">
+              <div class="resena-avatar" style="background:#4a7ab5;">GB</div>
+              <div class="resena-meta">
+                <span class="resena-nombre">Giuliano Bernardis</span>
+                <span class="resena-tipo">Local Guide · 12 opiniones</span>
+              </div>
+            </div>
+            <div class="resena-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            <p class="resena-texto">Un excelente lugar con excelente comida, destaca la buena atención del personal, más que un cliente te hacen sentir un amigo más del local. Desde que lo descubrí es mi primer idea cuando quiero un respiro. Los precios me parecen baratos a comparación del nivel de lo que preparan.</p>
+            <span class="resena-fecha">Hace 2 semanas</span>
+          </div>
+
+          <div class="resena-card">
+            <div class="resena-top">
+              <div class="resena-avatar" style="background:#7b4aaa;">SR</div>
+              <div class="resena-meta">
+                <span class="resena-nombre">Santiago Rodríguez</span>
+                <span class="resena-tipo">2 opiniones</span>
+              </div>
+            </div>
+            <div class="resena-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            <p class="resena-texto">Cómodo, ambiente agradable, se podía charlar y las pizzas riquísimas.</p>
+            <span class="resena-fecha">Hace un mes</span>
+          </div>
+
+          <div class="resena-card">
+            <div class="resena-top">
+              <div class="resena-avatar" style="background:#b57a3a;">LS</div>
+              <div class="resena-meta">
+                <span class="resena-nombre">Luciano Stizzoli</span>
+                <span class="resena-tipo">14 opiniones</span>
+              </div>
+            </div>
+            <div class="resena-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            <p class="resena-texto">Se equivocaron con un pedido y lo arreglaron recontra bien. Nos trajeron la pizza correcta al toque, nos ofrecieron dejarnos la incorrecta y nos trajeron unos conitos por el inconveniente. Y la pizza está buenísima. 6/5 el servicio.</p>
+            <span class="resena-fecha">Hace 2 meses</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="resenas-dots" id="resenas-dots"></div>
+
+      <div style="margin-top:2rem; text-align:center;">
+        <a href="https://www.google.com/maps/place/Vesuvio+Pizzeria/@-31.6466456,-60.7098175,3043m/data=!3m1!1e3!4m6!3m5!1s0x95b5a901d0149643:0x879abfd31c4e4362!8m2!3d-31.6362836!4d-60.712111!16s%2Fg%2F11w92x2x7y?entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn-outline" style="font-size:.7rem; padding:.6rem 1.5rem;">Ver todas las reseñas en Google</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" data-section="contacto">
+    <div class="section-inner">
+      <span class="section-label">Encontranos</span>
+      <h2 class="section-title">Contacto</h2>
+      <div class="divider"></div>
+      <div class="contact-grid">
+        <div>
+          <div class="contact-block" style="margin-bottom:2.5rem;">
+            <h3>Ubicación</h3>
+            <div class="contact-item"><span class="label">Dirección</span><span>Francia 3285, Santa Fe Capital</span></div>
+            <div class="contact-item"><span class="label">WhatsApp</span><a href="https://wa.me/5493426393012">342 639 3012</a></div>
+            <div class="contact-item"><span class="label">Instagram</span><a href="https://www.instagram.com/vesuviopizzeria.sf" target="_blank">@vesuviopizzeria.sf</a></div>
+          </div>
+          <div class="contact-block" style="margin-bottom:2.5rem;">
+            <h3>Horarios</h3>
+            <div class="contact-item"><span class="label">Todas las modalidades</span><span>Todos los días desde las 19:30hs</span></div>
+          </div>
+          <div class="contact-block">
+            <h3>Correos</h3>
+            <div class="contact-item"><span class="label">Consultas generales</span><a href="mailto:hola@vesuviopizzeria.ar">hola@vesuviopizzeria.ar</a></div>
+            <div class="contact-item"><span class="label">Club Vesuvio</span><a href="mailto:club@vesuviopizzeria.ar">club@vesuviopizzeria.ar</a></div>
+            <div class="contact-item"><span class="label">RRHH</span><a href="mailto:rrhh@vesuviopizzeria.ar">rrhh@vesuviopizzeria.ar</a></div>
+          </div>
+        </div>
+        <div>
+          <div class="map-placeholder">
+            <span class="map-icon">📍</span>
+            <span><strong style="color:var(--crema);">Francia 3285</strong><br>Santa Fe Capital, Argentina</span>
+            <a href="https://www.google.com/maps/search/Francia+3285+Santa+Fe+Argentina" target="_blank" class="btn-outline" style="font-size:.7rem; padding:.6rem 1.2rem;">Ver en Google Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">VESUVIO</div>
+    <div class="footer-sub">Pizzeria Napolitana · Santa Fe, Argentina</div>
+    <div class="footer-socials">
+      <a href="https://www.instagram.com/vesuviopizzeria.sf" target="_blank">Instagram</a>
+      <a href="https://wa.me/5493426393012" target="_blank">WhatsApp</a>
+      <a href="club-vesuvio.html">Club Vesuvio</a>
+      <a href="curso-pizzaiolo.html">Taller Pizzaiolo</a>
+    </div>
+    <p class="footer-copy">© 2024–2026 Vesuvio Pizzeria · Francia 3285, Santa Fe</p>
+  </footer>
+    </div>
+  </div>
+
+  <script>
+    const SB_URL = 'https://ckivxhxbysimhxmyovuc.supabase.co';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNraXZ4aHhieXNpbWh4bXlvdnVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwOTY1MjMsImV4cCI6MjA5NzY3MjUyM30.w4pCLsQSf1sm2S8jwIF1imVrHgZ7nbEi5qGsQ6o_HzM';
+
+    async function sbGet(table) {
+      const res = await fetch(`${SB_URL}/rest/v1/${table}`, {
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+      });
+      try { return await res.json(); } catch { return []; }
+    }
+
+    // Cargar config del sitio (link pedir, secciones visibles)
+    async function loadSiteConfig() {
+      try {
+        const data = await sbGet('sitio_config?id=eq.1');
+        if (Array.isArray(data) && data.length) {
+          const cfg = data[0];
+          // Link pedir ahora
+          if (cfg.pedir_url) document.getElementById('btn-pedir').href = cfg.pedir_url;
+          // Secciones ocultas
+          if (cfg.secciones_ocultas) {
+            const ocultas = JSON.parse(cfg.secciones_ocultas);
+            ocultas.forEach(id => {
+              const el = document.querySelector(`[data-section="${id}"]`);
+              if (el) el.style.display = 'none';
+              // Ocultar tab del nav también
+              const tab = document.querySelector(`.nav-tabs a[href="#${id}"]`) ||
+                          document.querySelector(`.nav-tabs a[href="#${id}-home"]`);
+              if (tab) tab.closest('li').style.display = 'none';
+            });
+          }
+        }
+      } catch(e) { console.error(e); }
+    }
+
+    // Carrusel reseñas
+    (function() {
+      const track = document.getElementById('resenas-track');
+      const dotsEl = document.getElementById('resenas-dots');
+      if (!track) return;
+      const cards = track.querySelectorAll('.resena-card');
+      const total = cards.length;
+      let perView = window.innerWidth <= 768 ? 1 : 3;
+      let current = 0;
+      let pages = Math.ceil(total / perView);
+
+      function buildDots() {
+        pages = Math.ceil(total / perView);
+        dotsEl.innerHTML = '';
+        for (let i = 0; i < pages; i++) {
+          const d = document.createElement('button');
+          d.className = 'res-dot' + (i === 0 ? ' active' : '');
+          d.addEventListener('click', () => goTo(i));
+          dotsEl.appendChild(d);
+        }
+      }
+      function goTo(page) {
+        current = Math.max(0, Math.min(page, pages - 1));
+        const cardW = cards[0].offsetWidth + 24;
+        track.style.transform = `translateX(-${current * perView * cardW}px)`;
+        dotsEl.querySelectorAll('.res-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+      }
+      buildDots();
+      window.addEventListener('resize', () => { perView = window.innerWidth <= 768 ? 1 : 3; buildDots(); goTo(0); });
+      let startX = 0;
+      track.addEventListener('touchstart', e => startX = e.touches[0].clientX, {passive:true});
+      track.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - startX; if (Math.abs(dx) > 50) goTo(dx < 0 ? current + 1 : current - 1); }, {passive:true});
+    })();
+
+    // Nav activo por scroll
+    const sections = ['nosotros','pizzas','modalidades','club','taller-home','resenas','contacto'];
+    const links = document.querySelectorAll('.nav-tabs a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 120) current = id;
+      });
+      links.forEach(a => {
+        const href = a.getAttribute('href');
+        a.classList.toggle('active', href === '#' + current || href === '#' + current + '-home');
+      });
+    });
+
+    loadSiteConfig();
+  </script>
+</body>
+</html>

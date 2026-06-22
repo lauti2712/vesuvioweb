@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Vesuvio Pizzeria</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --nero: #0d0a08; --carbone: #1a1410; --ceniza: #2e2620;
+      --brasa: #C8430A; --oro: #D4A847; --crema: #F5EDD8; --humo: #8a7a6a;
+      --verde: #4a7c59; --verde-light: rgba(74,124,89,.2);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+      --sidebar: 220px;
+    }
+    html, body { height: 100%; }
+    body { background: var(--nero); color: var(--crema); font-family: var(--sans); font-weight: 300; overflow-x: hidden; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, #1a1208 0%, #0d0a08 100%);
+    }
+    .login-box { width: 360px; padding: 3rem 2.5rem; background: var(--carbone); border-top: 3px solid var(--brasa); }
+    .login-logo { font-family: var(--serif); font-size: 2rem; font-weight: 900; color: var(--oro); margin-bottom: .3rem; }
+    .login-sub { font-size: .65rem; letter-spacing: .3em; text-transform: uppercase; color: var(--humo); margin-bottom: 2rem; }
+    .login-field { margin-bottom: 1rem; }
+    .login-field label { display: block; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--humo); margin-bottom: .4rem; }
+    .login-field input {
+      width: 100%; background: var(--ceniza); border: 1px solid rgba(138,122,106,.2);
+      color: var(--crema); padding: .75rem 1rem; font-family: var(--sans); font-size: .9rem; outline: none;
+    }
+    .login-field input:focus { border-color: var(--brasa); }
+    .btn-login {
+      width: 100%; background: var(--brasa); color: var(--crema); border: none;
+      padding: .9rem; font-family: var(--sans); font-size: .75rem; font-weight: 600;
+      letter-spacing: .15em; text-transform: uppercase; cursor: pointer; margin-top: .5rem; transition: background .2s;
+    }
+    .btn-login:hover { background: #e04d10; }
+    .btn-login:disabled { opacity: .5; cursor: not-allowed; }
+    #login-error { color: var(--brasa); font-size: .8rem; margin-top: .8rem; display: none; text-align: center; }
+
+    /* ── LAYOUT ── */
+    #app { display: none; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar);
+      background: var(--carbone); border-right: 1px solid rgba(255,255,255,.05);
+      display: flex; flex-direction: column; z-index: 100;
+    }
+    .sidebar-logo { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .sidebar-logo .s-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 900; color: var(--oro); text-decoration: none; display: block; }
+    .sidebar-logo .s-sub { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--humo); margin-top: .2rem; }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+    .nav-section { padding: .5rem 1.2rem .25rem; font-size: .55rem; letter-spacing: .25em; text-transform: uppercase; color: rgba(138,122,106,.5); }
+    .nav-item {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .65rem 1.5rem; font-size: .8rem; color: var(--humo);
+      cursor: pointer; transition: all .15s; border-left: 2px solid transparent;
+      text-decoration: none;
+    }
+    .nav-item:hover { color: var(--crema); background: rgba(255,255,255,.03); }
+    .nav-item.active { color: var(--crema); border-left-color: var(--brasa); background: rgba(200,67,10,.07); }
+    .nav-item .nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .nav-badge { margin-left: auto; background: var(--brasa); color: var(--crema); font-size: .6rem; font-weight: 700; padding: .1rem .45rem; border-radius: 10px; }
+
+    .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,.05); }
+    .sidebar-user { font-size: .75rem; color: var(--humo); margin-bottom: .6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-logout {
+      width: 100%; background: none; border: 1px solid rgba(138,122,106,.2);
+      color: var(--humo); padding: .45rem; font-family: var(--sans); font-size: .68rem;
+      letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: all .2s;
+    }
+    .btn-logout:hover { border-color: var(--brasa); color: var(--brasa); }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      padding: 1.2rem 2rem; border-bottom: 1px solid rgba(255,255,255,.05);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--carbone); position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--crema); }
+    .topbar-sub { font-size: .72rem; color: var(--humo); margin-top: .1rem; }
+    .topbar-right { display: flex; align-items: center; gap: 1rem; }
+    .topbar-link { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--humo); text-decoration: none; transition: color .2s; }
+    .topbar-link:hover { color: var(--oro); }
+
+    .page-content { flex: 1; padding: 2rem; }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── COMPONENTS ── */
+    .s-label { font-size: .62rem; letter-spacing: .25em; text-transform: uppercase; color: var(--brasa); margin-bottom: .6rem; display: block; }
+    .s-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--crema); margin-bottom: 1.5rem; }
+    .divider { width: 40px; height: 1px; background: var(--brasa); margin-bottom: 1.5rem; }
+
+    /* Cards de stats */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--carbone); padding: 1.5rem; border-left: 3px solid var(--brasa); }
+    .stat-num { font-family: var(--serif); font-size: 2.2rem; font-weight: 900; color: var(--oro); line-height: 1; }
+    .stat-label { font-size: .72rem; color: var(--humo); margin-top: .3rem; letter-spacing: .05em; }
+    .stat-card.verde { border-left-color: var(--verde); }
+    .stat-card.verde .stat-num { color: #6fbf85; }
+    .stat-card.oro { border-left-color: var(--oro); }
+
+    /* Tabla general */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .83rem; min-width: 600px; }
+    th { font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--humo); border-bottom: 1px solid rgba(255,255,255,.07); padding: .7rem 1rem; text-align: left; font-weight: 500; }
+    td { padding: .75rem 1rem; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--crema); vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    /* Badges */
+    .badge { font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; padding: .2rem .6rem; font-weight: 600; white-space: nowrap; border-radius: 2px; }
+    .badge-pendiente  { background: rgba(138,122,106,.2); color: var(--humo); }
+    .badge-confirmado { background: rgba(74,124,89,.25); color: #6fbf85; }
+    .badge-cancelado  { background: rgba(200,67,10,.2); color: #e06030; }
+    .badge-sin_pago   { background: rgba(138,122,106,.15); color: var(--humo); }
+    .badge-parcial    { background: rgba(212,168,71,.2); color: var(--oro); }
+    .badge-total      { background: rgba(74,124,89,.25); color: #6fbf85; }
+
+    /* Filtros */
+    .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .filter-btn {
+      background: none; border: 1px solid rgba(255,255,255,.08); color: var(--humo);
+      padding: .35rem .9rem; font-family: var(--sans); font-size: .7rem;
+      letter-spacing: .08em; cursor: pointer; transition: all .2s;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--brasa); color: var(--brasa); }
+
+    /* Selects inline */
+    .inline-select {
+      background: var(--ceniza); border: 1px solid rgba(138,122,106,.2);
+      color: var(--crema); padding: .3rem .5rem; font-family: var(--sans); font-size: .72rem; outline: none; cursor: pointer;
+    }
+    .inline-input {
+      background: var(--ceniza); border: 1px solid rgba(138,122,106,.15);
+      color: var(--humo); padding: .3rem .6rem; font-family: var(--sans); font-size: .75rem; outline: none; width: 180px;
+    }
+    .inline-input:focus { border-color: var(--oro); color: var(--crema); }
+
+    /* Botones */
+    .btn { padding: .4rem .9rem; font-family: var(--sans); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; border: none; transition: all .2s; }
+    .btn-primary { background: var(--brasa); color: var(--crema); }
+    .btn-primary:hover { background: #e04d10; }
+    .btn-ghost { background: none; border: 1px solid rgba(138,122,106,.25); color: var(--humo); }
+    .btn-ghost:hover { border-color: var(--crema); color: var(--crema); }
+    .btn-danger { background: none; border: 1px solid rgba(200,67,10,.3); color: #e06030; }
+    .btn-danger:hover { background: rgba(200,67,10,.1); }
+    .btn-wsp { background: rgba(37,211,102,.12); color: #25D366; border: 1px solid rgba(37,211,102,.25); text-decoration: none; display: inline-block; }
+    .btn-wsp:hover { background: rgba(37,211,102,.2); }
+
+    /* Form fields */
+    .field-group { margin-bottom: 1.2rem; }
+    .field-group label { display: block; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--humo); margin-bottom: .4rem; }
+    .field-group input, .field-group textarea, .field-group select {
+      width: 100%; background: var(--ceniza); border: 1px solid rgba(138,122,106,.2);
+      color: var(--crema); padding: .7rem .9rem; font-family: var(--sans); font-size: .88rem;
+      font-weight: 300; outline: none; resize: vertical;
+    }
+    .field-group input:focus, .field-group textarea:focus, .field-group select:focus { border-color: var(--brasa); }
+    .field-note { font-size: .72rem; color: var(--humo); margin-top: .4rem; }
+
+    /* Grid 2 cols */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+    /* Card contenedor */
+    .card { background: var(--carbone); padding: 1.8rem; margin-bottom: 1.5rem; }
+    .card-title { font-family: var(--serif); font-size: 1rem; color: var(--oro); margin-bottom: 1.2rem; }
+
+    /* Fecha rows en taller */
+    .fecha-admin-row { background: var(--nero); padding: .9rem 1.2rem; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .fecha-admin-info .fad { font-size: .92rem; color: var(--crema); font-weight: 500; }
+    .fecha-admin-info .fac { font-size: .75rem; color: var(--humo); margin-top: .15rem; }
+    .fecha-admin-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+    .cupos-inline { display: flex; align-items: center; gap: .4rem; }
+    .cupos-inline label { font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: var(--humo); }
+    .cupos-inline input { width: 55px; background: var(--ceniza); border: 1px solid rgba(138,122,106,.2); color: var(--crema); padding: .3rem .5rem; text-align: center; font-family: var(--sans); font-size: .85rem; outline: none; }
+
+    /* FAQ rows */
+    .faq-admin-row { background: var(--nero); padding: .9rem 1.2rem; margin-bottom: 2px; }
+    .faq-admin-row .faq-q-text { font-size: .88rem; color: var(--crema); margin-bottom: .2rem; }
+    .faq-admin-row .faq-a-text { font-size: .78rem; color: var(--humo); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .faq-row-actions { display: flex; gap: .5rem; margin-top: .6rem; }
+    .faq-edit-inline { display: none; margin-top: .8rem; }
+    .faq-edit-inline.open { display: block; }
+    .faq-move-btns { display: flex; flex-direction: column; gap: 2px; margin-right: .5rem; }
+    .btn-move { background: none; border: none; color: var(--humo); cursor: pointer; font-size: .8rem; padding: .1rem .3rem; transition: color .2s; }
+    .btn-move:hover { color: var(--crema); }
+    .faq-row-inner { display: flex; align-items: flex-start; gap: .5rem; }
+
+    /* Toggles */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-size: .88rem; color: var(--crema); }
+    .toggle-sub { font-size: .72rem; color: var(--humo); margin-top: .1rem; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: var(--ceniza); cursor: pointer;
+      border-radius: 22px; transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; left: 3px; top: 3px;
+      width: 16px; height: 16px; background: var(--humo);
+      border-radius: 50%; transition: transform .2s, background .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: rgba(200,67,10,.4); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--brasa); }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; background: var(--carbone); border: 1px solid; padding: .7rem 1.3rem; font-size: .83rem; transition: opacity .4s; border-radius: 2px; opacity: 0; pointer-events: none; }
+
+    /* Responsive básico */
+    @media (max-width: 900px) {
+      .sidebar { width: 60px; }
+      .sidebar .nav-item span, .sidebar-logo .s-sub, .sidebar-user, .sidebar-logo .s-logo { display: none; }
+      .main { margin-left: 60px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">VESUVIO</div>
+    <div class="login-sub">Panel de Administración</div>
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="l-email" placeholder="tu@email.com" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <button class="btn-login" id="login-btn" onclick="doLogin()">Entrar</button>
+    <div id="login-error">Email o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html" class="s-logo">VESUVIO</a>
+      <div class="s-sub">Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">General</div>
+      <a class="nav-item active" onclick="goTo('dashboard')">
+        <span class="nav-icon">📊</span><span>Dashboard</span>
+      </a>
+      <div class="nav-section">Taller</div>
+      <a class="nav-item" onclick="goTo('inscriptos')">
+        <span class="nav-icon">👥</span><span>Inscriptos</span>
+        <span class="nav-badge" id="badge-inscriptos">0</span>
+      </a>
+      <a class="nav-item" onclick="goTo('fechas')">
+        <span class="nav-icon">📅</span><span>Fechas</span>
+      </a>
+      <a class="nav-item" onclick="goTo('precios')">
+        <span class="nav-icon">💰</span><span>Precios</span>
+      </a>
+      <a class="nav-item" onclick="goTo('whatsapp')">
+        <span class="nav-icon">💬</span><span>WhatsApp</span>
+      </a>
+      <a class="nav-item" onclick="goTo('faqs')">
+        <span class="nav-icon">❓</span><span>FAQs</span>
+      </a>
+      <div class="nav-section">Sitio web</div>
+      <a class="nav-item" onclick="goTo('sitio')">
+        <span class="nav-icon">🌐</span><span>Configuración</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebar-user">—</div>
+      <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-sub" id="topbar-sub">Vesuvio Pizzeria</div>
+      </div>
+      <div class="topbar-right">
+        <a href="index.html" target="_blank" class="topbar-link">Ver sitio ↗</a>
+        <a href="curso-pizzaiolo.html" target="_blank" class="topbar-link">Ver taller ↗</a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num" id="stat-total">0</div>
+            <div class="stat-label">Inscriptos totales</div>
+          </div>
+          <div class="stat-card verde">
+            <div class="stat-num" id="stat-confirmados">0</div>
+            <div class="stat-label">Confirmados</div>
+          </div>
+          <div class="stat-card oro">
+            <div class="stat-num" id="stat-pagados">0</div>
+            <div class="stat-label">Con pago total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-fechas">0</div>
+            <div class="stat-label">Fechas activas</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Próximas fechas</div>
+          <div id="dashboard-fechas"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Últimas inscripciones</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nombre</th><th>Fecha</th><th>Estado</th><th>Pago</th><th>Acción</th></tr></thead>
+              <tbody id="dashboard-recientes"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── INSCRIPTOS ── -->
+      <div class="page" id="page-inscriptos">
+        <div class="filter-bar" id="filter-fechas"></div>
+        <div id="inscriptos-list"></div>
+      </div>
+
+      <!-- ── FECHAS ── -->
+      <div class="page" id="page-fechas">
+        <div class="card">
+          <div class="card-title">Agregar nueva fecha</div>
+          <div class="grid-2" style="align-items:end; gap:1rem;">
+            <div class="field-group" style="margin:0">
+              <label>Fecha (sábado o domingo)</label>
+              <input type="date" id="new-date" />
+            </div>
+            <div class="field-group" style="margin:0">
+              <label>Cupos</label>
+              <input type="number" id="new-cupos" value="6" min="1" max="8" />
+            </div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:1rem;" onclick="addFecha()">+ Agregar fecha</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Fechas configuradas</div>
+          <div id="fechas-admin-list"></div>
+        </div>
+      </div>
+
+      <!-- ── PRECIOS ── -->
+      <div class="page" id="page-precios">
+        <div class="card">
+          <div class="card-title">Precios del taller</div>
+          <div class="grid-2">
+            <div class="field-group">
+              <label>Precio general (tarjeta)</label>
+              <input type="text" id="p-general" placeholder="$120.000" />
+            </div>
+            <div class="field-group">
+              <label>Efectivo / transferencia</label>
+              <input type="text" id="p-efectivo" placeholder="$100.000" />
+            </div>
+            <div class="field-group">
+              <label>Grupo completo (6 personas)</label>
+              <input type="text" id="p-grupo" placeholder="$500.000" />
+            </div>
+            <div class="field-group">
+              <label>Descuento Club Vesuvio (%)</label>
+              <input type="text" id="p-club" placeholder="10" />
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="savePrecios()">Guardar precios</button>
+        </div>
+      </div>
+
+      <!-- ── WHATSAPP ── -->
+      <div class="page" id="page-whatsapp">
+        <div class="card">
+          <div class="card-title">Mensaje al reservar</div>
+          <p style="font-size:.83rem; color:var(--humo); margin-bottom:1.2rem;">Variables disponibles: <code style="background:var(--ceniza);padding:.1rem .4rem;">{{fecha}}</code> <code style="background:var(--ceniza);padding:.1rem .4rem;">{{nombre}}</code> <code style="background:var(--ceniza);padding:.1rem .4rem;">{{apellido}}</code></p>
+          <div class="field-group">
+            <label>Texto del mensaje</label>
+            <textarea id="wsp-msg" rows="8"></textarea>
+            <div class="field-note">Este mensaje se pre-arma cuando el cliente toca "Reservar mi lugar" y se abre WhatsApp listo para enviar.</div>
+          </div>
+          <button class="btn btn-primary" onclick="saveWspMsg()">Guardar mensaje</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Preview</div>
+          <div id="wsp-preview" style="background:var(--ceniza); padding:1.2rem; font-size:.85rem; color:var(--crema); white-space:pre-wrap; line-height:1.6; border-left:3px solid #25D366;"></div>
+          <button class="btn btn-ghost" style="margin-top:.8rem;" onclick="updateWspPreview()">Actualizar preview</button>
+        </div>
+      </div>
+
+      <!-- ── FAQs ── -->
+      <div class="page" id="page-faqs">
+        <div class="card">
+          <div class="card-title">Agregar pregunta</div>
+          <div class="field-group"><label>Pregunta *</label><input type="text" id="faq-q" placeholder="¿Cuánto dura el taller?" /></div>
+          <div class="field-group"><label>Respuesta *</label><textarea id="faq-a" rows="4" placeholder="El taller dura..."></textarea></div>
+          <button class="btn btn-primary" onclick="addFaq()">+ Agregar</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Preguntas actuales</div>
+          <div id="faqs-admin-list"></div>
+        </div>
+      </div>
+
+      <!-- ── SITIO ── -->
+      <div class="page" id="page-sitio">
+        <div class="card">
+          <div class="card-title">Botón "Pedir ahora"</div>
+          <div class="field-group">
+            <label>Link de destino</label>
+            <input type="url" id="pedir-url" placeholder="https://www.pedidosya.com.ar/..." />
+            <div class="field-note">URL que abre al tocar "Pedir ahora" en la página principal.</div>
+          </div>
+          <button class="btn btn-primary" onclick="savePedirUrl()">Guardar link</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Secciones del home</div>
+          <p style="font-size:.82rem;color:var(--humo);margin-bottom:1.5rem;">Activá o desactivá secciones. Las desactivadas desaparecen completamente del sitio para el visitante.</p>
+          <div id="secciones-toggles"></div>
+          <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveSecciones()">Guardar visibilidad</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Secciones del panel admin</div>
+          <p style="font-size:.82rem;color:var(--humo);margin-bottom:1.5rem;">Ocultá secciones del menú lateral del panel admin.</p>
+          <div id="admin-nav-toggles"></div>
+          <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveAdminNav()">Guardar</button>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app -->
+
+<div id="toast"></div>
+
+<script>
+  const SB_URL = 'https://ckivxhxbysimhxmyovuc.supabase.co';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNraXZ4aHhieXNpbWh4bXlvdnVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwOTY1MjMsImV4cCI6MjA5NzY3MjUyM30.w4pCLsQSf1sm2S8jwIF1imVrHgZ7nbEi5qGsQ6o_HzM';
+
+  // ─── STATE ───────────────────────────────────────
+  let SESSION = null;
+  let fechas = [], inscriptos = [], faqs = [];
+  let precios = { general:'$120.000', efectivo:'$100.000', grupo:'$500.000', club:'10' };
+  let wspMensaje = '';
+  let filterFechaId = 'all';
+  let editingFaqId = null;
+  let currentPage = 'dashboard';
+
+  // ─── HELPERS ─────────────────────────────────────
+  function toast(msg, color='var(--oro)') {
+    const t = document.getElementById('toast');
+    t.style.color = color; t.style.borderColor = color;
+    t.textContent = msg; t.style.opacity = '1';
+    clearTimeout(t._t); t._t = setTimeout(() => t.style.opacity='0', 2500);
+  }
+  function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function formatDate(d) {
+    const [y,m,day] = d.split('-').map(Number);
+    const date = new Date(y,m-1,day);
+    const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    return `${dias[date.getDay()]} ${day} de ${meses[m-1]} de ${y}`;
+  }
+  function getTipo(d) {
+    const [y,m,day] = d.split('-').map(Number);
+    const dow = new Date(y,m-1,day).getDay();
+    return dow===6?'Sábado':dow===0?'Domingo':'—';
+  }
+  function getCuposLibres(f) {
+    return f.cupos - inscriptos.filter(i => i.fecha_id===f.id && i.estado!=='cancelado').length;
+  }
+
+  // ─── SUPABASE ─────────────────────────────────────
+  async function api(table, method='GET', body=null) {
+    const res = await fetch(`${SB_URL}/rest/v1/${table}`, {
+      method,
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SESSION || SB_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': method==='POST' ? 'return=representation' : 'return=minimal'
+      },
+      body: body ? JSON.stringify(body) : null
+    });
+    if (method==='GET'||method==='POST') { try { return await res.json(); } catch { return []; } }
+    return res.ok;
+  }
+
+  async function authLogin(email, pass) {
+    const res = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    return await res.json();
+  }
+
+  // ─── LOGIN / LOGOUT ───────────────────────────────
+  async function doLogin() {
+    const email = document.getElementById('l-email').value.trim();
+    const pass  = document.getElementById('l-pass').value;
+    const btn   = document.getElementById('login-btn');
+    const err   = document.getElementById('login-error');
+    err.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Entrando...';
+    const data = await authLogin(email, pass);
+    if (data.access_token) {
+      SESSION = data.access_token;
+      document.getElementById('sidebar-user').textContent = email;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      await loadAll();
+      renderAll();
+    } else {
+      err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Entrar';
+    }
+  }
+
+  function doLogout() {
+    SESSION = null;
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('l-pass').value = '';
+  }
+
+  // ─── LOAD ALL ────────────────────────────────────
+  async function loadAll() {
+    const [fData, iData, faqData, pData, cData, cfgData] = await Promise.all([
+      api('curso_fechas?order=date.asc'),
+      api('curso_inscriptos?order=created_at.desc'),
+      api('curso_faqs?order=orden.asc'),
+      api('curso_precios?id=eq.1'),
+      api('curso_config?id=eq.1'),
+      api('sitio_config?id=eq.1'),
+    ]);
+    fechas     = Array.isArray(fData)   ? fData   : [];
+    inscriptos = Array.isArray(iData)   ? iData   : [];
+    faqs       = Array.isArray(faqData) ? faqData : [];
+    if (Array.isArray(pData)   && pData.length)   precios = pData[0];
+    if (Array.isArray(cData)   && cData.length && cData[0].wsp_mensaje) wspMensaje = cData[0].wsp_mensaje;
+    if (Array.isArray(cfgData) && cfgData.length && cfgData[0].pedir_url) {
+      document.getElementById('pedir-url').value = cfgData[0].pedir_url;
+    }
+  }
+
+  function renderAll() {
+    renderDashboard();
+    renderInscriptos();
+    renderFechasAdmin();
+    renderFaqsAdmin();
+    loadPreciosFields();
+    document.getElementById('wsp-msg').value = wspMensaje;
+    updateWspPreview();
+    updateBadge();
+  }
+
+  // ─── NAVIGATION ──────────────────────────────────
+  function goTo(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.add('active');
+    event.currentTarget.classList.add('active');
+    currentPage = page;
+    const titles = {
+      dashboard: ['Dashboard', 'Resumen general'],
+      inscriptos: ['Inscriptos', 'Taller de Pizzaiolo Napolitano'],
+      fechas: ['Fechas', 'Taller de Pizzaiolo Napolitano'],
+      precios: ['Precios', 'Taller de Pizzaiolo Napolitano'],
+      whatsapp: ['Mensaje WhatsApp', 'Taller de Pizzaiolo Napolitano'],
+      faqs: ['Preguntas frecuentes', 'Taller de Pizzaiolo Napolitano'],
+      sitio: ['Configuración del sitio', 'Vesuvio Pizzeria'],
+    };
+    document.getElementById('topbar-title').textContent = titles[page][0];
+    document.getElementById('topbar-sub').textContent   = titles[page][1];
+  }
+
+  function updateBadge() {
+    const pending = inscriptos.filter(i => i.estado === 'pendiente').length;
+    const b = document.getElementById('badge-inscriptos');
+    b.textContent = pending;
+    b.style.display = pending ? 'inline' : 'none';
+  }
+
+  // ─── DASHBOARD ───────────────────────────────────
+  function renderDashboard() {
+    document.getElementById('stat-total').textContent      = inscriptos.length;
+    document.getElementById('stat-confirmados').textContent = inscriptos.filter(i=>i.estado==='confirmado').length;
+    document.getElementById('stat-pagados').textContent    = inscriptos.filter(i=>i.pago==='total').length;
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const activas = fechas.filter(f => { const [y,m,d]=f.date.split('-').map(Number); return new Date(y,m-1,d)>=hoy; });
+    document.getElementById('stat-fechas').textContent = activas.length;
+
+    // Próximas fechas
+    document.getElementById('dashboard-fechas').innerHTML = activas.length
+      ? activas.slice(0,4).map(f => {
+          const libre = getCuposLibres(f);
+          const ins = inscriptos.filter(i=>i.fecha_id===f.id&&i.estado!=='cancelado').length;
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
+            <div>
+              <div style="font-size:.88rem;color:var(--crema);">${formatDate(f.date)}</div>
+              <div style="font-size:.72rem;color:var(--humo);">${ins} inscripto${ins!==1?'s':''} · ${libre} libre${libre!==1?'s':''} de ${f.cupos}</div>
+            </div>
+            <div style="font-size:.72rem;color:${libre===0?'var(--brasa)':libre<=2?'var(--oro)':'#6fbf85'};">${libre===0?'COMPLETO':libre<=2?'CASI LLENO':'DISPONIBLE'}</div>
+          </div>`;
+        }).join('')
+      : '<p style="color:var(--humo);font-size:.85rem;">No hay fechas cargadas.</p>';
+
+    // Últimas inscripciones
+    const tbody = document.getElementById('dashboard-recientes');
+    const recientes = [...inscriptos].slice(0,8);
+    tbody.innerHTML = recientes.length
+      ? recientes.map(i => `
+          <tr>
+            <td>${escHtml(i.nombre)} ${escHtml(i.apellido)}</td>
+            <td style="color:var(--humo);font-size:.8rem">${i.fecha_date?formatDate(i.fecha_date):'—'}</td>
+            <td><span class="badge badge-${i.estado||'pendiente'}">${{pendiente:'Pendiente',confirmado:'Confirmado',cancelado:'Cancelado'}[i.estado]||i.estado}</span></td>
+            <td><span class="badge badge-${i.pago||'sin_pago'}">${{sin_pago:'Sin pago',parcial:'Parcial',total:'Total'}[i.pago]||i.pago}</span></td>
+            <td><a href="https://wa.me/549${(i.wsp||'').replace(/\D/g,'')}" target="_blank" class="btn btn-wsp">💬</a></td>
+          </tr>`).join('')
+      : '<tr><td colspan="5" style="color:var(--humo);text-align:center;padding:1.5rem;">No hay inscriptos aún.</td></tr>';
+  }
+
+  // ─── INSCRIPTOS ───────────────────────────────────
+  function renderInscriptos() {
+    // Filter bar
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const sortedF = [...fechas].sort((a,b)=>a.date.localeCompare(b.date));
+    document.getElementById('filter-fechas').innerHTML =
+      `<button class="filter-btn ${filterFechaId==='all'?'active':''}" onclick="setFilter('all')">Todos (${inscriptos.length})</button>` +
+      sortedF.map(f => {
+        const count = inscriptos.filter(i=>i.fecha_id===f.id).length;
+        return `<button class="filter-btn ${filterFechaId===f.id?'active':''}" onclick="setFilter('${f.id}')">${getTipo(f.date)} ${f.date.slice(8)} (${count})</button>`;
+      }).join('');
+
+    const filtered = filterFechaId==='all' ? inscriptos : inscriptos.filter(i=>i.fecha_id===filterFechaId);
+    const el = document.getElementById('inscriptos-list');
+
+    if (!filtered.length) {
+      el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--humo);background:var(--carbone);">No hay inscriptos para esta selección.</div>';
+      return;
+    }
+
+    el.innerHTML = filtered.map((i,idx) => `
+      <div style="background:var(--carbone);padding:1.1rem 1.5rem;margin-bottom:2px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;">
+          <div>
+            <div style="font-size:.95rem;color:var(--crema);font-weight:500;">${idx+1}. ${escHtml(i.nombre)} ${escHtml(i.apellido)}</div>
+            <div style="font-size:.75rem;color:var(--humo);margin-top:.15rem;">${i.fecha_date?formatDate(i.fecha_date):'—'} · ${escHtml(i.wsp||'')}</div>
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+            <span class="badge badge-${i.estado||'pendiente'}">${{pendiente:'Pendiente',confirmado:'Confirmado',cancelado:'Cancelado'}[i.estado]||i.estado}</span>
+            <span class="badge badge-${i.pago||'sin_pago'}">${{sin_pago:'Sin pago',parcial:'Pago parcial',total:'Pago total'}[i.pago]||i.pago}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem;align-items:center;">
+          <a href="https://wa.me/549${(i.wsp||'').replace(/\D/g,'')}" target="_blank" class="btn btn-wsp">💬 WhatsApp</a>
+          <select class="inline-select" onchange="updateField('${i.id}','estado',this.value)">
+            <option value="pendiente"  ${i.estado==='pendiente' ?'selected':''}>Pendiente</option>
+            <option value="confirmado" ${i.estado==='confirmado'?'selected':''}>Confirmado</option>
+            <option value="cancelado"  ${i.estado==='cancelado' ?'selected':''}>Cancelado</option>
+          </select>
+          <select class="inline-select" onchange="updateField('${i.id}','pago',this.value)">
+            <option value="sin_pago" ${i.pago==='sin_pago'?'selected':''}>Sin pago</option>
+            <option value="parcial"  ${i.pago==='parcial' ?'selected':''}>Pago parcial</option>
+            <option value="total"    ${i.pago==='total'   ?'selected':''}>Pago total</option>
+          </select>
+          <button class="btn btn-danger" onclick="deleteInscripto('${i.id}')">Eliminar</button>
+        </div>
+        <div style="margin-top:.6rem;">
+          <input class="inline-input" style="width:100%;max-width:400px;" placeholder="Notas internas..." value="${escHtml(i.notas||'')}" onblur="updateField('${i.id}','notas',this.value)" />
+        </div>
+      </div>`).join('');
+  }
+
+  function setFilter(id) {
+    filterFechaId = id;
+    renderInscriptos();
+    document.querySelectorAll('#filter-fechas .filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  async function updateField(id, campo, valor) {
+    await api(`curso_inscriptos?id=eq.${id}`, 'PATCH', { [campo]: valor });
+    const i = inscriptos.find(x=>x.id===id);
+    if (i) i[campo] = valor;
+    renderDashboard();
+    renderInscriptos();
+    updateBadge();
+    toast('✓ Actualizado');
+  }
+
+  async function deleteInscripto(id) {
+    if (!confirm('¿Eliminar este inscripto?')) return;
+    await api(`curso_inscriptos?id=eq.${id}`, 'DELETE');
+    inscriptos = inscriptos.filter(x=>x.id!==id);
+    renderDashboard(); renderInscriptos(); updateBadge();
+    toast('Eliminado', 'var(--brasa)');
+  }
+
+  // ─── FECHAS ──────────────────────────────────────
+  function renderFechasAdmin() {
+    const el = document.getElementById('fechas-admin-list');
+    if (!fechas.length) { el.innerHTML = '<p style="color:var(--humo);font-size:.85rem;">No hay fechas cargadas.</p>'; return; }
+    el.innerHTML = [...fechas].sort((a,b)=>a.date.localeCompare(b.date)).map(f => {
+      const ins = inscriptos.filter(i=>i.fecha_id===f.id&&i.estado!=='cancelado').length;
+      const libre = getCuposLibres(f);
+      return `
+        <div class="fecha-admin-row">
+          <div class="fecha-admin-info">
+            <div class="fad">${formatDate(f.date)}</div>
+            <div class="fac">${ins} inscripto${ins!==1?'s':''} · ${libre} libre${libre!==1?'s':''} de ${f.cupos}</div>
+          </div>
+          <div class="fecha-admin-actions">
+            <div class="cupos-inline">
+              <label>Cupos:</label>
+              <input type="number" value="${f.cupos}" min="${ins}" max="8" id="cupos-${f.id}" />
+              <button class="btn btn-ghost" onclick="saveCupos('${f.id}')">Guardar</button>
+            </div>
+            <button class="btn btn-danger" onclick="deleteFecha('${f.id}')">Eliminar</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function addFecha() {
+    const dateVal  = document.getElementById('new-date').value;
+    const cuposVal = parseInt(document.getElementById('new-cupos').value) || 6;
+    if (!dateVal) { alert('Seleccioná una fecha.'); return; }
+    const [y,m,d] = dateVal.split('-').map(Number);
+    const dow = new Date(y,m-1,d).getDay();
+    if (dow!==0 && dow!==6) { alert('Solo sábados y domingos.'); return; }
+    if (fechas.find(f=>f.date===dateVal)) { alert('Esa fecha ya está.'); return; }
+    const newF = { id:`f_${dateVal.replace(/-/g,'')}`, date:dateVal, cupos:cuposVal };
+    const res = await api('curso_fechas', 'POST', newF);
+    if (res && !res.error) {
+      fechas.push(Array.isArray(res)?res[0]:newF);
+      renderFechasAdmin(); renderDashboard();
+      document.getElementById('new-date').value = '';
+      toast('✓ Fecha agregada');
+    }
+  }
+
+  async function saveCupos(id) {
+    const input = document.getElementById(`cupos-${id}`);
+    const f = fechas.find(x=>x.id===id);
+    if (!f||!input) return;
+    const val = parseInt(input.value);
+    const ins = inscriptos.filter(i=>i.fecha_id===id&&i.estado!=='cancelado').length;
+    if (isNaN(val)||val<ins) { alert(`Mínimo ${ins}.`); return; }
+    await api(`curso_fechas?id=eq.${id}`, 'PATCH', { cupos:val });
+    f.cupos = val;
+    renderFechasAdmin(); renderDashboard();
+    toast('✓ Cupos actualizados');
+  }
+
+  async function deleteFecha(id) {
+    const ins = inscriptos.filter(i=>i.fecha_id===id).length;
+    if (!confirm(ins>0?`Esta fecha tiene ${ins} inscripto${ins!==1?'s':''}. ¿Eliminar igual?`:'¿Eliminar esta fecha?')) return;
+    await api(`curso_fechas?id=eq.${id}`, 'DELETE');
+    fechas = fechas.filter(x=>x.id!==id);
+    inscriptos = inscriptos.filter(i=>i.fecha_id!==id);
+    renderFechasAdmin(); renderDashboard(); renderInscriptos();
+    toast('Fecha eliminada', 'var(--brasa)');
+  }
+
+  // ─── PRECIOS ─────────────────────────────────────
+  function loadPreciosFields() {
+    document.getElementById('p-general').value  = precios.general  || '';
+    document.getElementById('p-efectivo').value = precios.efectivo || '';
+    document.getElementById('p-grupo').value    = precios.grupo    || '';
+    document.getElementById('p-club').value     = precios.club     || '';
+  }
+
+  async function savePrecios() {
+    precios.general  = document.getElementById('p-general').value.trim()  || precios.general;
+    precios.efectivo = document.getElementById('p-efectivo').value.trim() || precios.efectivo;
+    precios.grupo    = document.getElementById('p-grupo').value.trim()    || precios.grupo;
+    precios.club     = document.getElementById('p-club').value.trim()     || precios.club;
+    await api('curso_precios?id=eq.1', 'PATCH', precios);
+    toast('✓ Precios actualizados');
+  }
+
+  // ─── WHATSAPP ────────────────────────────────────
+  async function saveWspMsg() {
+    wspMensaje = document.getElementById('wsp-msg').value;
+    await api('curso_config?id=eq.1', 'PATCH', { wsp_mensaje: wspMensaje });
+    updateWspPreview();
+    toast('✓ Mensaje guardado');
+  }
+
+  function updateWspPreview() {
+    const msg = (document.getElementById('wsp-msg').value || wspMensaje)
+      .replace(/{{fecha}}/g, 'Sábado 5 de julio de 2026')
+      .replace(/{{nombre}}/g, 'Juan')
+      .replace(/{{apellido}}/g, 'García');
+    document.getElementById('wsp-preview').textContent = msg;
+  }
+
+  // ─── FAQs ────────────────────────────────────────
+  function renderFaqsAdmin() {
+    const el = document.getElementById('faqs-admin-list');
+    if (!faqs.length) { el.innerHTML = '<p style="color:var(--humo);font-size:.85rem;">No hay preguntas cargadas.</p>'; return; }
+    el.innerHTML = faqs.map((f,idx) => `
+      <div class="faq-admin-row">
+        <div class="faq-row-inner">
+          <div class="faq-move-btns">
+            <button class="btn-move" onclick="moveFaq('${f.id}',-1)" ${idx===0?'disabled':''}>▲</button>
+            <button class="btn-move" onclick="moveFaq('${f.id}',1)" ${idx===faqs.length-1?'disabled':''}>▼</button>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div class="faq-q-text">${escHtml(f.pregunta)}</div>
+            <div class="faq-a-text">${escHtml(f.respuesta)}</div>
+            <div class="faq-row-actions">
+              <button class="btn btn-ghost" onclick="toggleEditFaq('${f.id}')">Editar</button>
+              <button class="btn btn-danger" onclick="deleteFaq('${f.id}')">Eliminar</button>
+            </div>
+            <div class="faq-edit-inline" id="faq-edit-${f.id}">
+              <div class="field-group" style="margin-top:.8rem;"><label>Pregunta</label><input type="text" id="eq-${f.id}" value="${escHtml(f.pregunta)}" /></div>
+              <div class="field-group"><label>Respuesta</label><textarea id="ea-${f.id}" rows="3">${escHtml(f.respuesta)}</textarea></div>
+              <button class="btn btn-primary" onclick="saveEditFaq('${f.id}')">Guardar</button>
+              <button class="btn btn-ghost" style="margin-left:.5rem;" onclick="toggleEditFaq('${f.id}')">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function toggleEditFaq(id) {
+    const el = document.getElementById(`faq-edit-${id}`);
+    el.classList.toggle('open');
+  }
+
+  async function addFaq() {
+    const q = document.getElementById('faq-q').value.trim();
+    const a = document.getElementById('faq-a').value.trim();
+    if (!q||!a) { alert('Completá pregunta y respuesta.'); return; }
+    const newF = { id:'fq_'+Date.now(), pregunta:q, respuesta:a, orden:faqs.length };
+    const res = await api('curso_faqs', 'POST', newF);
+    if (res&&!res.error) {
+      faqs.push(Array.isArray(res)?res[0]:newF);
+      renderFaqsAdmin();
+      document.getElementById('faq-q').value='';
+      document.getElementById('faq-a').value='';
+      toast('✓ Pregunta agregada');
+    }
+  }
+
+  async function saveEditFaq(id) {
+    const q = document.getElementById(`eq-${id}`).value.trim();
+    const a = document.getElementById(`ea-${id}`).value.trim();
+    if (!q||!a) { alert('No pueden estar vacíos.'); return; }
+    await api(`curso_faqs?id=eq.${id}`, 'PATCH', { pregunta:q, respuesta:a });
+    const f = faqs.find(x=>x.id===id);
+    if (f) { f.pregunta=q; f.respuesta=a; }
+    renderFaqsAdmin();
+    toast('✓ Actualizado');
+  }
+
+  async function deleteFaq(id) {
+    if (!confirm('¿Eliminar esta pregunta?')) return;
+    await api(`curso_faqs?id=eq.${id}`, 'DELETE');
+    faqs = faqs.filter(x=>x.id!==id);
+    renderFaqsAdmin();
+    toast('Eliminado','var(--brasa)');
+  }
+
+  async function moveFaq(id, dir) {
+    const idx = faqs.findIndex(x=>x.id===id);
+    const ni = idx+dir;
+    if (ni<0||ni>=faqs.length) return;
+    [faqs[idx],faqs[ni]] = [faqs[ni],faqs[idx]];
+    await Promise.all(faqs.map((f,i)=>api(`curso_faqs?id=eq.${f.id}`, 'PATCH', {orden:i})));
+    renderFaqsAdmin();
+  }
+
+  // ─── SITIO CONFIG ────────────────────────────────
+  async function savePedirUrl() {
+    const url = document.getElementById('pedir-url').value.trim();
+    if (!url) { alert('Ingresá una URL.'); return; }
+    // Usar tabla sitio_config (la creamos si no existe)
+    await api('sitio_config?id=eq.1', 'PATCH', { pedir_url: url });
+    toast('✓ Link guardado');
+  }
+
+  // ─── SECCIONES HOME ─────────────────────────────
+  const HOME_SECTIONS = [
+    { id: 'nosotros',   label: 'Nosotros',     sub: 'Historia, misión y valores' },
+    { id: 'pizzas',     label: 'Nuestras Pizzas', sub: 'Masa, horno e ingredientes' },
+    { id: 'modalidades', label: 'Modalidades',  sub: 'Take away, delivery, bar...' },
+    { id: 'club',       label: 'Club Vesuvio',  sub: 'Sección de membresía' },
+    { id: 'taller',     label: 'Taller Napolitano', sub: 'Bloque del taller en el home' },
+    { id: 'resenas',    label: 'Reseñas',       sub: 'Reseñas de Google' },
+    { id: 'contacto',   label: 'Contacto',      sub: 'Dirección, horarios, mapa' },
+  ];
+
+  const ADMIN_NAV_ITEMS = [
+    { id: 'inscriptos', label: 'Inscriptos' },
+    { id: 'fechas',     label: 'Fechas' },
+    { id: 'precios',    label: 'Precios' },
+    { id: 'whatsapp',   label: 'WhatsApp' },
+    { id: 'faqs',       label: 'FAQs' },
+    { id: 'sitio',      label: 'Configuración del sitio' },
+  ];
+
+  let seccionesOcultas = [];
+  let adminNavOcultas = [];
+
+  function renderSeccionesToggle(cfg) {
+    seccionesOcultas = cfg.secciones_ocultas ? JSON.parse(cfg.secciones_ocultas) : [];
+    adminNavOcultas  = cfg.admin_nav_ocultas  ? JSON.parse(cfg.admin_nav_ocultas)  : [];
+
+    document.getElementById('secciones-toggles').innerHTML = HOME_SECTIONS.map(s => `
+      <div class="toggle-row">
+        <div><div class="toggle-label">${s.label}</div><div class="toggle-sub">${s.sub}</div></div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="sec-${s.id}" ${!seccionesOcultas.includes(s.id)?'checked':''} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>`).join('');
+
+    document.getElementById('admin-nav-toggles').innerHTML = ADMIN_NAV_ITEMS.map(s => `
+      <div class="toggle-row">
+        <div class="toggle-label">${s.label}</div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="anav-${s.id}" ${!adminNavOcultas.includes(s.id)?'checked':''} />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>`).join('');
+
+    // Ocultar items del nav admin
+    adminNavOcultas.forEach(id => {
+      const navItem = document.querySelector(`.nav-item[onclick="goTo('${id}')"]`);
+      if (navItem) navItem.style.display = 'none';
+    });
+  }
+
+  async function saveSecciones() {
+    seccionesOcultas = HOME_SECTIONS
+      .filter(s => !document.getElementById(`sec-${s.id}`)?.checked)
+      .map(s => s.id);
+    await api(`sitio_config?id=eq.1`, 'PATCH', { secciones_ocultas: JSON.stringify(seccionesOcultas) });
+    toast('✓ Visibilidad guardada');
+  }
+
+  async function saveAdminNav() {
+    adminNavOcultas = ADMIN_NAV_ITEMS
+      .filter(s => !document.getElementById(`anav-${s.id}`)?.checked)
+      .map(s => s.id);
+    await api(`sitio_config?id=eq.1`, 'PATCH', { admin_nav_ocultas: JSON.stringify(adminNavOcultas) });
+    // Aplicar inmediatamente
+    ADMIN_NAV_ITEMS.forEach(s => {
+      const navItem = document.querySelector(`.nav-item[onclick="goTo('${s.id}')"]`);
+      if (navItem) navItem.style.display = adminNavOcultas.includes(s.id) ? 'none' : '';
+    });
+    toast('✓ Menú admin actualizado');
+  }
+
+  // ─── INIT ────────────────────────────────────────
+  document.getElementById('new-date').min = new Date().toISOString().split('T')[0];
+  document.getElementById('wsp-msg').addEventListener('input', updateWspPreview);
+</script>
+
+</body>
+</html>
