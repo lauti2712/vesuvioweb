@@ -216,6 +216,33 @@
     .toggle-switch input:checked + .toggle-slider { background: rgba(200,67,10,.4); }
     .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--brasa); }
 
+    /* Modal agregar inscripto */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-overlay.hidden { display: none; }
+    .modal-box { background: var(--carbone); border-top: 3px solid var(--brasa); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 2rem; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .modal-title { font-family: var(--serif); font-size: 1.2rem; color: var(--oro); }
+    .modal-close { background: none; border: none; color: var(--humo); font-size: 1.4rem; cursor: pointer; line-height: 1; transition: color .2s; }
+    .modal-close:hover { color: var(--crema); }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+    .modal-grid .field-group { margin-bottom: 0; }
+    .modal-grid .span2 { grid-column: 1 / -1; }
+    .modal-footer { display: flex; gap: .8rem; margin-top: 1.5rem; justify-content: flex-end; }
+
+    /* Panel de pago inline */
+    .pago-panel { background: var(--nero); border: 1px solid rgba(212,168,71,.15); padding: 1rem 1.2rem; margin-top: .6rem; display: none; }
+    .pago-panel.open { display: block; }
+    .pago-panel-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: .6rem; align-items: end; }
+    .pago-panel label { font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--humo); display: block; margin-bottom: .3rem; }
+    .pago-panel input, .pago-panel select { background: var(--ceniza); border: 1px solid rgba(138,122,106,.2); color: var(--crema); padding: .5rem .7rem; font-family: var(--sans); font-size: .83rem; outline: none; width: 100%; }
+    .pago-panel input:focus, .pago-panel select:focus { border-color: var(--oro); }
+    .pago-info { font-size: .78rem; color: var(--humo); margin-top: .5rem; }
+    .pago-info strong { color: var(--oro); }
+
+    /* Btn agregar inscripto */
+    .btn-add-inscripto { background: rgba(200,67,10,.12); color: var(--brasa); border: 1px solid rgba(200,67,10,.3); padding: .5rem 1rem; font-family: var(--sans); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: all .2s; margin-bottom: 1rem; display: inline-flex; align-items: center; gap: .4rem; }
+    .btn-add-inscripto:hover { background: rgba(200,67,10,.2); }
+
     /* Toast */
     #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; background: var(--carbone); border: 1px solid; padding: .7rem 1.3rem; font-size: .83rem; transition: opacity .4s; border-radius: 2px; opacity: 0; pointer-events: none; }
 
@@ -345,6 +372,7 @@
 
       <!-- ── INSCRIPTOS ── -->
       <div class="page" id="page-inscriptos">
+        <button class="btn-add-inscripto" onclick="openModal()">+ Agregar inscripto manualmente</button>
         <div class="filter-bar" id="filter-fechas"></div>
         <div id="inscriptos-list"></div>
       </div>
@@ -461,6 +489,55 @@
   </main>
 </div><!-- /app -->
 
+<!-- Modal agregar inscripto -->
+<div class="modal-overlay hidden" id="modal-agregar">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Agregar inscripto</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div class="field-group">
+        <label>Nombre *</label>
+        <input type="text" id="m-nombre" placeholder="Nombre" />
+      </div>
+      <div class="field-group">
+        <label>Apellido *</label>
+        <input type="text" id="m-apellido" placeholder="Apellido" />
+      </div>
+      <div class="field-group">
+        <label>WhatsApp</label>
+        <input type="tel" id="m-wsp" placeholder="342 000 0000" />
+      </div>
+      <div class="field-group">
+        <label>Edad</label>
+        <input type="number" id="m-edad" placeholder="Ej: 28" min="9" max="120" />
+      </div>
+      <div class="field-group span2">
+        <label>Fecha *</label>
+        <select id="m-fecha">
+          <option value="">Seleccioná una fecha...</option>
+        </select>
+      </div>
+      <div class="field-group span2">
+        <label>Estado</label>
+        <select id="m-estado">
+          <option value="pendiente">Pendiente</option>
+          <option value="confirmado">Confirmado</option>
+        </select>
+      </div>
+      <div class="field-group span2">
+        <label>Notas internas</label>
+        <input type="text" id="m-notas" placeholder="Ej: Viene del grupo del club, pagó en efectivo..." />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarInscriptoManual()">Agregar inscripto</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -569,9 +646,10 @@
     faqs       = Array.isArray(faqData) ? faqData : [];
     if (Array.isArray(pData)   && pData.length)   precios = pData[0];
     if (Array.isArray(cData)   && cData.length && cData[0].wsp_mensaje) wspMensaje = cData[0].wsp_mensaje;
-    if (Array.isArray(cfgData) && cfgData.length && cfgData[0].pedir_url) {
-      document.getElementById('pedir-url').value = cfgData[0].pedir_url;
-    }
+    // Siempre renderizar toggles — con datos o vacíos
+    const cfg = (Array.isArray(cfgData) && cfgData.length) ? cfgData[0] : {};
+    if (cfg.pedir_url) document.getElementById('pedir-url').value = cfg.pedir_url;
+    renderSeccionesToggle(cfg);
   }
 
   function renderAll() {
@@ -671,16 +749,20 @@
       return;
     }
 
-    el.innerHTML = filtered.map((i,idx) => `
+    el.innerHTML = filtered.map((i,idx) => {
+      const pagoLabel = {sin_pago:'Sin pago',parcial:'Pago parcial',total:'Pago total'}[i.pago]||i.pago;
+      const montoInfo = i.monto_cobrado ? ` · <strong>$${escHtml(String(i.monto_cobrado))}</strong> ${i.forma_pago?'('+escHtml(i.forma_pago)+')':''}` : '';
+      const panelOpen = (i.pago==='parcial'||i.pago==='total') ? 'open' : '';
+      return `
       <div style="background:var(--carbone);padding:1.1rem 1.5rem;margin-bottom:2px;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;">
           <div>
-            <div style="font-size:.95rem;color:var(--crema);font-weight:500;">${idx+1}. ${escHtml(i.nombre)} ${escHtml(i.apellido)}</div>
+            <div style="font-size:.95rem;color:var(--crema);font-weight:500;">${idx+1}. ${escHtml(i.nombre)} ${escHtml(i.apellido)}${i.edad?' <span style="font-size:.75rem;color:var(--humo);">('+i.edad+' años)</span>':''}</div>
             <div style="font-size:.75rem;color:var(--humo);margin-top:.15rem;">${i.fecha_date?formatDate(i.fecha_date):'—'} · ${escHtml(i.wsp||'')}</div>
           </div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
             <span class="badge badge-${i.estado||'pendiente'}">${{pendiente:'Pendiente',confirmado:'Confirmado',cancelado:'Cancelado'}[i.estado]||i.estado}</span>
-            <span class="badge badge-${i.pago||'sin_pago'}">${{sin_pago:'Sin pago',parcial:'Pago parcial',total:'Pago total'}[i.pago]||i.pago}</span>
+            <span class="badge badge-${i.pago||'sin_pago'}">${pagoLabel}${montoInfo}</span>
           </div>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem;align-items:center;">
@@ -690,17 +772,42 @@
             <option value="confirmado" ${i.estado==='confirmado'?'selected':''}>Confirmado</option>
             <option value="cancelado"  ${i.estado==='cancelado' ?'selected':''}>Cancelado</option>
           </select>
-          <select class="inline-select" onchange="updateField('${i.id}','pago',this.value)">
+          <select class="inline-select" id="sel-pago-${i.id}" onchange="onPagoChange('${i.id}',this.value)">
             <option value="sin_pago" ${i.pago==='sin_pago'?'selected':''}>Sin pago</option>
             <option value="parcial"  ${i.pago==='parcial' ?'selected':''}>Pago parcial</option>
             <option value="total"    ${i.pago==='total'   ?'selected':''}>Pago total</option>
           </select>
           <button class="btn btn-danger" onclick="deleteInscripto('${i.id}')">Eliminar</button>
         </div>
+        <div class="pago-panel ${panelOpen}" id="pago-panel-${i.id}">
+          <div class="pago-panel-grid">
+            <div>
+              <label>Monto cobrado ($)</label>
+              <input type="number" id="monto-${i.id}" placeholder="Ej: 60000" value="${i.monto_cobrado||''}" min="0" />
+            </div>
+            <div>
+              <label>Forma de pago</label>
+              <select id="forma-${i.id}">
+                <option value="" ${!i.forma_pago?'selected':''}>Seleccioná...</option>
+                <option value="Efectivo"       ${i.forma_pago==='Efectivo'      ?'selected':''}>Efectivo</option>
+                <option value="Transferencia"  ${i.forma_pago==='Transferencia' ?'selected':''}>Transferencia</option>
+                <option value="Débito"         ${i.forma_pago==='Débito'        ?'selected':''}>Débito</option>
+                <option value="Crédito"        ${i.forma_pago==='Crédito'       ?'selected':''}>Crédito</option>
+                <option value="MercadoPago"    ${i.forma_pago==='MercadoPago'   ?'selected':''}>MercadoPago</option>
+              </select>
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" style="width:100%;" onclick="guardarPago('${i.id}')">Guardar</button>
+            </div>
+          </div>
+          ${i.monto_cobrado?`<div class="pago-info">Registrado: <strong>$${escHtml(String(i.monto_cobrado))}</strong>${i.forma_pago?' · '+escHtml(i.forma_pago):''}</div>`:''}
+        </div>
         <div style="margin-top:.6rem;">
           <input class="inline-input" style="width:100%;max-width:400px;" placeholder="Notas internas..." value="${escHtml(i.notas||'')}" onblur="updateField('${i.id}','notas',this.value)" />
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   function setFilter(id) {
@@ -718,6 +825,90 @@
     renderInscriptos();
     updateBadge();
     toast('✓ Actualizado');
+  }
+
+  // ─── MODAL AGREGAR INSCRIPTO ────────────────────
+  function openModal() {
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const futuras = fechas.filter(f => { const [y,m,d]=f.date.split('-').map(Number); return new Date(y,m-1,d)>=hoy; }).sort((a,b)=>a.date.localeCompare(b.date));
+    const sel = document.getElementById('m-fecha');
+    sel.innerHTML = '<option value="">Seleccioná una fecha...</option>' +
+      futuras.map(f => {
+        const libre = getCuposLibres(f);
+        return `<option value="${f.id}" data-date="${f.date}">${formatDate(f.date)} (${libre} lugar${libre!==1?'es':''})</option>`;
+      }).join('');
+    // Limpiar campos
+    ['m-nombre','m-apellido','m-wsp','m-edad','m-notas'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('m-estado').value = 'confirmado';
+    document.getElementById('modal-agregar').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-agregar').classList.add('hidden');
+  }
+
+  async function guardarInscriptoManual() {
+    const nombre  = document.getElementById('m-nombre').value.trim();
+    const apellido = document.getElementById('m-apellido').value.trim();
+    const wsp     = document.getElementById('m-wsp').value.trim();
+    const edad    = document.getElementById('m-edad').value.trim();
+    const fechaId = document.getElementById('m-fecha').value;
+    const estado  = document.getElementById('m-estado').value;
+    const notas   = document.getElementById('m-notas').value.trim();
+
+    if (!nombre || !apellido) { alert('Nombre y apellido son obligatorios.'); return; }
+    if (!fechaId) { alert('Seleccioná una fecha.'); return; }
+
+    const f = fechas.find(x=>x.id===fechaId);
+    if (!f) return;
+    if (getCuposLibres(f) <= 0) {
+      if (!confirm(`Esta fecha no tiene cupos libres. ¿Agregarlo igual?`)) return;
+    }
+
+    const sel = document.getElementById('m-fecha');
+    const fechaDate = sel.options[sel.selectedIndex]?.dataset.date || '';
+
+    const result = await api('curso_inscriptos', 'POST', {
+      fecha_id: fechaId, fecha_date: fechaDate,
+      nombre, apellido, wsp: wsp||'', edad: parseInt(edad)||null,
+      estado, pago: 'sin_pago', notas,
+      es_organizador: true
+    });
+
+    if (result && !result.error) {
+      inscriptos.push(Array.isArray(result)?result[0]:{fecha_id:fechaId, fecha_date:fechaDate, nombre, apellido, wsp, estado, pago:'sin_pago', notas});
+      closeModal();
+      renderDashboard(); renderInscriptos(); updateBadge();
+      toast('✓ Inscripto agregado');
+    } else {
+      alert('Error al guardar. Intentá de nuevo.');
+    }
+  }
+
+  // ─── PAGO CON MONTO Y FORMA ──────────────────────
+  function onPagoChange(id, valor) {
+    const panel = document.getElementById(`pago-panel-${id}`);
+    if (valor === 'parcial' || valor === 'total') {
+      panel.classList.add('open');
+    } else {
+      panel.classList.remove('open');
+      updateField(id, 'pago', valor);
+    }
+  }
+
+  async function guardarPago(id) {
+    const pago   = document.getElementById(`sel-pago-${id}`).value;
+    const monto  = document.getElementById(`monto-${id}`).value.trim();
+    const forma  = document.getElementById(`forma-${id}`).value;
+    await api(`curso_inscriptos?id=eq.${id}`, 'PATCH', {
+      pago,
+      monto_cobrado: monto ? parseInt(monto) : null,
+      forma_pago: forma || null
+    });
+    const i = inscriptos.find(x=>x.id===id);
+    if (i) { i.pago=pago; i.monto_cobrado=monto?parseInt(monto):null; i.forma_pago=forma||null; }
+    renderDashboard(); renderInscriptos(); updateBadge();
+    toast('✓ Pago registrado');
   }
 
   async function deleteInscripto(id) {
