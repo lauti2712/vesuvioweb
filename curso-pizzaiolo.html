@@ -237,38 +237,79 @@
     .inscripcion-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 4rem; margin-top: 3rem; }
 
     /* Selector de fechas */
-    .fechas-container h3 { font-family: var(--serif); font-size: 1.1rem; color: var(--oro); margin-bottom: 1.5rem; }
-    .fechas-list { display: flex; flex-direction: column; gap: .7rem; }
-    .fecha-slot {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--nero);
-      padding: .9rem 1.2rem;
-      border: 1px solid rgba(255,255,255,.06);
-      cursor: pointer; gap: 1rem;
-      transition: border-color .2s, background .2s;
-    }
-    .fecha-slot:hover:not(.agotado) { border-color: rgba(200,67,10,.4); }
-    .fecha-slot.selected { border-color: var(--brasa); background: var(--brasa-light); }
-    .fecha-slot.agotado { opacity: .45; cursor: not-allowed; }
-    .fecha-info { display: flex; flex-direction: column; gap: .1rem; }
-    .fecha-dia { font-size: .95rem; color: var(--crema); font-weight: 500; }
-    .fecha-tipo { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--humo); }
-    .fecha-cupos { display: flex; align-items: center; gap: .5rem; }
-    .cupos-badge {
-      font-size: .7rem; font-weight: 600; letter-spacing: .05em;
-      padding: .25rem .7rem;
-    }
-    .cupos-badge.disponible { background: rgba(74,124,89,.2); color: #6fbf85; border: 1px solid rgba(74,124,89,.3); }
-    .cupos-badge.pocos { background: rgba(200,67,10,.15); color: #e06030; border: 1px solid rgba(200,67,10,.3); }
-    .cupos-badge.agotado-badge { background: rgba(255,255,255,.05); color: var(--humo); border: 1px solid rgba(255,255,255,.08); }
-    .fecha-radio { width: 16px; height: 16px; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; flex-shrink: 0; position: relative; transition: border-color .2s; }
-    .fecha-slot.selected .fecha-radio { border-color: var(--brasa); }
-    .fecha-slot.selected .fecha-radio::after { content: ''; position: absolute; inset: 3px; background: var(--brasa); border-radius: 50%; }
+    /* ── CALENDARIO ── */
+    .fechas-container h3 { font-family: var(--serif); font-size: 1.1rem; color: var(--oro); margin-bottom: 1.2rem; }
 
-    .no-fechas {
-      background: var(--nero); padding: 2rem; text-align: center;
-      border: 1px dashed rgba(255,255,255,.08);
+    .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .cal-nav-btn {
+      background: none; border: 1px solid rgba(255,255,255,.1); color: var(--humo);
+      width: 32px; height: 32px; cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center; transition: all .2s;
     }
+    .cal-nav-btn:hover { border-color: var(--brasa); color: var(--crema); }
+    .cal-month-label { font-family: var(--serif); font-size: 1.05rem; color: var(--crema); font-weight: 700; text-transform: capitalize; }
+
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .cal-day-header {
+      text-align: center; font-size: .6rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--humo); padding: .4rem 0;
+    }
+    .cal-cell {
+      aspect-ratio: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2px;
+      border-radius: 2px; font-size: .82rem; position: relative;
+      transition: all .15s;
+    }
+    .cal-cell.empty { background: transparent; }
+    .cal-cell.other-month { color: rgba(138,122,106,.2); background: transparent; pointer-events: none; }
+    .cal-cell.past { color: rgba(138,122,106,.25); background: rgba(255,255,255,.02); pointer-events: none; }
+    .cal-cell.normal { background: rgba(255,255,255,.03); color: rgba(138,122,106,.4); }
+
+    /* Con fecha cargada */
+    .cal-cell.disponible {
+      background: rgba(74,124,89,.15); color: #6fbf85;
+      border: 1px solid rgba(74,124,89,.3); cursor: pointer;
+    }
+    .cal-cell.disponible:hover { background: rgba(74,124,89,.28); border-color: rgba(74,124,89,.5); }
+    .cal-cell.pocos {
+      background: rgba(212,168,71,.12); color: var(--oro);
+      border: 1px solid rgba(212,168,71,.3); cursor: pointer;
+    }
+    .cal-cell.pocos:hover { background: rgba(212,168,71,.22); border-color: rgba(212,168,71,.5); }
+    .cal-cell.completo {
+      background: rgba(200,67,10,.1); color: rgba(200,67,10,.5);
+      border: 1px solid rgba(200,67,10,.2); cursor: not-allowed; pointer-events: none;
+    }
+    .cal-cell.selected {
+      background: var(--brasa) !important; color: var(--crema) !important;
+      border-color: var(--brasa) !important;
+    }
+    .cal-cell.selected .cal-cupos { color: rgba(245,237,216,.7); }
+
+    .cal-num { font-weight: 600; font-size: .88rem; line-height: 1; }
+    .cal-cupos { font-size: .58rem; letter-spacing: .04em; line-height: 1; opacity: .85; }
+
+    /* Leyenda */
+    .cal-legend { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1rem; }
+    .cal-legend-item { display: flex; align-items: center; gap: .4rem; font-size: .7rem; color: var(--humo); }
+    .cal-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .cal-legend-dot.disponible { background: rgba(74,124,89,.4); border: 1px solid rgba(74,124,89,.5); }
+    .cal-legend-dot.pocos { background: rgba(212,168,71,.3); border: 1px solid rgba(212,168,71,.4); }
+    .cal-legend-dot.completo { background: rgba(200,67,10,.2); border: 1px solid rgba(200,67,10,.3); }
+
+    /* Nota reserva exclusiva */
+    .cal-nota {
+      margin-top: 1.2rem; padding: .9rem 1rem;
+      background: rgba(212,168,71,.06); border-left: 2px solid rgba(212,168,71,.3);
+      font-size: .8rem; color: var(--humo); line-height: 1.5;
+    }
+    .cal-nota a { color: var(--oro); text-decoration: none; }
+    .cal-nota a:hover { text-decoration: underline; }
+
+    .no-fechas { background: var(--nero); padding: 2rem; text-align: center; border: 1px dashed rgba(255,255,255,.08); }
     .no-fechas p { color: var(--humo); font-size: .9rem; }
 
     /* Formulario */
@@ -504,8 +545,8 @@
 
   <!-- NAV -->
   <nav>
-    <a href="vesuvio.html" class="nav-logo">VESUVIO</a>
-    <a href="vesuvio.html" class="nav-back">← Volver al inicio</a>
+    <a href="index.html" class="nav-logo">VESUVIO</a>
+    <a href="index.html" class="nav-back">← Volver al inicio</a>
   </nav>
 
   <!-- HERO -->
@@ -650,32 +691,8 @@
       <span class="s-label">Inversión</span>
       <h2 class="s-title">Precios</h2>
       <div class="divider"></div>
-
-      <div class="precios-grid">
-
-        <div class="precio-card">
-          <span class="precio-tag">Por persona</span>
-          <p class="precio-titulo">Tarifa general</p>
-          <div class="precio-monto" id="precio-general-display">$120.000</div>
-          <p class="precio-sub">Con tarjeta</p>
-          <p class="precio-detalle">En <strong>efectivo o transferencia</strong>: <span id="precio-efectivo-display">$100.000</span></p>
-        </div>
-
-        <div class="precio-card featured">
-          <span class="precio-tag">Grupo completo</span>
-          <p class="precio-titulo">Reserva exclusiva (6 personas)</p>
-          <div class="precio-monto" id="precio-grupo-display">$500.000</div>
-          <p class="precio-sub">Grupo completo · precio fijo</p>
-          <p class="precio-detalle">Reservá el taller exclusivo para tu grupo. Ideal para cumpleaños, despedidas, salidas de empresa o grupo de amigos.</p>
-        </div>
-
-      </div>
-
-      <div class="club-descuento">
-        <span class="cd-badge" id="precio-club-display">10% OFF</span>
-        <p><strong>Miembros del Club Vesuvio:</strong> presentá tu código de miembro al momento de reservar y accedés al descuento en cualquier modalidad.</p>
-      </div>
-
+      <div class="precios-grid" id="precios-cards"></div>
+      <div id="descuentos-list" style="margin-top:1.5rem;display:flex;flex-direction:column;gap:.8rem;"></div>
       <p style="margin-top:1.2rem; font-size:.75rem; color:rgba(138,122,106,.6);">* Grupos de hasta 6 personas. En casos excepcionales se aceptan 7 u 8 participantes si son del mismo grupo familiar.</p>
     </div>
   </section>
@@ -721,11 +738,32 @@
 
       <div class="inscripcion-grid">
 
-        <!-- Fechas -->
+        <!-- Calendario -->
         <div class="fechas-container">
           <h3>Elegí una fecha</h3>
-          <div class="fechas-list" id="fechas-list">
-            <!-- Generado por JS -->
+
+          <!-- Nav mes -->
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="calPrevMonth()">‹</button>
+            <span class="cal-month-label" id="cal-month-label"></span>
+            <button class="cal-nav-btn" onclick="calNextMonth()">›</button>
+          </div>
+
+          <!-- Grilla -->
+          <div class="cal-grid" id="cal-grid"></div>
+
+          <!-- Leyenda -->
+          <div class="cal-legend">
+            <div class="cal-legend-item"><span class="cal-legend-dot disponible"></span>Con cupos</div>
+            <div class="cal-legend-item"><span class="cal-legend-dot pocos"></span>Últimos lugares</div>
+            <div class="cal-legend-item"><span class="cal-legend-dot completo"></span>Completo</div>
+          </div>
+
+          <!-- Nota reserva exclusiva -->
+          <div class="cal-nota">
+            ✨ <strong style="color:var(--crema);">¿Querés un día exclusivo para tu grupo?</strong><br>
+            Para reservas exclusivas podemos coordinar cualquier día de la semana.
+            <a href="https://wa.me/5493426393012?text=Hola!%20Quiero%20consultar%20por%20una%20fecha%20exclusiva%20para%20el%20taller%20de%20pizzaiolo." target="_blank">Consultanos por WhatsApp →</a>
           </div>
         </div>
 
@@ -923,7 +961,7 @@
     <div class="footer-logo">VESUVIO</div>
     <div class="footer-sub">Taller de Pizzaiolo · Francia 3285, Santa Fe</div>
     <div class="footer-links">
-      <a href="vesuvio.html">Inicio</a>
+      <a href="index.html">Inicio</a>
       <a href="club-vesuvio.html">Club Vesuvio</a>
       <a href="https://www.instagram.com/vesuviopizzeria.sf" target="_blank">Instagram</a>
       <a href="https://wa.me/5493426393012" target="_blank">WhatsApp</a>
@@ -1011,47 +1049,113 @@
       } catch(e) { console.error(e); }
     }
 
+    function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
     function renderPrecios() {
-      const g = document.getElementById('precio-general-display');
-      const e = document.getElementById('precio-efectivo-display');
-      const gr = document.getElementById('precio-grupo-display');
-      const cl = document.getElementById('precio-club-display');
-      if (g) g.textContent = precios.general;
-      if (e) e.textContent = precios.efectivo;
-      if (gr) gr.textContent = precios.grupo;
-      if (cl) cl.textContent = (precios.club||'10') + '% OFF';
+      const cardsEl = document.getElementById('precios-cards');
+      const descEl  = document.getElementById('descuentos-list');
+      if (!cardsEl) return;
+
+      // Card persona
+      cardsEl.innerHTML = `
+        <div class="precio-card">
+          <span class="precio-tag">Por persona</span>
+          <p class="precio-titulo">${escHtml(precios.general_titulo||'Tarifa general')}</p>
+          <div class="precio-monto">${escHtml(precios.general||'$120.000')}</div>
+          <p class="precio-sub">${escHtml(precios.general_sub||'Con tarjeta')}</p>
+          <p class="precio-detalle">En <strong>${escHtml(precios.general_detalle||'efectivo o transferencia')}</strong>: ${escHtml(precios.efectivo||'$100.000')}</p>
+        </div>
+        <div class="precio-card featured">
+          <span class="precio-tag">Grupo completo</span>
+          <p class="precio-titulo">${escHtml(precios.grupo_titulo||'Reserva exclusiva (6 personas)')}</p>
+          <div class="precio-monto">${escHtml(precios.grupo||'$500.000')}</div>
+          <p class="precio-sub">${escHtml(precios.grupo_sub||'Grupo completo · precio fijo')}</p>
+          <p class="precio-detalle">${escHtml(precios.grupo_detalle||'Reservá el taller exclusivo para tu grupo.')}</p>
+        </div>`;
+
+      // Descuentos dinámicos
+      if (descEl) {
+        descEl.innerHTML = descuentos.map(d => `
+          <div class="club-descuento">
+            <span class="cd-badge">${escHtml(d.porcentaje)}</span>
+            <p><strong>${escHtml(d.titulo)}:</strong> ${escHtml(d.descripcion)}</p>
+          </div>`).join('');
+      }
     }
 
+    // ─── CALENDARIO ─────────────────────────────────
+    let calYear  = new Date().getFullYear();
+    let calMonth = new Date().getMonth(); // 0-indexed
+
+    const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const DIAS  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
     function renderFechas() {
-      const container = document.getElementById('fechas-list');
-      if (!container) return;
+      renderCalendar();
+    }
+
+    function calPrevMonth() {
+      calMonth--;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    }
+
+    function calNextMonth() {
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('cal-grid');
+      const label = document.getElementById('cal-month-label');
+      if (!grid || !label) return;
+
+      label.textContent = `${MESES[calMonth]} ${calYear}`;
+
       const hoy = new Date(); hoy.setHours(0,0,0,0);
-      const futuras = fechas.filter(f => {
+      const primerDia = new Date(calYear, calMonth, 1).getDay(); // 0=Dom
+      const diasEnMes = new Date(calYear, calMonth + 1, 0).getDate();
+
+      // Construir mapa de fechas disponibles este mes
+      const fechaMap = {};
+      fechas.forEach(f => {
         const [y,m,d] = f.date.split('-').map(Number);
-        return new Date(y,m-1,d) >= hoy;
+        if (y === calYear && m - 1 === calMonth) {
+          fechaMap[d] = f;
+        }
       });
-      if (!futuras.length) {
-        container.innerHTML = `<div class="no-fechas"><p>Por el momento no hay fechas disponibles.<br>Seguí nuestro Instagram para enterarte cuando abran nuevas fechas.</p></div>`;
-        return;
+
+      let html = DIAS.map(d => `<div class="cal-day-header">${d}</div>`).join('');
+
+      // Celdas vacías antes del primer día
+      for (let i = 0; i < primerDia; i++) {
+        html += `<div class="cal-cell empty"></div>`;
       }
-      container.innerHTML = futuras.map(f => {
-        const libres = getCuposLibres(f);
-        const agotado = libres <= 0;
-        const pocos = libres > 0 && libres <= 2;
-        const selected = f.id === selectedFechaId;
-        const badge = agotado
-          ? `<span class="cupos-badge agotado-badge">Sin cupos</span>`
-          : pocos ? `<span class="cupos-badge pocos">Últimos ${libres} lugares</span>`
-          : `<span class="cupos-badge disponible">${libres} lugares</span>`;
-        return `
-          <div class="fecha-slot ${agotado?'agotado':''} ${selected?'selected':''}" onclick="${agotado?'':` selectFecha('${f.id}')`}">
-            <div class="fecha-info">
-              <span class="fecha-dia">${formatDate(f.date)}</span>
-              <span class="fecha-tipo">${getTipodia(f.date)}</span>
-            </div>
-            <div class="fecha-cupos">${badge}<div class="fecha-radio"></div></div>
+
+      for (let d = 1; d <= diasEnMes; d++) {
+        const thisDate = new Date(calYear, calMonth, d);
+        const f = fechaMap[d];
+        const isSelected = f && f.id === selectedFechaId;
+
+        if (thisDate < hoy) {
+          html += `<div class="cal-cell past"><span class="cal-num">${d}</span></div>`;
+        } else if (f) {
+          const libres = getCuposLibres(f);
+          const agotado = libres <= 0;
+          const pocos   = libres > 0 && libres <= 2;
+          const cls = isSelected ? 'selected' : agotado ? 'completo' : pocos ? 'pocos' : 'disponible';
+          const cuposLabel = agotado ? 'Completo' : `${libres}/${f.cupos}`;
+          html += `<div class="cal-cell ${cls}" onclick="${agotado ? '' : `selectFecha('${f.id}')`}" title="${agotado ? 'Sin cupos' : libres+' lugar'+(libres!==1?'es':'')+ ' disponible'+(libres!==1?'s':'')}">
+            <span class="cal-num">${d}</span>
+            <span class="cal-cupos">${cuposLabel}</span>
           </div>`;
-      }).join('');
+        } else {
+          html += `<div class="cal-cell normal"><span class="cal-num">${d}</span></div>`;
+        }
+      }
+
+      grid.innerHTML = html;
     }
 
     function selectFecha(id) {
@@ -1060,7 +1164,7 @@
       if (!f) return;
       document.getElementById('selected-date-display').classList.add('visible');
       document.getElementById('selected-date-text').textContent = formatDate(f.date);
-      renderFechas();
+      renderCalendar();
     }
 
     // ─── MULTI PARTICIPANTE ────────────────────────
@@ -1238,6 +1342,15 @@
 
     async function init() {
       await loadData();
+      // Ir al mes de la primera fecha disponible
+      const hoy = new Date(); hoy.setHours(0,0,0,0);
+      const futuras = fechas
+        .filter(f => { const [y,m,d]=f.date.split('-').map(Number); return new Date(y,m-1,d)>=hoy; })
+        .sort((a,b)=>a.date.localeCompare(b.date));
+      if (futuras.length) {
+        const [y,m] = futuras[0].date.split('-').map(Number);
+        calYear = y; calMonth = m - 1;
+      }
       renderFechas();
       renderFaqs();
       renderPrecios();
