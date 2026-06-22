@@ -236,15 +236,7 @@
   <!-- NAV -->
   <nav>
     <a href="#hero" class="nav-logo">VESUVIO</a>
-    <ul class="nav-tabs" id="nav-tabs">
-      <li><a href="#nosotros">Nosotros</a></li>
-      <li><a href="#pizzas">Pizzas</a></li>
-      <li><a href="#modalidades">Modalidades</a></li>
-      <li><a href="#club">Club</a></li>
-      <li><a href="#resenas">Reseñas</a></li>
-      <li><a href="#contacto">Contacto</a></li>
-      <li><a href="#taller-home">🍕 Taller</a></li>
-    </ul>
+    <ul class="nav-tabs" id="nav-tabs"></ul>
   </nav>
 
   <!-- HERO -->
@@ -259,7 +251,7 @@
       <div class="volcano-separator"></div>
       <div class="hero-ctas">
         <a id="btn-pedir" href="https://www.pedidosya.com.ar" target="_blank" class="btn-primary">Pedir ahora</a>
-        <a href="#nosotros" class="btn-outline">Conocer más</a>
+
       </div>
     </div>
     <div class="scroll-hint">
@@ -587,6 +579,18 @@
     const SB_URL = 'https://ckivxhxbysimhxmyovuc.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNraXZ4aHhieXNpbWh4bXlvdnVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwOTY1MjMsImV4cCI6MjA5NzY3MjUyM30.w4pCLsQSf1sm2S8jwIF1imVrHgZ7nbEi5qGsQ6o_HzM';
 
+    // Mapa de sección → metadata nav
+    const SECTION_META = {
+      nosotros:   { label: 'Nosotros',   href: '#nosotros'   },
+      pizzas:     { label: 'Pizzas',     href: '#pizzas'     },
+      modalidades:{ label: 'Modalidades',href: '#modalidades'},
+      club:       { label: 'Club',       href: '#club'       },
+      taller:     { label: '🍕 Taller',  href: '#taller-home'},
+      resenas:    { label: 'Reseñas',    href: '#resenas'    },
+      contacto:   { label: 'Contacto',   href: '#contacto'   },
+    };
+    const DEFAULT_ORDER = ['nosotros','pizzas','modalidades','club','taller','resenas','contacto'];
+
     async function sbGet(table) {
       const res = await fetch(`${SB_URL}/rest/v1/${table}`, {
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
@@ -594,27 +598,44 @@
       try { return await res.json(); } catch { return []; }
     }
 
-    // Cargar config del sitio (link pedir, secciones visibles)
     async function loadSiteConfig() {
       try {
         const data = await sbGet('sitio_config?id=eq.1');
-        if (Array.isArray(data) && data.length) {
-          const cfg = data[0];
-          // Link pedir ahora
-          if (cfg.pedir_url) document.getElementById('btn-pedir').href = cfg.pedir_url;
-          // Secciones ocultas
-          if (cfg.secciones_ocultas) {
-            const ocultas = JSON.parse(cfg.secciones_ocultas);
-            ocultas.forEach(id => {
-              const el = document.querySelector(`[data-section="${id}"]`);
-              if (el) el.style.display = 'none';
-              // Ocultar tab del nav también
-              const tab = document.querySelector(`.nav-tabs a[href="#${id}"]`) ||
-                          document.querySelector(`.nav-tabs a[href="#${id}-home"]`);
-              if (tab) tab.closest('li').style.display = 'none';
-            });
-          }
-        }
+        const cfg = (Array.isArray(data) && data.length) ? data[0] : {};
+
+        // Link pedir ahora
+        if (cfg.pedir_url) document.getElementById('btn-pedir').href = cfg.pedir_url;
+
+        // Orden de secciones
+        const orden = cfg.secciones_orden ? JSON.parse(cfg.secciones_orden) : DEFAULT_ORDER;
+        const ocultas = cfg.secciones_ocultas ? JSON.parse(cfg.secciones_ocultas) : [];
+
+        // Reordenar secciones en el DOM
+        const main = document.querySelector('body');
+        const footer = document.querySelector('footer');
+        orden.forEach(id => {
+          // El taller tiene id "taller-home" en el DOM
+          const domId = id === 'taller' ? 'taller-home' : id;
+          const el = document.querySelector(`[data-section="${id}"]`);
+          if (el && footer) main.insertBefore(el, footer);
+        });
+
+        // Ocultar secciones
+        ocultas.forEach(id => {
+          const el = document.querySelector(`[data-section="${id}"]`);
+          if (el) el.style.display = 'none';
+        });
+
+        // Construir nav en el orden correcto, excluyendo ocultas
+        const navEl = document.getElementById('nav-tabs');
+        navEl.innerHTML = orden
+          .filter(id => !ocultas.includes(id))
+          .map(id => {
+            const meta = SECTION_META[id];
+            if (!meta) return '';
+            return `<li><a href="${meta.href}">${meta.label}</a></li>`;
+          }).join('');
+
       } catch(e) { console.error(e); }
     }
 
@@ -628,7 +649,6 @@
       let perView = window.innerWidth <= 768 ? 1 : 3;
       let current = 0;
       let pages = Math.ceil(total / perView);
-
       function buildDots() {
         pages = Math.ceil(total / perView);
         dotsEl.innerHTML = '';
@@ -653,17 +673,16 @@
     })();
 
     // Nav activo por scroll
-    const sections = ['nosotros','pizzas','modalidades','club','taller-home','resenas','contacto'];
-    const links = document.querySelectorAll('.nav-tabs a');
     window.addEventListener('scroll', () => {
+      const navLinks = document.querySelectorAll('.nav-tabs a');
       let current = '';
-      sections.forEach(id => {
-        const el = document.getElementById(id);
-        if (el && window.scrollY >= el.offsetTop - 120) current = id;
+      document.querySelectorAll('[data-section]').forEach(el => {
+        if (window.scrollY >= el.offsetTop - 120) current = el.dataset.section;
       });
-      links.forEach(a => {
+      navLinks.forEach(a => {
         const href = a.getAttribute('href');
-        a.classList.toggle('active', href === '#' + current || href === '#' + current + '-home');
+        const secId = href.replace('#','').replace('-home','');
+        a.classList.toggle('active', secId === current || href.replace('#','') === current);
       });
     });
 

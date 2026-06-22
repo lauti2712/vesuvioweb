@@ -197,6 +197,25 @@
     .btn-move:hover { color: var(--crema); }
     .faq-row-inner { display: flex; align-items: flex-start; gap: .5rem; }
 
+    /* Drag & drop orden secciones */
+    .orden-list { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+    .orden-item {
+      display: flex; align-items: center; gap: .8rem;
+      background: var(--nero); padding: .75rem 1rem;
+      border: 1px solid rgba(255,255,255,.05);
+      cursor: grab; user-select: none; transition: background .15s, border-color .15s;
+    }
+    .orden-item:hover { border-color: rgba(200,67,10,.3); }
+    .orden-item.dragging { opacity: .4; cursor: grabbing; }
+    .orden-item.drag-over { border-color: var(--brasa); background: rgba(200,67,10,.07); }
+    .drag-handle { color: rgba(138,122,106,.4); font-size: 1.1rem; cursor: grab; flex-shrink: 0; }
+    .orden-item-label { flex: 1; font-size: .88rem; color: var(--crema); }
+    .orden-item-sub { font-size: .72rem; color: var(--humo); }
+    .orden-arrow-btns { display: flex; gap: 2px; }
+    .btn-orden { background: none; border: 1px solid rgba(138,122,106,.2); color: var(--humo); width: 24px; height: 24px; font-size: .7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+    .btn-orden:hover { border-color: var(--brasa); color: var(--brasa); }
+    .btn-orden:disabled { opacity: .25; cursor: not-allowed; }
+
     /* Toggles */
     .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,.04); }
     .toggle-row:last-child { border-bottom: none; }
@@ -472,9 +491,11 @@
 
         <div class="card">
           <div class="card-title">Secciones del home</div>
-          <p style="font-size:.82rem;color:var(--humo);margin-bottom:1.5rem;">Activá o desactivá secciones. Las desactivadas desaparecen completamente del sitio para el visitante.</p>
-          <div id="secciones-toggles"></div>
-          <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveSecciones()">Guardar visibilidad</button>
+          <p style="font-size:.82rem;color:var(--humo);margin-bottom:1.5rem;">Arrastrá para reordenar. Usá el toggle para mostrar u ocultar cada sección.</p>
+          <div class="orden-list" id="secciones-orden-list"></div>
+          <div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="saveSecciones()">Guardar cambios</button>
+          </div>
         </div>
 
         <div class="card">
@@ -1127,19 +1148,28 @@
   let seccionesOcultas = [];
   let adminNavOcultas = [];
 
+  // Orden actual de secciones (se inicializa con DEFAULT o desde Supabase)
+  let seccionesOrden = [...HOME_SECTIONS.map(s => s.id)];
+
   function renderSeccionesToggle(cfg) {
     seccionesOcultas = cfg.secciones_ocultas ? JSON.parse(cfg.secciones_ocultas) : [];
     adminNavOcultas  = cfg.admin_nav_ocultas  ? JSON.parse(cfg.admin_nav_ocultas)  : [];
 
-    document.getElementById('secciones-toggles').innerHTML = HOME_SECTIONS.map(s => `
-      <div class="toggle-row">
-        <div><div class="toggle-label">${s.label}</div><div class="toggle-sub">${s.sub}</div></div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="sec-${s.id}" ${!seccionesOcultas.includes(s.id)?'checked':''} />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>`).join('');
+    // Aplicar orden guardado
+    if (cfg.secciones_orden) {
+      const ordenGuardado = JSON.parse(cfg.secciones_orden);
+      // Combinar: primero los ordenados, luego cualquiera nuevo que no esté
+      seccionesOrden = [
+        ...ordenGuardado.filter(id => HOME_SECTIONS.find(s => s.id === id)),
+        ...HOME_SECTIONS.map(s => s.id).filter(id => !ordenGuardado.includes(id))
+      ];
+    } else {
+      seccionesOrden = HOME_SECTIONS.map(s => s.id);
+    }
 
+    renderOrdenList();
+
+    // Admin nav toggles
     document.getElementById('admin-nav-toggles').innerHTML = ADMIN_NAV_ITEMS.map(s => `
       <div class="toggle-row">
         <div class="toggle-label">${s.label}</div>
@@ -1149,19 +1179,103 @@
         </label>
       </div>`).join('');
 
-    // Ocultar items del nav admin
     adminNavOcultas.forEach(id => {
       const navItem = document.querySelector(`.nav-item[onclick="goTo('${id}')"]`);
       if (navItem) navItem.style.display = 'none';
     });
   }
 
+  function renderOrdenList() {
+    const list = document.getElementById('secciones-orden-list');
+    if (!list) return;
+    list.innerHTML = seccionesOrden.map((id, idx) => {
+      const s = HOME_SECTIONS.find(x => x.id === id);
+      if (!s) return '';
+      const visible = !seccionesOcultas.includes(id);
+      return `
+        <div class="orden-item" draggable="true" data-id="${id}"
+          ondragstart="onDragStart(event)"
+          ondragover="onDragOver(event)"
+          ondrop="onDrop(event)"
+          ondragend="onDragEnd(event)">
+          <span class="drag-handle">⠿</span>
+          <div style="flex:1;">
+            <div class="orden-item-label">${s.label}</div>
+            <div class="orden-item-sub">${s.sub}</div>
+          </div>
+          <div class="orden-arrow-btns">
+            <button class="btn-orden" onclick="moveSeccion('${id}',-1)" ${idx===0?'disabled':''}>▲</button>
+            <button class="btn-orden" onclick="moveSeccion('${id}',1)" ${idx===seccionesOrden.length-1?'disabled':''}>▼</button>
+          </div>
+          <label class="toggle-switch" style="margin-left:.5rem;" title="${visible?'Visible':'Oculta'}">
+            <input type="checkbox" id="sec-${id}" ${visible?'checked':''} onchange="toggleSeccion('${id}',this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>`;
+    }).join('');
+
+    // Drag events
+    list.querySelectorAll('.orden-item').forEach(el => {
+      el.addEventListener('dragstart', onDragStart);
+      el.addEventListener('dragover', onDragOver);
+      el.addEventListener('drop', onDrop);
+      el.addEventListener('dragend', onDragEnd);
+    });
+  }
+
+  // ─── DRAG & DROP ────────────────────────────────
+  let dragSrcId = null;
+
+  function onDragStart(e) {
+    dragSrcId = e.currentTarget.dataset.id;
+    e.currentTarget.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function onDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.orden-item').forEach(el => el.classList.remove('drag-over'));
+    e.currentTarget.classList.add('drag-over');
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    const targetId = e.currentTarget.dataset.id;
+    if (!dragSrcId || dragSrcId === targetId) return;
+    const fromIdx = seccionesOrden.indexOf(dragSrcId);
+    const toIdx   = seccionesOrden.indexOf(targetId);
+    seccionesOrden.splice(fromIdx, 1);
+    seccionesOrden.splice(toIdx, 0, dragSrcId);
+    renderOrdenList();
+  }
+
+  function onDragEnd(e) {
+    document.querySelectorAll('.orden-item').forEach(el => {
+      el.classList.remove('dragging', 'drag-over');
+    });
+    dragSrcId = null;
+  }
+
+  function moveSeccion(id, dir) {
+    const idx = seccionesOrden.indexOf(id);
+    const ni = idx + dir;
+    if (ni < 0 || ni >= seccionesOrden.length) return;
+    [seccionesOrden[idx], seccionesOrden[ni]] = [seccionesOrden[ni], seccionesOrden[idx]];
+    renderOrdenList();
+  }
+
+  function toggleSeccion(id, visible) {
+    if (visible) seccionesOcultas = seccionesOcultas.filter(x => x !== id);
+    else if (!seccionesOcultas.includes(id)) seccionesOcultas.push(id);
+  }
+
   async function saveSecciones() {
-    seccionesOcultas = HOME_SECTIONS
-      .filter(s => !document.getElementById(`sec-${s.id}`)?.checked)
-      .map(s => s.id);
-    await api(`sitio_config?id=eq.1`, 'PATCH', { secciones_ocultas: JSON.stringify(seccionesOcultas) });
-    toast('✓ Visibilidad guardada');
+    await api('sitio_config?id=eq.1', 'PATCH', {
+      secciones_ocultas: JSON.stringify(seccionesOcultas),
+      secciones_orden:   JSON.stringify(seccionesOrden)
+    });
+    toast('✓ Secciones guardadas');
   }
 
   async function saveAdminNav() {
@@ -1169,7 +1283,6 @@
       .filter(s => !document.getElementById(`anav-${s.id}`)?.checked)
       .map(s => s.id);
     await api(`sitio_config?id=eq.1`, 'PATCH', { admin_nav_ocultas: JSON.stringify(adminNavOcultas) });
-    // Aplicar inmediatamente
     ADMIN_NAV_ITEMS.forEach(s => {
       const navItem = document.querySelector(`.nav-item[onclick="goTo('${s.id}')"]`);
       if (navItem) navItem.style.display = adminNavOcultas.includes(s.id) ? 'none' : '';
