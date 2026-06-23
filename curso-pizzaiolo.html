@@ -992,9 +992,14 @@
 
     async function sb(table) {
       const res = await fetch(`${SB_URL}/rest/v1/${table}`, {
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': `Bearer ${SB_KEY}`,
+          'Accept': 'application/json'
+        }
       });
-      try { return await res.json(); } catch { return []; }
+      if (!res.ok) { console.error(`sb error ${res.status} on ${table}`); return []; }
+      try { return await res.json(); } catch(e) { console.error('sb parse error', e); return []; }
     }
 
     async function sbPost(table, body) {
@@ -1051,6 +1056,7 @@
         inscriptos  = Array.isArray(iData)   ? iData   : [];
         faqs        = Array.isArray(faqData) && faqData.length ? faqData : DEFAULT_FAQS;
         descuentos  = Array.isArray(dData)   ? dData   : [];
+        console.log('descuentos cargados:', descuentos.length, descuentos);
         // Merge precios con defaults — evita que null de Supabase pise los defaults
         if (Array.isArray(pData) && pData.length) {
           const fromDB = pData[0];
