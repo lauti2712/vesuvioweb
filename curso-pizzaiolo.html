@@ -266,7 +266,12 @@
     .cal-cell.empty { background: transparent; }
     .cal-cell.other-month { color: rgba(138,122,106,.2); background: transparent; pointer-events: none; }
     .cal-cell.past { color: rgba(138,122,106,.25); background: rgba(255,255,255,.02); pointer-events: none; }
-    .cal-cell.normal { background: rgba(255,255,255,.03); color: rgba(138,122,106,.4); }
+    .cal-cell.normal {
+      background: rgba(255,255,255,.03); color: rgba(138,122,106,.35);
+      cursor: pointer; border: 1px solid transparent; transition: all .15s;
+    }
+    .cal-cell.normal:hover { border-color: rgba(212,168,71,.2); color: var(--humo); background: rgba(212,168,71,.05); }
+    .cal-cell.normal.selected { background: rgba(212,168,71,.12) !important; border-color: rgba(212,168,71,.4) !important; color: var(--oro) !important; }
 
     /* Con fecha cargada */
     .cal-cell.disponible {
@@ -762,8 +767,8 @@
           <!-- Nota reserva exclusiva -->
           <div class="cal-nota">
             ✨ <strong style="color:var(--crema);">¿Querés un día exclusivo para tu grupo?</strong><br>
-            Para reservas exclusivas podemos coordinar cualquier día de la semana.
-            <a href="https://wa.me/5493426393012?text=Hola!%20Quiero%20consultar%20por%20una%20fecha%20exclusiva%20para%20el%20taller%20de%20pizzaiolo." target="_blank">Consultanos por WhatsApp →</a>
+            Para reservas exclusivas podemos coordinar cualquier día de la semana — debe ser grupo completo (6 personas).
+            <a href="https://wa.me/5493426393012?text=Hola!%20Quiero%20consultar%20por%20una%20fecha%20exclusiva%20para%20el%20taller%20de%20pizzaiolo%20(grupo%20completo)." target="_blank">Consultanos por WhatsApp →</a>
           </div>
         </div>
 
@@ -972,7 +977,7 @@
     const SB_URL = 'https://ckivxhxbysimhxmyovuc.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNraXZ4aHhieXNpbWh4bXlvdnVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwOTY1MjMsImV4cCI6MjA5NzY3MjUyM30.w4pCLsQSf1sm2S8jwIF1imVrHgZ7nbEi5qGsQ6o_HzM';
 
-    let fechas = [], faqs = [], inscriptos = [], precios = { general: '$120.000', efectivo: '$100.000', grupo: '$500.000', club: '10' };
+    let fechas = [], faqs = [], inscriptos = [], descuentos = [], precios = { general: '$120.000', efectivo: '$100.000', grupo: '$500.000', club: '10' };
     let wspMensaje = 'Hola! Me quiero inscribir al taller de pizzaiolo napolitano de Vesuvio.\n\n📅 Fecha: {{fecha}}\n👤 Nombre: {{nombre}} {{apellido}}\n\nQuedo a la espera de confirmación!';
     let selectedFechaId = null;
 
@@ -1034,22 +1039,49 @@
 
     async function loadData() {
       try {
-        const [fData, iData, faqData, pData, cData] = await Promise.all([
+        const [fData, iData, faqData, pData, cData, dData] = await Promise.all([
           sb('curso_fechas?order=date.asc'),
           sb('curso_inscriptos?order=created_at.asc'),
           sb('curso_faqs?order=orden.asc'),
           sb('curso_precios?id=eq.1'),
           sb('curso_config?id=eq.1'),
+          sb('curso_descuentos?order=orden.asc'),
         ]);
-        fechas     = Array.isArray(fData) ? fData : [];
-        inscriptos = Array.isArray(iData) ? iData : [];
-        faqs       = Array.isArray(faqData) && faqData.length ? faqData : DEFAULT_FAQS;
-        if (Array.isArray(pData) && pData.length) precios = pData[0];
+        fechas      = Array.isArray(fData)   ? fData   : [];
+        inscriptos  = Array.isArray(iData)   ? iData   : [];
+        faqs        = Array.isArray(faqData) && faqData.length ? faqData : DEFAULT_FAQS;
+        descuentos  = Array.isArray(dData)   ? dData   : [];
+        // Merge precios con defaults — evita que null de Supabase pise los defaults
+        if (Array.isArray(pData) && pData.length) {
+          const fromDB = pData[0];
+          Object.keys(fromDB).forEach(k => {
+            if (fromDB[k] !== null && fromDB[k] !== undefined) precios[k] = fromDB[k];
+          });
+        }
         if (Array.isArray(cData) && cData.length && cData[0].wsp_mensaje) wspMensaje = cData[0].wsp_mensaje;
       } catch(e) { console.error(e); }
     }
 
     function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // Defaults para precios — se usan si Supabase devuelve null
+    const PRECIOS_DEFAULTS = {
+      general:         '$120.000',
+      general_titulo:  'Tarifa general',
+      general_sub:     'Con tarjeta',
+      general_detalle: 'efectivo o transferencia',
+      efectivo:        '$100.000',
+      grupo:           '$500.000',
+      grupo_titulo:    'Reserva exclusiva (6 personas)',
+      grupo_sub:       'Grupo completo · precio fijo',
+      grupo_detalle:   'Reservá el taller exclusivo para tu grupo. Ideal para cumpleaños, despedidas, salidas de empresa o grupo de amigos.',
+      club:            '10',
+    };
+
+    function p(key) {
+      const val = precios[key];
+      return (val !== null && val !== undefined && val !== '') ? val : PRECIOS_DEFAULTS[key] || '';
+    }
 
     function renderPrecios() {
       const cardsEl = document.getElementById('precios-cards');
@@ -1060,17 +1092,17 @@
       cardsEl.innerHTML = `
         <div class="precio-card">
           <span class="precio-tag">Por persona</span>
-          <p class="precio-titulo">${escHtml(precios.general_titulo||'Tarifa general')}</p>
-          <div class="precio-monto">${escHtml(precios.general||'$120.000')}</div>
-          <p class="precio-sub">${escHtml(precios.general_sub||'Con tarjeta')}</p>
-          <p class="precio-detalle">En <strong>${escHtml(precios.general_detalle||'efectivo o transferencia')}</strong>: ${escHtml(precios.efectivo||'$100.000')}</p>
+          <p class="precio-titulo">${escHtml(p('general_titulo'))}</p>
+          <div class="precio-monto">${escHtml(p('general'))}</div>
+          <p class="precio-sub">${escHtml(p('general_sub'))}</p>
+          <p class="precio-detalle">En <strong>${escHtml(p('general_detalle'))}</strong>: ${escHtml(p('efectivo'))}</p>
         </div>
         <div class="precio-card featured">
           <span class="precio-tag">Grupo completo</span>
-          <p class="precio-titulo">${escHtml(precios.grupo_titulo||'Reserva exclusiva (6 personas)')}</p>
-          <div class="precio-monto">${escHtml(precios.grupo||'$500.000')}</div>
-          <p class="precio-sub">${escHtml(precios.grupo_sub||'Grupo completo · precio fijo')}</p>
-          <p class="precio-detalle">${escHtml(precios.grupo_detalle||'Reservá el taller exclusivo para tu grupo.')}</p>
+          <p class="precio-titulo">${escHtml(p('grupo_titulo'))}</p>
+          <div class="precio-monto">${escHtml(p('grupo'))}</div>
+          <p class="precio-sub">${escHtml(p('grupo_sub'))}</p>
+          <p class="precio-detalle">${escHtml(p('grupo_detalle'))}</p>
         </div>`;
 
       // Descuentos dinámicos
@@ -1151,7 +1183,11 @@
             <span class="cal-cupos">${cuposLabel}</span>
           </div>`;
         } else {
-          html += `<div class="cal-cell normal"><span class="cal-num">${d}</span></div>`;
+          const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          const isSel = selectedFechaId === `custom_${dateStr}`;
+          html += `<div class="cal-cell normal ${isSel?'selected':''}" onclick="selectCustomDate('${dateStr}', ${d})">
+            <span class="cal-num">${d}</span>
+          </div>`;
         }
       }
 
@@ -1164,6 +1200,29 @@
       if (!f) return;
       document.getElementById('selected-date-display').classList.add('visible');
       document.getElementById('selected-date-text').textContent = formatDate(f.date);
+      // Ocultar nota exclusiva si hay fecha con cupo
+      const nota = document.getElementById('custom-date-nota');
+      if (nota) nota.style.display = 'none';
+      renderCalendar();
+    }
+
+    function selectCustomDate(dateStr, dayNum) {
+      selectedFechaId = `custom_${dateStr}`;
+      const [y,m,d] = dateStr.split('-').map(Number);
+      const label = formatDate(dateStr);
+      document.getElementById('selected-date-display').classList.add('visible');
+      document.getElementById('selected-date-text').textContent = label + ' — Fecha a confirmar';
+      // Mostrar nota de reserva exclusiva junto al form
+      let nota = document.getElementById('custom-date-nota');
+      if (!nota) {
+        nota = document.createElement('div');
+        nota.id = 'custom-date-nota';
+        nota.style.cssText = 'background:rgba(212,168,71,.08);border-left:2px solid rgba(212,168,71,.3);padding:.8rem 1rem;margin-bottom:1rem;font-size:.8rem;color:var(--humo);line-height:1.5;';
+        nota.innerHTML = '⚠️ <strong style="color:var(--oro);">Fecha sin cupos disponibles.</strong> Seleccionaste un día para coordinar una reserva exclusiva (grupo completo, 6 personas). Al enviar el formulario te contactaremos para confirmar disponibilidad.';
+        const display = document.getElementById('selected-date-display');
+        if (display && display.parentNode) display.parentNode.insertBefore(nota, display.nextSibling);
+      }
+      nota.style.display = 'block';
       renderCalendar();
     }
 
@@ -1235,8 +1294,13 @@
 
     async function handleInscripcion() {
       if (!selectedFechaId) { alert('Por favor elegí una fecha primero.'); return; }
-      const f = fechas.find(x => x.id === selectedFechaId);
-      if (!f) return;
+
+      // Fecha custom (sin cupo cargado) = reserva exclusiva
+      const isCustom = selectedFechaId.startsWith('custom_');
+      const f = isCustom ? null : fechas.find(x => x.id === selectedFechaId);
+      if (!isCustom && !f) return;
+      const fechaDate = isCustom ? selectedFechaId.replace('custom_','') : f.date;
+      const fechaLabel = formatDate(fechaDate) + (isCustom ? ' (a confirmar)' : '');
 
       const participantes = getParticipantes();
 
@@ -1254,11 +1318,13 @@
       }
       if (!participantes[0].wsp) { alert('Completá el WhatsApp de quien reserva.'); return; }
 
-      // Verificar cupos
-      const libres = getCuposLibres(f);
-      if (participantes.length > libres) {
-        alert(`Solo quedan ${libres} cupo${libres !== 1 ? 's' : ''} disponibles para esa fecha.`);
-        return;
+      // Verificar cupos (solo si tiene fecha cargada)
+      if (!isCustom) {
+        const libres = getCuposLibres(f);
+        if (participantes.length > libres) {
+          alert(`Solo quedan ${libres} cupo${libres !== 1 ? 's' : ''} disponibles para esa fecha.`);
+          return;
+        }
       }
 
       const btn = document.getElementById('submit-btn');
@@ -1295,18 +1361,18 @@
           nombre: resOrganizador.nombre,
           apellido: resOrganizador.apellido,
           wsp: resOrganizador.wsp,
-          fecha: formatDate(f.date),
+          fecha: fechaLabel,
           grupo: resumen,
           cantidad: participantes.length
         });
 
-        document.getElementById('success-fecha').textContent = formatDate(f.date);
+        document.getElementById('success-fecha').textContent = fechaLabel;
         document.getElementById('form-fields').style.display = 'none';
         document.getElementById('form-success').style.display = 'block';
         document.getElementById('form-success').querySelector('p').innerHTML =
           `Anotamos <strong style="color:var(--crema)">${participantes.length} participante${participantes.length>1?'s':''}</strong> para <strong id="success-fecha" style="color:var(--crema)">${formatDate(f.date)}</strong>.<br><br>En las próximas horas te escribimos por WhatsApp con todos los detalles. ¡Nos vemos en Vesuvio! 🍕`;
 
-        const msg = encodeURIComponent(buildWspMsg(formatDate(f.date), resOrganizador.nombre, resOrganizador.apellido)
+        const msg = encodeURIComponent(buildWspMsg(fechaLabel, resOrganizador.nombre, resOrganizador.apellido)
           + (participantes.length > 1 ? `\n\nSomos ${participantes.length} personas en total.` : ''));
         setTimeout(() => window.open(`https://wa.me/5493426393012?text=${msg}`, '_blank'), 800);
         renderFechas();

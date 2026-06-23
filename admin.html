@@ -638,7 +638,7 @@
 
   // ─── STATE ───────────────────────────────────────
   let SESSION = null;
-  let fechas = [], inscriptos = [], faqs = [];
+  let fechas = [], inscriptos = [], faqs = [], descuentos = [];
   let precios = { general:'$120.000', efectivo:'$100.000', grupo:'$500.000', club:'10' };
   let wspMensaje = '';
   let filterFechaId = 'all';
@@ -725,13 +725,14 @@
 
   // ─── LOAD ALL ────────────────────────────────────
   async function loadAll() {
-    const [fData, iData, faqData, pData, cData, cfgData] = await Promise.all([
+    const [fData, iData, faqData, pData, cData, cfgData, dData] = await Promise.all([
       api('curso_fechas?order=date.asc'),
       api('curso_inscriptos?order=created_at.desc'),
       api('curso_faqs?order=orden.asc'),
       api('curso_precios?id=eq.1'),
       api('curso_config?id=eq.1'),
       api('sitio_config?id=eq.1'),
+      api('curso_descuentos?order=orden.asc'),
     ]);
     fechas     = Array.isArray(fData)   ? fData   : [];
     inscriptos = Array.isArray(iData)   ? iData   : [];
@@ -1079,19 +1080,130 @@
 
   // ─── PRECIOS ─────────────────────────────────────
   function loadPreciosFields() {
-    document.getElementById('p-general').value  = precios.general  || '';
-    document.getElementById('p-efectivo').value = precios.efectivo || '';
-    document.getElementById('p-grupo').value    = precios.grupo    || '';
-    document.getElementById('p-club').value     = precios.club     || '';
+    const fields = {
+      'p-general':         precios.general         || '',
+      'p-general-titulo':  precios.general_titulo  || '',
+      'p-general-sub':     precios.general_sub     || '',
+      'p-general-detalle': precios.general_detalle || '',
+      'p-efectivo':        precios.efectivo        || '',
+      'p-grupo':           precios.grupo           || '',
+      'p-grupo-titulo':    precios.grupo_titulo    || '',
+      'p-grupo-sub':       precios.grupo_sub       || '',
+      'p-grupo-detalle':   precios.grupo_detalle   || '',
+    };
+    Object.entries(fields).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+    renderDescuentosAdmin();
   }
 
   async function savePrecios() {
-    precios.general  = document.getElementById('p-general').value.trim()  || precios.general;
-    precios.efectivo = document.getElementById('p-efectivo').value.trim() || precios.efectivo;
-    precios.grupo    = document.getElementById('p-grupo').value.trim()    || precios.grupo;
-    precios.club     = document.getElementById('p-club').value.trim()     || precios.club;
-    await api('curso_precios?id=eq.1', 'PATCH', precios);
+    const updates = {
+      general:         (document.getElementById('p-general')?.value.trim()         || precios.general),
+      general_titulo:  (document.getElementById('p-general-titulo')?.value.trim()  || precios.general_titulo),
+      general_sub:     (document.getElementById('p-general-sub')?.value.trim()     || precios.general_sub),
+      general_detalle: (document.getElementById('p-general-detalle')?.value.trim() || precios.general_detalle),
+      efectivo:        (document.getElementById('p-efectivo')?.value.trim()        || precios.efectivo),
+      grupo:           (document.getElementById('p-grupo')?.value.trim()           || precios.grupo),
+      grupo_titulo:    (document.getElementById('p-grupo-titulo')?.value.trim()    || precios.grupo_titulo),
+      grupo_sub:       (document.getElementById('p-grupo-sub')?.value.trim()       || precios.grupo_sub),
+      grupo_detalle:   (document.getElementById('p-grupo-detalle')?.value.trim()   || precios.grupo_detalle),
+    };
+    Object.assign(precios, updates);
+    await api('curso_precios?id=eq.1', 'PATCH', updates);
     toast('✓ Precios actualizados');
+  }
+
+  // ─── DESCUENTOS ──────────────────────────────────
+  function renderDescuentosAdmin() {
+    const el = document.getElementById('descuentos-admin-list');
+    if (!el) return;
+    if (!descuentos.length) {
+      el.innerHTML = '<p style="color:var(--humo);font-size:.85rem;padding:.5rem 0;">No hay bloques de descuento. Agregá uno arriba.</p>';
+      return;
+    }
+    el.innerHTML = descuentos.map((d, idx) => `
+      <div class="descuento-admin-row" id="drow-${d.id}">
+        <div style="flex:1;">
+          <div class="descuento-admin-info">
+            <div class="d-pct">${escHtml(d.porcentaje)}</div>
+            <div class="d-titulo">${escHtml(d.titulo)}</div>
+            <div class="d-desc">${escHtml(d.descripcion)}</div>
+          </div>
+          <div class="descuento-edit-inline" id="dedit-${d.id}">
+            <div class="field-group" style="margin:0;"><label>Badge</label><input type="text" id="dep-${d.id}" value="${escHtml(d.porcentaje)}" /></div>
+            <div class="field-group" style="margin:0;"><label>Título</label><input type="text" id="det-${d.id}" value="${escHtml(d.titulo)}" /></div>
+            <div class="field-group span2" style="margin:0;"><label>Descripción</label><input type="text" id="ded-${d.id}" value="${escHtml(d.descripcion)}" /></div>
+            <div class="span2" style="display:flex;gap:.5rem;margin-top:.3rem;">
+              <button class="btn btn-primary" onclick="saveDescuento('${d.id}')">Guardar</button>
+              <button class="btn btn-ghost" onclick="toggleDescuentoEdit('${d.id}')">Cancelar</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.4rem;align-items:flex-end;">
+          <div style="display:flex;gap:2px;">
+            <button class="btn-orden" onclick="moveDescuento('${d.id}',-1)" ${idx===0?'disabled':''}>▲</button>
+            <button class="btn-orden" onclick="moveDescuento('${d.id}',1)" ${idx===descuentos.length-1?'disabled':''}>▼</button>
+          </div>
+          <button class="btn btn-ghost" onclick="toggleDescuentoEdit('${d.id}')">Editar</button>
+          <button class="btn btn-danger" onclick="deleteDescuento('${d.id}')">Eliminar</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function toggleDescuentoEdit(id) {
+    document.getElementById(`dedit-${id}`).classList.toggle('open');
+  }
+
+  async function addDescuento() {
+    const pct    = document.getElementById('nd-pct').value.trim();
+    const titulo = document.getElementById('nd-titulo').value.trim();
+    const desc   = document.getElementById('nd-desc').value.trim();
+    if (!pct)    { alert('Completá el badge (ej: 10% OFF)'); return; }
+    if (!titulo) { alert('Completá el título'); return; }
+    if (!desc)   { alert('Completá la descripción'); return; }
+    const newD = { id: 'd_'+Date.now(), porcentaje: pct, titulo, descripcion: desc, orden: descuentos.length };
+    const res = await api('curso_descuentos', 'POST', newD);
+    const saved = Array.isArray(res) ? res[0] : null;
+    if (saved && !saved.error) {
+      descuentos.push(saved);
+    } else {
+      descuentos.push(newD); // fallback optimista
+    }
+    renderDescuentosAdmin();
+    document.getElementById('nd-pct').value = '';
+    document.getElementById('nd-titulo').value = '';
+    document.getElementById('nd-desc').value = '';
+    toast('✓ Bloque agregado');
+  }
+
+  async function saveDescuento(id) {
+    const pct    = document.getElementById(`dep-${id}`).value.trim();
+    const titulo = document.getElementById(`det-${id}`).value.trim();
+    const desc   = document.getElementById(`ded-${id}`).value.trim();
+    await api(`curso_descuentos?id=eq.${id}`, 'PATCH', { porcentaje: pct, titulo, descripcion: desc });
+    const d = descuentos.find(x=>x.id===id);
+    if (d) { d.porcentaje=pct; d.titulo=titulo; d.descripcion=desc; }
+    renderDescuentosAdmin();
+    toast('✓ Descuento actualizado');
+  }
+
+  async function deleteDescuento(id) {
+    if (!confirm('¿Eliminar este bloque?')) return;
+    await api(`curso_descuentos?id=eq.${id}`, 'DELETE');
+    descuentos = descuentos.filter(x=>x.id!==id);
+    renderDescuentosAdmin();
+    toast('Eliminado','var(--brasa)');
+  }
+
+  async function moveDescuento(id, dir) {
+    const idx = descuentos.findIndex(x=>x.id===id);
+    const ni = idx+dir;
+    if (ni<0||ni>=descuentos.length) return;
+    [descuentos[idx],descuentos[ni]] = [descuentos[ni],descuentos[idx]];
+    await Promise.all(descuentos.map((d,i)=>api(`curso_descuentos?id=eq.${d.id}`,'PATCH',{orden:i})));
+    renderDescuentosAdmin();
   }
 
   // ─── WHATSAPP ────────────────────────────────────
