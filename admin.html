@@ -1194,20 +1194,28 @@
   }
 
   async function savePrecios() {
+    // Campos requeridos: usar valor anterior si se deja vacío
+    const req = id => {
+      const v = document.getElementById(id)?.value.trim();
+      return (v !== undefined && v !== '') ? v : (precios[id.replace('p-','').replace(/-/g,'_')] || '');
+    };
+    // Campos opcionales: guardar vacío si se borra
+    const opt = id => document.getElementById(id)?.value.trim() || '';
+
     const updates = {
-      general:         (document.getElementById('p-general')?.value.trim()         || precios.general),
-      general_titulo:  (document.getElementById('p-general-titulo')?.value.trim()  || precios.general_titulo),
-      general_sub:     (document.getElementById('p-general-sub')?.value.trim()     || precios.general_sub),
-      general_detalle: (document.getElementById('p-general-detalle')?.value.trim() || precios.general_detalle),
-      general_promo:   document.getElementById('p-general-promo')?.value.trim()    || null,
-      general_obs:     document.getElementById('p-general-obs')?.value.trim()      || null,
-      efectivo:        (document.getElementById('p-efectivo')?.value.trim()        || precios.efectivo),
-      grupo:           (document.getElementById('p-grupo')?.value.trim()           || precios.grupo),
-      grupo_titulo:    (document.getElementById('p-grupo-titulo')?.value.trim()    || precios.grupo_titulo),
-      grupo_sub:       (document.getElementById('p-grupo-sub')?.value.trim()       || precios.grupo_sub),
-      grupo_detalle:   (document.getElementById('p-grupo-detalle')?.value.trim()   || precios.grupo_detalle),
-      grupo_promo:     document.getElementById('p-grupo-promo')?.value.trim()      || null,
-      grupo_obs:       document.getElementById('p-grupo-obs')?.value.trim()        || null,
+      general:         req('p-general'),
+      general_titulo:  req('p-general-titulo'),
+      general_sub:     opt('p-general-sub'),
+      general_detalle: opt('p-general-detalle'),
+      general_promo:   opt('p-general-promo'),
+      general_obs:     opt('p-general-obs'),
+      efectivo:        opt('p-efectivo'),
+      grupo:           req('p-grupo'),
+      grupo_titulo:    req('p-grupo-titulo'),
+      grupo_sub:       opt('p-grupo-sub'),
+      grupo_detalle:   opt('p-grupo-detalle'),
+      grupo_promo:     opt('p-grupo-promo'),
+      grupo_obs:       opt('p-grupo-obs'),
     };
     Object.assign(precios, updates);
     await api('curso_precios?id=eq.1', 'PATCH', updates);
