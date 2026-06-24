@@ -530,19 +530,190 @@
     .add-icon { width: 22px; height: 22px; border-radius: 50%; background: rgba(200,67,10,.15); border: 1px solid rgba(200,67,10,.3); display: flex; align-items: center; justify-content: center; font-size: 1rem; line-height: 1; flex-shrink: 0; }
     .part-count-info { font-size: .72rem; color: var(--humo); margin-left: auto; }
 
+    /* ── PRECIO PROMO ── */
+    .precio-promo-wrap { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .3rem; }
+    .precio-monto-tachado {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 700;
+      color: rgba(138,122,106,.45); text-decoration: line-through;
+      line-height: 1;
+    }
+    .precio-monto-promo {
+      font-family: var(--serif); font-size: 2.8rem; font-weight: 900;
+      color: #6fbf85; line-height: 1;
+    }
+    .precio-promo-badge {
+      display: inline-block; background: rgba(74,124,89,.2);
+      border: 1px solid rgba(74,124,89,.35); color: #6fbf85;
+      font-size: .62rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; padding: .25rem .65rem;
+      margin-left: .2rem; vertical-align: middle;
+    }
+    .precio-monto { font-family: var(--serif); font-size: 2.8rem; font-weight: 900; color: var(--oro); line-height: 1; margin-bottom: .3rem; }
+
+    /* ── GALERÍA ── */
+    #galeria { background: var(--carbone); }
+    .galeria-grid {
+      columns: 3; gap: 1rem; margin-top: 2rem;
+    }
+    .galeria-item {
+      break-inside: avoid; margin-bottom: 1rem;
+      position: relative; overflow: hidden;
+      cursor: pointer; background: var(--ceniza);
+    }
+    .galeria-item img {
+      width: 100%; display: block;
+      transition: transform .4s ease, filter .3s;
+      filter: brightness(.9);
+    }
+    .galeria-item:hover img { transform: scale(1.04); filter: brightness(1); }
+    .galeria-item-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,10,8,.8) 0%, transparent 50%);
+      opacity: 0; transition: opacity .3s;
+      display: flex; align-items: flex-end; padding: .8rem;
+    }
+    .galeria-item:hover .galeria-item-overlay { opacity: 1; }
+    .galeria-item-desc {
+      font-size: .78rem; color: var(--crema); line-height: 1.4;
+    }
+    .galeria-empty {
+      padding: 3rem 2rem; text-align: center;
+      border: 1px dashed rgba(255,255,255,.08);
+      color: var(--humo); font-size: .9rem;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(13,10,8,.95);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem; opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-img {
+      max-width: min(90vw, 1000px); max-height: 85vh;
+      object-fit: contain; border: 1px solid rgba(255,255,255,.08);
+      transition: opacity .2s;
+    }
+    .lightbox-close {
+      position: absolute; top: 1.2rem; right: 1.5rem;
+      background: none; border: 1px solid rgba(255,255,255,.15);
+      color: var(--crema); width: 36px; height: 36px;
+      border-radius: 50%; font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .lightbox-close:hover { border-color: var(--brasa); color: var(--brasa); }
+    .lightbox-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      color: var(--crema); width: 42px; height: 42px;
+      border-radius: 50%; font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .lightbox-nav:hover { background: rgba(200,67,10,.2); border-color: var(--brasa); }
+    .lightbox-prev { left: 1rem; }
+    .lightbox-next { right: 1rem; }
+    .lightbox-desc {
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      font-size: .8rem; color: var(--humo); text-align: center;
+      background: rgba(13,10,8,.7); padding: .4rem 1rem;
+      white-space: nowrap; max-width: 80vw; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lightbox-counter {
+      position: absolute; top: 1.2rem; left: 50%; transform: translateX(-50%);
+      font-size: .72rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--humo);
+    }
+
+    /* ── TABLET ── */
     @media (max-width: 900px) {
-      #hero { grid-template-columns: 1fr; min-height: auto; padding-top: 6rem; }
+      #hero { grid-template-columns: 1fr; min-height: auto; padding: 5.5rem 2rem 3rem; gap: 2rem; }
       .pizarra { display: none; }
       .modulos-grid { grid-template-columns: 1fr 1fr; }
       .modulo.cierre { grid-column: auto; grid-template-columns: auto 1fr; }
+      .incluye-grid { grid-template-columns: 1fr 1fr; }
+      .precios-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── MOBILE ── */
     @media (max-width: 600px) {
-      nav { padding: 1rem 1.5rem; }
-      section { padding: 3.5rem 1.5rem; }
-      .para-grid, .inscripcion-grid { grid-template-columns: 1fr; }
-      .modulos-grid { grid-template-columns: 1fr; }
+      /* Nav */
+      nav { padding: .9rem 1.2rem; }
+      .nav-back { font-size: .62rem; }
+
+      /* Hero */
+      #hero { padding: 5rem 1.2rem 2.5rem; gap: 1.5rem; }
+      .hero-title { font-size: 2.8rem; }
+      .hero-desc { font-size: .92rem; }
+      .hero-pills { gap: .4rem; }
+      .pill { font-size: .68rem; padding: .28rem .7rem; }
+      .hero-ctas { flex-direction: column; }
+      .hero-ctas a { text-align: center; }
+
+      /* Secciones */
+      section { padding: 3rem 1.2rem; }
+      .s-title { font-size: 1.6rem; }
+
+      /* Módulos */
+      .modulos-grid { grid-template-columns: 1fr; gap: 2px; }
       .modulo.cierre { grid-template-columns: 1fr; }
-      .add-fecha-form { grid-template-columns: 1fr; }
+      .modulo { padding: 1.5rem 1.2rem; }
+
+      /* Qué incluye */
+      .incluye-grid { grid-template-columns: 1fr; gap: 2px; }
+      .incluye-card { padding: 1.5rem 1.2rem; }
+
+      /* Precios */
+      .precios-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .precio-card { padding: 1.5rem 1.2rem; }
+      .precio-monto { font-size: 2.2rem; }
+      .club-descuento { flex-direction: column; gap: .6rem; align-items: flex-start; }
+
+      /* Para quién */
+      .para-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .para-card { padding: 1.5rem 1.2rem; }
+
+      /* Inscripción */
+      .inscripcion-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+      /* Calendario */
+      .cal-cell { font-size: .75rem; }
+      .cal-num { font-size: .8rem; }
+      .cal-cupos { font-size: .52rem; }
+      .cal-day-header { font-size: .55rem; padding: .3rem 0; }
+      .cal-nav-btn { width: 28px; height: 28px; font-size: .9rem; }
+      .cal-month-label { font-size: .95rem; }
+      .cal-legend { gap: .6rem; }
+      .cal-legend-item { font-size: .65rem; }
+      .cal-nota { font-size: .75rem; }
+
+      /* Form participantes */
+      .part-grid { grid-template-columns: 1fr; }
+      .add-part-row { padding: .75rem .8rem; }
+      .part-count-info { display: none; }
+      .form-card { padding: 1.5rem 1.2rem; }
+      .form-group input { font-size: .9rem; padding: .65rem .8rem; }
+
+      /* Galería */
+      .galeria-grid { columns: 2; gap: .6rem; }
+      .galeria-item { margin-bottom: .6rem; }
+
+      /* FAQ */
+      .faq-q { padding: 1rem 1.2rem; font-size: .88rem; }
+      .faq-a-inner { padding: 0 1.2rem 1rem; font-size: .85rem; }
+
+      /* Admin login */
+      .login-row { flex-direction: column; }
+      .login-row input, .login-row button { width: 100%; }
+    }
+
+    /* Altura mínima en celdas del calendario para móvil */
+    @media (max-width: 400px) {
+      .cal-cell { aspect-ratio: auto; min-height: 44px; padding: .2rem; }
+      .hero-title { font-size: 2.4rem; }
     }
   </style>
 </head>
@@ -832,6 +1003,26 @@
     </div>
   </section>
 
+  <!-- GALERÍA -->
+  <section id="galeria">
+    <div class="inner">
+      <span class="s-label">Momentos del taller</span>
+      <h2 class="s-title">Galería</h2>
+      <div class="divider"></div>
+      <div class="galeria-grid" id="galeria-grid"></div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="lightboxBgClick(event)">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)">‹</button>
+    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+    <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)">›</button>
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+    <div class="lightbox-desc" id="lightbox-desc"></div>
+  </div>
+
   <!-- FAQ -->
   <section id="faq">
     <div class="inner">
@@ -977,7 +1168,8 @@
     const SB_URL = 'https://ckivxhxbysimhxmyovuc.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNraXZ4aHhieXNpbWh4bXlvdnVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwOTY1MjMsImV4cCI6MjA5NzY3MjUyM30.w4pCLsQSf1sm2S8jwIF1imVrHgZ7nbEi5qGsQ6o_HzM';
 
-    let fechas = [], faqs = [], inscriptos = [], descuentos = [], precios = { general: '$120.000', efectivo: '$100.000', grupo: '$500.000', club: '10' };
+    let fechas = [], faqs = [], inscriptos = [], descuentos = [], galeria = [], precios = { general: '$120.000', efectivo: '$100.000', grupo: '$500.000', club: '10' };
+    let lightboxIdx = 0;
     let wspMensaje = 'Hola! Me quiero inscribir al taller de pizzaiolo napolitano de Vesuvio.\n\n📅 Fecha: {{fecha}}\n👤 Nombre: {{nombre}} {{apellido}}\n\nQuedo a la espera de confirmación!';
     let selectedFechaId = null;
 
@@ -1044,19 +1236,20 @@
 
     async function loadData() {
       try {
-        const [fData, iData, faqData, pData, cData, dData] = await Promise.all([
+        const [fData, iData, faqData, pData, cData, dData, gData] = await Promise.all([
           sb('curso_fechas?order=date.asc'),
           sb('curso_inscriptos?order=created_at.asc'),
           sb('curso_faqs?order=orden.asc'),
           sb('curso_precios?id=eq.1'),
           sb('curso_config?id=eq.1'),
           sb('curso_descuentos?order=orden.asc'),
+          sb('taller_galeria?order=orden.asc'),
         ]);
         fechas      = Array.isArray(fData)   ? fData   : [];
         inscriptos  = Array.isArray(iData)   ? iData   : [];
         faqs        = Array.isArray(faqData) && faqData.length ? faqData : DEFAULT_FAQS;
         descuentos  = Array.isArray(dData)   ? dData   : [];
-        console.log('descuentos cargados:', descuentos.length, descuentos);
+        galeria     = Array.isArray(gData)   ? gData   : [];
         // Merge precios con defaults — evita que null de Supabase pise los defaults
         if (Array.isArray(pData) && pData.length) {
           const fromDB = pData[0];
@@ -1095,19 +1288,32 @@
       if (!cardsEl) return;
 
       // Card persona
+      // Helper precio — tachado + promo si hay precio promo
+      function renderPrecioMonto(original, promo, obs) {
+        if (promo) {
+          return `
+            <div class="precio-promo-wrap">
+              <span class="precio-monto-tachado">${escHtml(original)}</span>
+              <span class="precio-monto-promo">${escHtml(promo)}</span>
+            </div>
+            ${obs ? `<span class="precio-promo-badge">${escHtml(obs)}</span>` : ''}`;
+        }
+        return `<div class="precio-monto">${escHtml(original)}</div>`;
+      }
+
       cardsEl.innerHTML = `
         <div class="precio-card">
           <span class="precio-tag">Por persona</span>
           <p class="precio-titulo">${escHtml(p('general_titulo'))}</p>
-          <div class="precio-monto">${escHtml(p('general'))}</div>
-          <p class="precio-sub">${escHtml(p('general_sub'))}</p>
+          ${renderPrecioMonto(p('general'), p('general_promo'), p('general_obs'))}
+          <p class="precio-sub" style="margin-top:.5rem;">${escHtml(p('general_sub'))}</p>
           <p class="precio-detalle">En <strong>${escHtml(p('general_detalle'))}</strong>: ${escHtml(p('efectivo'))}</p>
         </div>
         <div class="precio-card featured">
           <span class="precio-tag">Grupo completo</span>
           <p class="precio-titulo">${escHtml(p('grupo_titulo'))}</p>
-          <div class="precio-monto">${escHtml(p('grupo'))}</div>
-          <p class="precio-sub">${escHtml(p('grupo_sub'))}</p>
+          ${renderPrecioMonto(p('grupo'), p('grupo_promo'), p('grupo_obs'))}
+          <p class="precio-sub" style="margin-top:.5rem;">${escHtml(p('grupo_sub'))}</p>
           <p class="precio-detalle">${escHtml(p('grupo_detalle'))}</p>
         </div>`;
 
@@ -1426,6 +1632,7 @@
       renderFechas();
       renderFaqs();
       renderPrecios();
+      renderGaleria();
     }
 
     init();

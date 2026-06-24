@@ -274,6 +274,28 @@
     .btn-add-inscripto { background: rgba(200,67,10,.12); color: var(--brasa); border: 1px solid rgba(200,67,10,.3); padding: .5rem 1rem; font-family: var(--sans); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: all .2s; margin-bottom: 1rem; display: inline-flex; align-items: center; gap: .4rem; }
     .btn-add-inscripto:hover { background: rgba(200,67,10,.2); }
 
+    /* Galería admin */
+    .galeria-admin-row {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: var(--nero); padding: .8rem; margin-bottom: 2px;
+    }
+    .galeria-admin-thumb {
+      width: 80px; height: 60px; object-fit: cover; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .galeria-admin-info { flex: 1; min-width: 0; }
+    .galeria-admin-desc-input {
+      width: 100%; background: var(--ceniza); border: 1px solid rgba(138,122,106,.15);
+      color: var(--humo); padding: .4rem .7rem; font-family: var(--sans);
+      font-size: .82rem; outline: none; margin-bottom: .5rem;
+    }
+    .galeria-admin-desc-input:focus { border-color: var(--oro); color: var(--crema); }
+    .galeria-admin-actions { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
+    .galeria-admin-empty { padding: 2rem; text-align: center; color: var(--humo); font-size: .88rem; }
+
+    /* Upload zone drag active */
+    #upload-zone:hover { border-color: rgba(200,67,10,.4); }
+
     /* Toast */
     #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; background: var(--carbone); border: 1px solid; padding: .7rem 1.3rem; font-size: .83rem; transition: opacity .4s; border-radius: 2px; opacity: 0; pointer-events: none; }
 
@@ -337,6 +359,10 @@
       </a>
       <a class="nav-item" onclick="goTo('faqs')">
         <span class="nav-icon">❓</span><span>FAQs</span>
+      </a>
+      <div class="nav-section">Taller</div>
+      <a class="nav-item" onclick="goTo('galeria')">
+        <span class="nav-icon">📸</span><span>Galería</span>
       </a>
       <div class="nav-section">Sitio web</div>
       <a class="nav-item" onclick="goTo('sitio')">
@@ -481,6 +507,19 @@
               <input type="text" id="p-grupo-detalle" placeholder="Reservá el taller exclusivo para tu grupo..." />
             </div>
           </div>
+          <div style="margin-top:1rem;padding:1rem;background:rgba(74,124,89,.07);border-left:2px solid rgba(74,124,89,.3);">
+            <p style="font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:#6fbf85;margin-bottom:.8rem;">Precio promocional grupo (opcional)</p>
+            <div class="grid-2" style="gap:.8rem;">
+              <div class="field-group" style="margin:0;">
+                <label>Precio promo grupo</label>
+                <input type="text" id="p-grupo-promo" placeholder="Ej: $400.000 (dejar vacío para ocultar)" />
+              </div>
+              <div class="field-group" style="margin:0;">
+                <label>Observación / etiqueta</label>
+                <input type="text" id="p-grupo-obs" placeholder="Ej: DURANTE JUNIO" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div style="margin-bottom:1.5rem;">
@@ -545,6 +584,37 @@
         <div class="card">
           <div class="card-title">Preguntas actuales</div>
           <div id="faqs-admin-list"></div>
+        </div>
+      </div>
+
+      <!-- ── GALERÍA ── -->
+      <div class="page" id="page-galeria">
+        <div class="card">
+          <div class="card-title">📸 Subir fotos</div>
+          <p style="font-size:.82rem;color:var(--humo);margin-bottom:1.2rem;">Las fotos se suben a Supabase Storage y aparecen en la galería del curso. Podés subir varias a la vez.</p>
+          <div id="upload-zone"
+            style="border:2px dashed rgba(138,122,106,.25);padding:2.5rem;text-align:center;cursor:pointer;transition:border-color .2s;"
+            onclick="document.getElementById('foto-input').click()"
+            ondragover="event.preventDefault();this.style.borderColor='var(--brasa)'"
+            ondragleave="this.style.borderColor='rgba(138,122,106,.25)'"
+            ondrop="handleDrop(event)">
+            <div style="font-size:2rem;margin-bottom:.5rem;">📷</div>
+            <p style="color:var(--crema);font-size:.9rem;margin-bottom:.3rem;">Tocá para seleccionar o arrastrá fotos acá</p>
+            <p style="color:var(--humo);font-size:.75rem;">JPG, PNG, WEBP — máx 5MB por foto</p>
+          </div>
+          <input type="file" id="foto-input" multiple accept="image/*" style="display:none" onchange="uploadFotos(this.files)" />
+          <div id="upload-progress" style="margin-top:1rem;display:none;">
+            <div style="font-size:.8rem;color:var(--humo);" id="upload-status">Subiendo...</div>
+            <div style="height:3px;background:var(--ceniza);margin-top:.5rem;border-radius:2px;">
+              <div id="upload-bar" style="height:100%;background:var(--brasa);width:0%;transition:width .3s;border-radius:2px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Fotos en la galería</div>
+          <p style="font-size:.82rem;color:var(--humo);margin-bottom:1.2rem;">Podés editar la descripción, reordenar con las flechas o eliminar fotos.</p>
+          <div id="galeria-admin-list"></div>
         </div>
       </div>
 
@@ -638,7 +708,7 @@
 
   // ─── STATE ───────────────────────────────────────
   let SESSION = null;
-  let fechas = [], inscriptos = [], faqs = [], descuentos = [];
+  let fechas = [], inscriptos = [], faqs = [], descuentos = [], galeria = [];
   let precios = { general:'$120.000', efectivo:'$100.000', grupo:'$500.000', club:'10' };
   let wspMensaje = '';
   let filterFechaId = 'all';
@@ -725,7 +795,7 @@
 
   // ─── LOAD ALL ────────────────────────────────────
   async function loadAll() {
-    const [fData, iData, faqData, pData, cData, cfgData, dData] = await Promise.all([
+    const [fData, iData, faqData, pData, cData, cfgData, dData, gData] = await Promise.all([
       api('curso_fechas?order=date.asc'),
       api('curso_inscriptos?order=created_at.desc'),
       api('curso_faqs?order=orden.asc'),
@@ -733,13 +803,18 @@
       api('curso_config?id=eq.1'),
       api('sitio_config?id=eq.1'),
       api('curso_descuentos?order=orden.asc'),
+      api('taller_galeria?order=orden.asc'),
     ]);
-    fechas     = Array.isArray(fData)   ? fData   : [];
-    inscriptos = Array.isArray(iData)   ? iData   : [];
-    faqs       = Array.isArray(faqData) ? faqData : [];
-    if (Array.isArray(pData)   && pData.length)   precios = pData[0];
-    if (Array.isArray(cData)   && cData.length && cData[0].wsp_mensaje) wspMensaje = cData[0].wsp_mensaje;
-    // Siempre renderizar toggles — con datos o vacíos
+    fechas      = Array.isArray(fData)   ? fData   : [];
+    inscriptos  = Array.isArray(iData)   ? iData   : [];
+    faqs        = Array.isArray(faqData) ? faqData : [];
+    descuentos  = Array.isArray(dData)   ? dData   : [];
+    galeria     = Array.isArray(gData)   ? gData   : [];
+    // Merge precios — no pisar con null
+    if (Array.isArray(pData) && pData.length) {
+      Object.entries(pData[0]).forEach(([k,v]) => { if (v !== null && v !== undefined) precios[k] = v; });
+    }
+    if (Array.isArray(cData) && cData.length && cData[0].wsp_mensaje) wspMensaje = cData[0].wsp_mensaje;
     const cfg = (Array.isArray(cfgData) && cfgData.length) ? cfgData[0] : {};
     if (cfg.pedir_url) document.getElementById('pedir-url').value = cfg.pedir_url;
     renderSeccionesToggle(cfg);
@@ -751,6 +826,7 @@
     renderFechasAdmin();
     renderFaqsAdmin();
     loadPreciosFields();
+    renderGaleriaAdmin();
     document.getElementById('wsp-msg').value = wspMensaje;
     updateWspPreview();
     updateBadge();
@@ -1095,6 +1171,12 @@
       const el = document.getElementById(id);
       if (el) el.value = val;
     });
+    // Campos promo — pueden ser null
+    ['p-general-promo','p-general-obs','p-grupo-promo','p-grupo-obs'].forEach(id => {
+      const key = id.replace('p-','').replace(/-/g,'_');
+      const el = document.getElementById(id);
+      if (el) el.value = precios[key] || '';
+    });
     renderDescuentosAdmin();
   }
 
@@ -1104,11 +1186,15 @@
       general_titulo:  (document.getElementById('p-general-titulo')?.value.trim()  || precios.general_titulo),
       general_sub:     (document.getElementById('p-general-sub')?.value.trim()     || precios.general_sub),
       general_detalle: (document.getElementById('p-general-detalle')?.value.trim() || precios.general_detalle),
+      general_promo:   document.getElementById('p-general-promo')?.value.trim()    || null,
+      general_obs:     document.getElementById('p-general-obs')?.value.trim()      || null,
       efectivo:        (document.getElementById('p-efectivo')?.value.trim()        || precios.efectivo),
       grupo:           (document.getElementById('p-grupo')?.value.trim()           || precios.grupo),
       grupo_titulo:    (document.getElementById('p-grupo-titulo')?.value.trim()    || precios.grupo_titulo),
       grupo_sub:       (document.getElementById('p-grupo-sub')?.value.trim()       || precios.grupo_sub),
       grupo_detalle:   (document.getElementById('p-grupo-detalle')?.value.trim()   || precios.grupo_detalle),
+      grupo_promo:     document.getElementById('p-grupo-promo')?.value.trim()      || null,
+      grupo_obs:       document.getElementById('p-grupo-obs')?.value.trim()        || null,
     };
     Object.assign(precios, updates);
     await api('curso_precios?id=eq.1', 'PATCH', updates);
@@ -1471,6 +1557,107 @@
       if (navItem) navItem.style.display = adminNavOcultas.includes(s.id) ? 'none' : '';
     });
     toast('✓ Menú admin actualizado');
+  }
+
+  // ─── GALERÍA ─────────────────────────────────────
+  const BUCKET_URL = `${SB_URL}/storage/v1/object/public/taller-fotos`;
+
+  function renderGaleriaAdmin() {
+    const el = document.getElementById('galeria-admin-list');
+    if (!el) return;
+    if (!galeria.length) {
+      el.innerHTML = '<div class="galeria-admin-empty">No hay fotos aún. Subí la primera arriba.</div>';
+      return;
+    }
+    el.innerHTML = galeria.map((f, idx) => `
+      <div class="galeria-admin-row" id="grow-${f.id}">
+        <img class="galeria-admin-thumb" src="${f.url}" alt="" />
+        <div class="galeria-admin-info">
+          <input class="galeria-admin-desc-input" type="text"
+            placeholder="Descripción (opcional)..."
+            value="${escHtml(f.descripcion||'')}"
+            onblur="saveGaleriaDesc('${f.id}', this.value)" />
+          <div class="galeria-admin-actions">
+            <button class="btn-orden" onclick="moveGaleria('${f.id}',-1)" ${idx===0?'disabled':''}>▲</button>
+            <button class="btn-orden" onclick="moveGaleria('${f.id}',1)" ${idx===galeria.length-1?'disabled':''}>▼</button>
+            <a href="${f.url}" target="_blank" class="btn btn-ghost" style="font-size:.65rem;">Ver</a>
+            <button class="btn btn-danger" onclick="deleteGaleria('${f.id}')">Eliminar</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  async function uploadFotos(files) {
+    if (!files.length) return;
+    const prog = document.getElementById('upload-progress');
+    const bar  = document.getElementById('upload-bar');
+    const stat = document.getElementById('upload-status');
+    prog.style.display = 'block';
+    let done = 0;
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) { toast(`${file.name} supera 5MB, saltada`, 'var(--oro)'); done++; continue; }
+      const ext  = file.name.split('.').pop().toLowerCase();
+      const name = `foto_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      stat.textContent = `Subiendo ${file.name}...`;
+      // Upload a Storage
+      const upRes = await fetch(`${SB_URL}/storage/v1/object/taller-fotos/${name}`, {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SESSION}`, 'Content-Type': file.type },
+        body: file
+      });
+      if (upRes.ok) {
+        const url = `${BUCKET_URL}/${name}`;
+        const row = { id: `g_${Date.now()}`, url, descripcion: '', orden: galeria.length };
+        const dbRes = await api('taller_galeria', 'POST', row);
+        galeria.push(Array.isArray(dbRes) && dbRes[0] ? dbRes[0] : row);
+      } else {
+        toast(`Error subiendo ${file.name}`, 'var(--brasa)');
+      }
+      done++;
+      bar.style.width = `${Math.round(done / files.length * 100)}%`;
+    }
+    stat.textContent = `✓ ${done} foto${done!==1?'s':''} procesada${done!==1?'s':''}`;
+    setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 2000);
+    renderGaleriaAdmin();
+    toast('✓ Galería actualizada');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('upload-zone').style.borderColor = 'rgba(138,122,106,.25)';
+    uploadFotos(e.dataTransfer.files);
+  }
+
+  async function saveGaleriaDesc(id, desc) {
+    await api(`taller_galeria?id=eq.${id}`, 'PATCH', { descripcion: desc });
+    const f = galeria.find(x=>x.id===id);
+    if (f) f.descripcion = desc;
+  }
+
+  async function moveGaleria(id, dir) {
+    const idx = galeria.findIndex(x=>x.id===id);
+    const ni = idx+dir;
+    if (ni<0||ni>=galeria.length) return;
+    [galeria[idx],galeria[ni]] = [galeria[ni],galeria[idx]];
+    await Promise.all(galeria.map((f,i)=>api(`taller_galeria?id=eq.${f.id}`,'PATCH',{orden:i})));
+    renderGaleriaAdmin();
+  }
+
+  async function deleteGaleria(id) {
+    if (!confirm('¿Eliminar esta foto?')) return;
+    const f = galeria.find(x=>x.id===id);
+    if (f) {
+      // Extraer nombre del archivo del URL
+      const name = f.url.split('/taller-fotos/').pop();
+      await fetch(`${SB_URL}/storage/v1/object/taller-fotos/${name}`, {
+        method: 'DELETE',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SESSION}` }
+      });
+      await api(`taller_galeria?id=eq.${id}`, 'DELETE');
+    }
+    galeria = galeria.filter(x=>x.id!==id);
+    renderGaleriaAdmin();
+    toast('Foto eliminada', 'var(--brasa)');
   }
 
   // ─── INIT ────────────────────────────────────────
