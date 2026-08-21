@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller Pizzaiolo Napoletano — Vesuvio Pizzeria</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Lato:wght@300;400;700&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<style>
+  /* ── Variables ─────────────────────────────────────── */
+  :root {
+    --cream:      #F4EFE4;
+    --cream-dark: #E8DFC9;
+    --red:        #7A1F1F;
+    --red-light:  #9B2B2B;
+    --gold:       #B8960C;
+    --gold-light: #D4AF37;
+    --black:      #1A1209;
+    --grey:       #4A3F35;
+    --white:      #FDFAF4;
+    --green-ita:  #2E7D32;
+  }
+
+  /* ── Reset & base ──────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #CCC5B5;
+    font-family: 'Lato', sans-serif;
+    color: var(--black);
+    font-size: 10pt;
+    line-height: 1.55;
+  }
+
+  /* ── Página A4 ─────────────────────────────────────── */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 10mm auto;
+    background: var(--cream);
+    position: relative;
+    padding: 18mm 20mm 16mm;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+    page-break-after: always;
+  }
+
+  /* Borde doble decorativo */
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 8mm;
+    border: 2px solid var(--red);
+    pointer-events: none;
+  }
+  .page::after {
+    content: '';
+    position: absolute;
+    inset: 10mm;
+    border: 0.5px solid var(--gold);
+    pointer-events: none;
+  }
+
+  /* ── PORTADA ───────────────────────────────────────── */
+  .portada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 297mm;
+    padding: 18mm 22mm;
+    text-align: center;
+    gap: 0;
+  }
+
+  .portada-eyebrow {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 9pt;
+    letter-spacing: 0.25em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 6mm;
+  }
+
+  /* Espacio reservado para logo */
+  .logo-placeholder {
+    width: 52mm;
+    height: 52mm;
+    border: 1.5px dashed var(--gold);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8mm;
+  }
+  .logo-placeholder span {
+    font-family: 'Lato', sans-serif;
+    font-size: 7pt;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .portada-brand {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 11pt;
+    letter-spacing: 0.3em;
+    color: var(--grey);
+    margin-bottom: 2mm;
+  }
+
+  .divider-gold {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 5mm 0;
+  }
+  .divider-red {
+    width: 100%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    margin: 5mm 0;
+  }
+
+  .portada-taller {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 13pt;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2mm;
+  }
+  .portada-titulo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 34pt;
+    color: var(--red);
+    line-height: 1.05;
+    margin-bottom: 2mm;
+  }
+  .portada-subtitulo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14pt;
+    color: var(--grey);
+    margin-bottom: 6mm;
+  }
+
+  .portada-material {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 9pt;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .portada-cita {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 10.5pt;
+    color: var(--grey);
+    line-height: 1.6;
+    padding: 6mm 8mm;
+    border-left: 2px solid var(--gold);
+    border-right: 2px solid var(--gold);
+    text-align: center;
+    margin: 6mm 0;
+  }
+
+  /* Bandiera */
+  .bandiera {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    margin: 4mm 0;
+  }
+  .bandiera span {
+    width: 14mm;
+    height: 3.5px;
+    border-radius: 1px;
+  }
+  .b-verde { background: var(--green-ita); }
+  .b-bianco { background: var(--cream-dark); border: 0.5px solid #ccc; }
+  .b-rosso { background: var(--red); }
+
+  /* Índice portada */
+  .indice-portada {
+    width: 100%;
+    border: 1px solid var(--red);
+    overflow: hidden;
+    margin-top: 6mm;
+  }
+  .indice-portada table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .indice-portada td {
+    padding: 3.5mm 5mm;
+    border-bottom: 0.5px solid var(--gold);
+    vertical-align: middle;
+  }
+  .indice-portada tr:last-child td { border-bottom: none; }
+  .indice-portada .idx-num {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 9pt;
+    color: var(--gold);
+    width: 12mm;
+    text-align: center;
+  }
+  .indice-portada .idx-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 9pt;
+    color: var(--black);
+    letter-spacing: 0.05em;
+  }
+  .indice-portada tr:nth-child(odd) td { background: var(--cream-dark); }
+  .indice-portada tr:nth-child(even) td { background: var(--cream); }
+
+  /* ── BLOQUES ───────────────────────────────────────── */
+  .bloque-header {
+    background: var(--red);
+    color: var(--white);
+    padding: 4mm 7mm;
+    margin-bottom: 6mm;
+  }
+  .bloque-header .bnum {
+    font-family: 'Lato', sans-serif;
+    font-size: 7pt;
+    letter-spacing: 0.3em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 1mm;
+  }
+  .bloque-header .btitulo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 17pt;
+    color: var(--white);
+    line-height: 1.1;
+  }
+
+  /* ── Secciones internas ────────────────────────────── */
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 11pt;
+    color: var(--red);
+    margin-top: 5mm;
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  h4 {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 9pt;
+    color: var(--red);
+    font-style: italic;
+    margin-top: 3mm;
+    margin-bottom: 1.5mm;
+  }
+  p {
+    margin-bottom: 2.5mm;
+    text-align: justify;
+    hyphens: auto;
+  }
+  ul {
+    padding-left: 5mm;
+    margin-bottom: 2.5mm;
+  }
+  li {
+    margin-bottom: 1mm;
+    text-align: justify;
+  }
+  li::marker { color: var(--gold); }
+  b { color: var(--black); }
+  i { color: var(--grey); }
+
+  /* ── Tablas ────────────────────────────────────────── */
+  table.datos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 4mm;
+    font-size: 9pt;
+  }
+  table.datos thead th {
+    background: var(--red);
+    color: var(--white);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 2.5mm 4mm;
+    text-align: left;
+    font-size: 8pt;
+    text-transform: uppercase;
+  }
+  table.datos tbody tr:nth-child(odd)  td { background: var(--cream-dark); }
+  table.datos tbody tr:nth-child(even) td { background: var(--cream); }
+  table.datos td {
+    padding: 2mm 4mm;
+    border-bottom: 0.3px solid var(--gold);
+    vertical-align: top;
+  }
+  table.datos td:first-child { font-weight: 700; color: var(--grey); }
+
+  /* ── Dos columnas ──────────────────────────────────── */
+  .cols2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    margin-bottom: 4mm;
+  }
+  .col-box {
+    background: var(--cream-dark);
+    border: 0.5px solid var(--gold);
+    padding: 4mm 5mm;
+  }
+  .col-box .col-titulo {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 8pt;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 2mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 1px solid var(--gold);
+  }
+  .col-box p, .col-box li { font-size: 8.5pt; }
+
+  /* ── Caja destacada ────────────────────────────────── */
+  .caja {
+    background: var(--cream-dark);
+    border-left: 3px solid var(--gold);
+    padding: 3.5mm 5mm;
+    margin: 3mm 0;
+    font-size: 9pt;
+  }
+  .caja .caja-titulo {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    margin-bottom: 1.5mm;
+  }
+
+  /* ── Pizzas ────────────────────────────────────────── */
+  .pizza-grid {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+    margin-bottom: 3mm;
+  }
+  .pizza-grid tr:nth-child(odd)  td { background: var(--cream-dark); }
+  .pizza-grid tr:nth-child(even) td { background: var(--cream); }
+  .pizza-grid td {
+    padding: 2.5mm 4mm;
+    border-bottom: 0.3px solid var(--gold);
+    vertical-align: top;
+  }
+  .pizza-grid td:first-child {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--red);
+    font-size: 9.5pt;
+    width: 32%;
+    white-space: nowrap;
+  }
+
+  /* ── Amalfi destacada ──────────────────────────────── */
+  .amalfi-box {
+    border: 1.5px solid var(--gold);
+    background: var(--cream-dark);
+    padding: 5mm 7mm;
+    text-align: center;
+    margin: 5mm 0;
+  }
+  .amalfi-box .am-eyebrow {
+    font-family: 'Lato', sans-serif;
+    font-size: 7pt;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1mm;
+  }
+  .amalfi-box .am-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 15pt;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 2mm;
+  }
+  .amalfi-box .am-ing {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 9.5pt;
+    color: var(--grey);
+    margin-bottom: 2mm;
+  }
+  .amalfi-box .am-desc {
+    font-size: 8.5pt;
+    color: var(--black);
+  }
+
+  /* ── Cita final ────────────────────────────────────── */
+  .cita-final {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 10pt;
+    color: var(--grey);
+    text-align: center;
+    padding: 5mm 8mm;
+    border-top: 1.5px solid var(--red);
+    border-bottom: 1.5px solid var(--red);
+    margin: 5mm 0;
+    line-height: 1.7;
+  }
+
+  .footer-page {
+    text-align: center;
+    font-size: 7pt;
+    color: var(--grey);
+    letter-spacing: 0.1em;
+    margin-top: 4mm;
+    padding-top: 2mm;
+    border-top: 0.5px solid var(--gold);
+  }
+
+  /* ── Línea divisoria ───────────────────────────────── */
+  hr.gold  { border: none; border-top: 0.8px solid var(--gold);  margin: 4mm 0; }
+  hr.red   { border: none; border-top: 1.5px solid var(--red);   margin: 5mm 0; }
+
+  /* ── Print ─────────────────────────────────────────── */
+  @media print {
+    body { background: white; }
+    .page { margin: 0; box-shadow: none; page-break-after: always; width: 210mm; min-height: 297mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ PORTADA ═══════════════ -->
+<div class="page portada">
+  <p class="portada-eyebrow">Santa Fe · Argentina</p>
+
+  <div class="logo-placeholder">
+    <span>Logo aquí</span>
+  </div>
+
+  <p class="portada-brand">Vesuvio Pizzeria</p>
+  <div class="divider-gold"></div>
+
+  <p class="portada-taller">Taller Intensivo</p>
+  <h1 class="portada-titulo">Pizzaiolo<br>Napoletano</h1>
+  <p class="portada-subtitulo">Material del Asistente</p>
+
+  <div class="bandiera">
+    <span class="b-verde"></span>
+    <span class="b-bianco"></span>
+    <span class="b-rosso"></span>
+  </div>
+
+  <div class="divider-gold"></div>
+
+  <p class="portada-cita">
+    "La mejor pizza no es la más compleja,<br>sino la más equilibrada."
+  </p>
+
+  <div class="indice-portada">
+    <table>
+      <tr><td class="idx-num">I</td><td class="idx-title">Historia</td></tr>
+      <tr><td class="idx-num">II</td><td class="idx-title">La Masa</td></tr>
+      <tr><td class="idx-num">III</td><td class="idx-title">El Horno</td></tr>
+      <tr><td class="idx-num">IV</td><td class="idx-title">Pizza Margherita</td></tr>
+      <tr><td class="idx-num">V</td><td class="idx-title">Variedades y Combinaciones</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ BLOQUE I: HISTORIA ═══════════════ -->
+<div class="page">
+  <div class="bloque-header">
+    <span class="bnum">Bloque I</span>
+    <span class="btitulo">Historia</span>
+  </div>
+
+  <h4>¿Qué es la pizza?</h4>
+  <p>La primera mención de la palabra <i>pizza</i> aparece en el año <b>997 d.C.</b> en un texto latino de Gaeta, entre Roma y Nápoles. Lo descripto no tiene ninguna relación con lo que conocemos hoy. Se intuye que deriva de <i>Pitta</i>, pan plano de Medio Oriente.</p>
+  <p>El primer registro con receta data de <b>1570</b>, en el libro de Bartolomeo Scappi (cocinero del Papa Pío V): una tarta dulce con paloma, dátiles y canela. La pizza como la conocemos surge en el siglo XVII en Nápoles, en un contexto de pobreza extrema. La primera reconocida fue la <b>Mastunicola</b>: manteca de cerdo, queso, pimienta y albahaca — aún sin tomate.</p>
+
+  <h4>¿Qué es la Pizza Napoletana?</h4>
+  <p>El origen de la comida más consumida del mundo: <b>5.000 millones de unidades anuales</b>. Llegó a Argentina en <b>1882</b> de la mano de Nicola Vaccarezza, convirtiendo al país en el que más pizzerías tiene por habitante (aprox. 1 cada 900 personas).</p>
+
+  <h3>Sus cuatro pilares</h3>
+  <div class="cols2">
+    <div class="col-box">
+      <div class="col-titulo">Cornicione</div>
+      <p>El borde aireado y leopardado, marca de identidad que no tienen otras pizzas, ni siquiera dentro de Italia. Las manchas oscuras son la prueba visual de un horno bien calibrado y una masa correctamente fermentada — una corteza pareja y pálida, sin leopardado, suele indicar horno frío o masa poco desarrollada.</p>
+    </div>
+    <div class="col-box">
+      <div class="col-titulo">Ingredientes</div>
+      <p>Solo harina, agua, levadura y sal. Fiel a su origen pobre: sin aditivos, sin aceites, sin azúcar.</p>
+    </div>
+    <div class="col-box">
+      <div class="col-titulo">Fermento</div>
+      <p>Leudado lento y controlado con mínima levadura. Más tiempo = más sabor y mejor digestión.</p>
+    </div>
+    <div class="col-box">
+      <div class="col-titulo">Cocción</div>
+      <p>Horno a alta temperatura en el menor tiempo posible. La cocción rápida conserva la estructura de la masa.</p>
+    </div>
+  </div>
+
+  <hr class="gold">
+
+  <table class="datos">
+    <thead><tr><th>Año</th><th>Hito</th></tr></thead>
+    <tbody>
+      <tr><td>997 d.C.</td><td>Primera mención escrita de la palabra "pizza"</td></tr>
+      <tr><td>1570</td><td>Primera receta documentada — Bartolomeo Scappi</td></tr>
+      <tr><td>1882</td><td>Llega a Argentina — Nicola Vaccarezza</td></tr>
+      <tr><td>1984</td><td>Fundación de la AVPN — estandarización global</td></tr>
+      <tr><td>2017</td><td>UNESCO: Patrimonio Cultural Inmaterial de la Humanidad</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer-page">VESUVIO PIZZERIA · Taller Pizzaiolo Napoletano · Material del Asistente</div>
+</div>
+
+<!-- ═══════════════ BLOQUE II: LA MASA ═══════════════ -->
+<div class="page">
+  <div class="bloque-header">
+    <span class="bnum">Bloque II</span>
+    <span class="btitulo">La Masa</span>
+  </div>
+
+  <h3>Ingredientes y proporciones</h3>
+  <table class="datos">
+    <thead><tr><th>Ingrediente</th><th>Cantidad</th><th>% Harina</th></tr></thead>
+    <tbody>
+      <tr><td>Harina 000 W320</td><td>1 kg</td><td>100%</td></tr>
+      <tr><td>Agua fría</td><td>680 g</td><td>68%</td></tr>
+      <tr><td>Sal fina</td><td>28 g</td><td>2,8%</td></tr>
+      <tr><td>Levadura instantánea</td><td>1 g</td><td>0,1%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cols2">
+    <div class="col-box">
+      <div class="col-titulo">Sal — 2 a 3%</div>
+      <ul>
+        <li><b>Sabor:</b> resalta todos los ingredientes.</li>
+        <li><b>Fermentación:</b> ejerce presión osmótica sobre la levadura. Menos del 2% = festín; exceso = la ahoga.</li>
+        <li><b>Higroscópica:</b> atrae agua, por eso se agrega al <b>final</b> del amasado.</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <div class="col-titulo">Agua</div>
+      <ul>
+        <li>Si es potable, es apta.</li>
+        <li>Lo clave es la <b>temperatura</b>: usar agua fría para poder amasar más tiempo.</li>
+        <li>Límite crítico: <b>23–25 °C</b>. Pasado ese punto el gluten pierde estructura.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Levadura — Saccharomyces cerevisiae</h3>
+  <p>Produce <b>CO₂</b> (burbujas que airean la masa) y <b>etanol</b>. Las bacterias lácticas convierten ese etanol en ácido acético, que da complejidad al sabor. <b>Poca levadura + tiempo largo = mejor sabor.</b> Equivalencia: <b>3 g de levadura fresca = 1 g de instantánea.</b></p>
+
+  <table class="datos">
+    <thead><tr><th>Tipo</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td>Fresca</td><td>Alta actividad pero vida corta y potencia variable. Difícil de estandarizar.</td></tr>
+      <tr><td>Seca activa</td><td>Requiere activación a 43 °C. No recomendada.</td></tr>
+      <tr><td>Instantánea ✓</td><td>Regular, fácil de usar, hasta 2 años de vida cerrada. La más recomendada.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Harina — Fuerza W</h3>
+  <p>Las proteínas <b>glutenina + gliadina</b> se hidratan y forman la <b>red de gluten</b>, la estructura de la masa. La fuerza <b>W</b> indica elasticidad y capacidad de absorción. Para pizza napoletana: <b>W 280–320</b>. En Vesuvio usamos <b>harina 000, W 320</b>. Menos de 280 y la masa no aguanta el leudado.</p>
+
+  <div class="footer-page">VESUVIO PIZZERIA · Taller Pizzaiolo Napoletano · Material del Asistente</div>
+</div>
+
+<!-- ═══════════════ BLOQUE II cont.: RECETAS Y BOLLADO ═══════════════ -->
+<div class="page">
+  <div class="bloque-header">
+    <span class="bnum">Bloque II — continuación</span>
+    <span class="btitulo">Amasado, Leudado y Bollado</span>
+  </div>
+
+  <div class="cols2">
+    <div class="col-box">
+      <div class="col-titulo">Con Amasadora (espiral)</div>
+      <ol style="padding-left:4mm; font-size:8.5pt;">
+        <li style="margin-bottom:1.5mm;">Disolver levadura en el <b>85% del agua fría</b>.</li>
+        <li style="margin-bottom:1.5mm;">Agregar toda la harina. Velocidad baja.</li>
+        <li style="margin-bottom:1.5mm;">Añadir sal + <b>15% de agua</b> restante.</li>
+        <li style="margin-bottom:1.5mm;">Amasar hasta <b>23 °C</b> superficial (termómetro láser).</li>
+        <li>Retirar, tensionar bloque, reposar 30 min, bollar.</li>
+      </ol>
+    </div>
+    <div class="col-box">
+      <div class="col-titulo">A Mano — Autolisis (para casa)</div>
+      <ol style="padding-left:4mm; font-size:8.5pt;">
+        <li style="margin-bottom:1.5mm;">Levadura en 85% agua. Sal en 15% agua.</li>
+        <li style="margin-bottom:1.5mm;">Corona de harina + agua con levadura. Amasar.</li>
+        <li style="margin-bottom:1.5mm;">Agregar sal disuelta. Amasar <b>10 min</b>.</li>
+        <li style="margin-bottom:1.5mm;">Reposar 10' → amasar 5' → reposar 10' → amasar 5'.</li>
+        <li style="margin-bottom:1.5mm;">Tupper con film en contacto. <b>Mín. 24 hs en heladera.</b></li>
+        <li>Atemperar, bollar, último leudado a temp. ambiente.</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>Leudado en Frío</h3>
+  <p>El frío ralentiza la levadura y da tiempo a las bacterias lácticas para producir más ácido acético (<b>más sabor</b>). La amilasa genera más azúcares (<b>mejor color y reacción de Maillard</b>). El gluten se relaja para un <b>estirado más fácil</b>.</p>
+  <div class="caja">
+    <div class="caja-titulo">Temperatura y tiempo óptimos</div>
+    <ul>
+      <li><b>4 a 10 °C</b> — por debajo la levadura se detiene; por encima se dispara.</li>
+      <li>Mínimo <b>24 hs</b>. Hasta 72 hs para masas con más complejidad de sabor.</li>
+    </ul>
+  </div>
+
+  <h3>El Bollado</h3>
+  <p>Se buscan bollos <b>uniformes, lisos y con superficie levemente seca</b> que actúe de barrera para el CO₂. Peso: <b>280 g</b> por bollo en Vesuvio. El disciplinare AVPN establece un rango de 200–280 g para una pizza de 22–35 cm de diámetro.</p>
+
+  <div class="caja">
+    <div class="caja-titulo">Método Wonton (Dumpling)</div>
+    <p>Con la superficie hacia arriba, se trabajan <b>4 regiones</b> de la masa: cada una se estira y pliega al centro. Se cierra y tensiona arrastrando con el meñique sobre la mesada.</p>
+  </div>
+
+  <div class="caja">
+    <div class="caja-titulo">Tensión es uniforme = leudado uniforme</div>
+    <p>Un bollo mal tensado leuda de forma irregular y dificulta el estirado. Cuidar siempre que la superficie del bollo sea la misma que la de la masa original — es la barrera contra el gas.</p>
+  </div>
+
+  <div class="footer-page">VESUVIO PIZZERIA · Taller Pizzaiolo Napoletano · Material del Asistente</div>
+</div>
+
+<!-- ═══════════════ BLOQUE III: EL HORNO ═══════════════ -->
+<div class="page">
+  <div class="bloque-header">
+    <span class="bnum">Bloque III</span>
+    <span class="btitulo">El Horno</span>
+  </div>
+
+  <p>La pizza napoletana se cocina principalmente por <b>conducción</b> (el piso transmite calor directo a la base) y <b>radiación</b> (paredes y techo irradian calor). El aire caliente es secundario — se pierde cada vez que se abre el horno. <b>El precalentado es esencial en cualquier tipo de horno.</b></p>
+
+  <table class="datos" style="margin-top:4mm;">
+    <thead><tr><th>Horno</th><th>Temperatura</th><th>Tiempo</th><th>Notas clave</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>A Leña</td>
+        <td>460–480 °C</td>
+        <td>máx. 90 seg</td>
+        <td>Rotar con pala de giro. La pizza va lejos de la llama. La leña no aporta sabor.</td>
+      </tr>
+      <tr>
+        <td>A Gas</td>
+        <td>460–480 °C</td>
+        <td>máx. 90 seg</td>
+        <td>Más consistente que la leña. Llama siempre igual. Ideal para estandarizar.</td>
+      </tr>
+      <tr>
+        <td>Eléctrico</td>
+        <td>Máx. disponible</td>
+        <td>~2,5 min</td>
+        <td>No abrir innecesariamente — se pierde temperatura. Girar la pizza rápido.</td>
+      </tr>
+      <tr>
+        <td>Doméstico</td>
+        <td>Máx. posible</td>
+        <td>Variable</td>
+        <td>Precalentar 30+ min. Placa negra en tercio superior. Entrar primero solo con salsa.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="gold">
+
+  <h3>Las Palas</h3>
+  <div class="cols2">
+    <div class="col-box">
+      <div class="col-titulo">Pala de Carga (rectangular)</div>
+      <ul>
+        <li>Ingresa la pizza cruda al horno.</li>
+        <li>Siempre limpia y seca — sin rayones ni humedad.</li>
+        <li>Cubrir con semolín antes de cada uso.</li>
+        <li>Inclinar, apoyar la punta en el piso y <b>deslizar</b> (no tirar) la pizza.</li>
+        <li>No dejarla dentro: agarra temperatura y la pizza se pega.</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <div class="col-titulo">Pala de Giro (redonda)</div>
+      <ul>
+        <li>Gira la pizza para cocción pareja.</li>
+        <li>Retira la pizza del horno.</li>
+        <li>En leña actúa de escudo térmico contra la llama.</li>
+        <li>Sufre mayor desgaste que la de carga.</li>
+        <li><b>En casa:</b> tabla de madera + papel manteca.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-page">VESUVIO PIZZERIA · Taller Pizzaiolo Napoletano · Material del Asistente</div>
+</div>
+
+<!-- ═══════════════ BLOQUE IV: MARGHERITA ═══════════════ -->
+<div class="page">
+  <div class="bloque-header">
+    <span class="bnum">Bloque IV</span>
+    <span class="btitulo">Pizza Margherita</span>
+  </div>
+
+  <p>La más icónica de la pizza napoletana. La leyenda dice que fue creada en honor a la reina Margarita de Saboya en 1889, pero hay registros de ella al menos 9 años antes. Es una de las dos pizzas con sello <b>STG (Especialidad Tradicional Garantizada)</b> según el disciplinare de la AVPN, junto a la Marinara.</p>
+
+  <div class="cols2" style="margin-top:4mm;">
+    <div class="col-box">
+      <div class="col-titulo">Al Horno</div>
+      <ul>
+        <li>Pomodoro (salsa de tomate)</li>
+        <li>Fior di latte</li>
+        <li>Albahaca (debajo del queso, para protegerla)</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <div class="col-titulo">Post-Horno</div>
+      <ul>
+        <li>Parmesano rallado</li>
+        <li>Albahaca fresca</li>
+        <li>Aceite de oliva extra virgen</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>El Queso</h3>
+  <p>La tradición indica <b>Mozzarella Fior di Latte</b>, de la familia <i>Pasta Filata</i> (pasta hilada). La cuajada se estira en caliente alineando capas que dan el derretido característico. Otras opciones: Mozzarella di Búfala, Próvola, Stracciatella, Burrata. Lo esencial: que sea una muzzarella <b>hilada</b>.</p>
+
+  <h3>La Salsa de Tomate</h3>
+  <p>El tomate llegó tarde a Nápoles — fue considerado venenoso por siglos. Primera mención en la cocina italiana: 1694. La salsa napoletana es <b>sin cocción</b> y con pocos ingredientes.</p>
+
+  <table class="datos">
+    <thead><tr><th>Ingrediente</th><th>Cantidad</th></tr></thead>
+    <tbody>
+      <tr><td>Tomate perita pelado en lata</td><td>1 lata</td></tr>
+      <tr><td>Sal</td><td>20 g</td></tr>
+      <tr><td>Aceite de oliva (opcional)</td><td>15 g</td></tr>
+      <tr><td>Albahaca rota a mano</td><td>10 g</td></tr>
+    </tbody>
+  </table>
+
+  <div class="caja">
+    <div class="caja-titulo">Nunca mixear la salsa</div>
+    <p>Las pepitas del tomate liberan un amargor intenso al romperse. Se exprime el tomate a mano: mejor textura, sin amargor. El aceite de oliva potencia el dulzor natural del tomate.</p>
+  </div>
+
+  <h3>El Estirado</h3>
+  <ol style="padding-left:5mm;">
+    <li style="margin-bottom:2mm;"><b>Cornicione:</b> con los dedos, llevar el aire de la masa hacia los bordes presionando del centro hacia afuera. Mínimo 1,5 cm de borde. Trabajar en las cuatro direcciones.</li>
+    <li style="margin-bottom:2mm;"><b>Volanteo:</b> nudillos bajo el borde, separar un puño estirando suavemente. Rotar y repetir hasta el tamaño deseado. Apoyar con la superficie hacia arriba.</li>
+    <li><b>Carga a la pala:</b> semolín en la pala. Arrastrar la pizza con las yemas por debajo sin pellizcar el cornicione. No demorar — la salsa humedece la base y se pega. Directo al horno.</li>
+  </ol>
+
+  <div class="footer-page">VESUVIO PIZZERIA · Taller Pizzaiolo Napoletano · Material del Asistente</div>
+</div>
+
+<!-- ═══════════════ BLOQUE V: VARIEDADES ═══════════════ -->
+<div class="page">
+  <div class="bloque-header">
+    <span class="bnum">Bloque V</span>
+    <span class="btitulo">Variedades y Combinaciones</span>
+  </div>
+
+  <h3>Las Clásicas Napoletanas</h3>
+  <table class="pizza-grid">
+    <tbody>
+      <tr>
+        <td>Marinara</td>
+        <td>Salsa abundante, ajo laminado, orégano y aceite de oliva. Sin queso. La más antigua de todas — la que comían los marineros porque sus ingredientes no se echaban a perder en el barco.</td>
+      </tr>
+      <tr>
+        <td>Margherita</td>
+        <td>Salsa, fior di latte, albahaca. Post-horno: parmesano, albahaca fresca y aceite de oliva. La más replicada del mundo. Bien hecha, difícil de superar.</td>
+      </tr>
+      <tr>
+        <td>Capricciosa</td>
+        <td>Salsa, fior di latte, aceitunas, champiñones, jamón cocido y alcaucil. "Caprichosa" por su variedad de ingredientes: una pizza para los que no pueden elegir.</td>
+      </tr>
+      <tr>
+        <td>Quattro Stagioni</td>
+        <td>Dividida en cuatro secciones por tiras de masa. Cada cuadrante: champiñones, alcaucil, aceitunas y jamón cocido. Visualmente una de las más llamativas.</td>
+      </tr>
+      <tr>
+        <td>Cosacca</td>
+        <td>Variante de la Marinara. Sale sin queso y se termina con pecorino romano rallado muy fino directamente sobre la pizza caliente, simulando la nieve de Rusia.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="gold">
+
+  <h3>Combinaciones Contemporáneas</h3>
+  <table class="pizza-grid">
+    <tbody>
+      <tr>
+        <td>Burrata, Jamón Crudo y Rúcula</td>
+        <td>Bianca con fior di latte al horno. Post-horno: burrata entera al centro (el comensal la rompe en la mesa), jamón crudo y rúcula. La rúcula aporta el amargor que equilibra la cremosidad.</td>
+      </tr>
+      <tr>
+        <td>Mortadela y Pimienta</td>
+        <td>Bianca con fior di latte al horno. Post-horno: mortadela y pimienta negra generosa. La mortadela no va al horno — el calor la resecaría. Simple y con mucho carácter.</td>
+      </tr>
+      <tr>
+        <td>Búfala y Limón</td>
+        <td>Base blanca. Post-horno: mozzarella di búfala, ralladura de limón y aceite de oliva. La acidez y el perfume del limón cortan la cremosidad de la búfala de forma sorprendente.</td>
+      </tr>
+      <tr>
+        <td>Cherrys y Stracciatella</td>
+        <td>Roja o bianca con cherrys confitados o semi-secos + stracciatella post-horno. Protagonismo del contraste acidez–cremosidad.</td>
+      </tr>
+      <tr>
+        <td>Embutido Picante</td>
+        <td>Salame napolitano o 'nduja calabresa sobre base de tomate. Al calor del horno el embutido se tuesta en los bordes, concentra su sabor y libera su grasa sobre la salsa.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="amalfi-box">
+    <div class="am-eyebrow">Pizza de Autor · Vesuvio</div>
+    <div class="am-nombre">Amalfi</div>
+    <div class="am-ing">Base blanca · Crema de palta · Tomate semi-seco · Pistachos · Albahaca fresca</div>
+    <p class="am-desc">Nació en nuestra cocina con cada ingrediente cumpliendo un rol específico: la crema aporta suavidad, el tomate contraste ácido, el pistacho textura y la albahaca frescura.</p>
+  </div>
+
+  <div class="cita-final">
+    "La Marinara y la Margherita son el punto de partida: dos pizzas que con cuatro ingredientes<br>
+    lograron trascender siglos y fronteras. Entender por qué funcionan<br>
+    es la clave para crear combinaciones propias con criterio."
+  </div>
+
+  <div class="bandiera" style="margin:3mm 0;">
+    <span class="b-verde"></span>
+    <span class="b-bianco"></span>
+    <span class="b-rosso"></span>
+  </div>
+
+  <div class="footer-page">VESUVIO PIZZERIA · Pizza Napoletana Artesanal · Santa Fe, Argentina</div>
+</div>
+
+</body>
+</html>
