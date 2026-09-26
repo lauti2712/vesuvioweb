@@ -296,6 +296,25 @@
     /* Upload zone drag active */
     #upload-zone:hover { border-color: rgba(200,67,10,.4); }
 
+    /* Carta admin */
+    .carta-cat-block { margin-bottom: 2rem; }
+    .carta-cat-header { display: flex; align-items: center; justify-content: space-between; padding: .7rem 1rem; background: var(--ceniza); margin-bottom: 2px; }
+    .carta-cat-title { font-family: var(--serif); font-size: 1rem; color: var(--oro); }
+    .carta-item-row { background: var(--nero); padding: .7rem 1rem; margin-bottom: 2px; display: grid; grid-template-columns: 1fr auto auto auto; gap: .8rem; align-items: center; }
+    .carta-item-nombre { font-size: .88rem; color: var(--crema); font-weight: 500; }
+    .carta-item-desc { font-size: .72rem; color: var(--humo); }
+    .carta-item-precio { font-family: var(--serif); font-size: .95rem; color: var(--oro); white-space: nowrap; text-align: right; }
+    .carta-item-precio small { font-family: var(--sans); font-size: .7rem; color: var(--humo); display: block; }
+    .disponible-toggle { display: flex; align-items: center; gap: .4rem; font-size: .68rem; color: var(--humo); cursor: pointer; }
+    .carta-edit-panel { display: none; background: var(--carbone); padding: 1rem; margin-bottom: 2px; }
+    .carta-edit-panel.open { display: block; }
+    .carta-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: .8rem; }
+    .carta-edit-grid .span2 { grid-column: 1/-1; }
+    .carta-edit-grid input { background: var(--ceniza); border: 1px solid rgba(138,122,106,.2); color: var(--crema); padding: .5rem .7rem; font-family: var(--sans); font-size: .83rem; outline: none; width: 100%; }
+    .carta-edit-grid input:focus { border-color: var(--brasa); }
+    .add-item-form { background: var(--nero); padding: 1rem; margin-top: .5rem; display: none; }
+    .add-item-form.open { display: block; }
+
     /* Toast */
     #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; background: var(--carbone); border: 1px solid; padding: .7rem 1.3rem; font-size: .83rem; transition: opacity .4s; border-radius: 2px; opacity: 0; pointer-events: none; }
 
@@ -363,6 +382,9 @@
       <div class="nav-section">Taller</div>
       <a class="nav-item" onclick="goTo('galeria')">
         <span class="nav-icon">📸</span><span>Galería</span>
+      </a>
+      <a class="nav-item" onclick="goTo('carta')">
+        <span class="nav-icon">📋</span><span>Carta</span>
       </a>
       <div class="nav-section">Sitio web</div>
       <a class="nav-item" onclick="goTo('sitio')">
@@ -631,6 +653,18 @@
         </div>
       </div>
 
+      <!-- ── CARTA ── -->
+      <div class="page" id="page-carta">
+        <div class="card" style="margin-bottom:1rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="card-title" style="margin:0;">📋 Carta del menú</div>
+            <a href="carta.html" target="_blank" class="btn btn-ghost" style="font-size:.7rem;">Ver carta ↗</a>
+          </div>
+          <p style="font-size:.82rem;color:var(--humo);margin-top:.5rem;">Editá precios, disponibilidad y descripciones. Los cambios se ven al instante en la carta.</p>
+        </div>
+        <div id="carta-admin-content"><p style="color:var(--humo);font-size:.85rem;">Cargando...</p></div>
+      </div>
+
       <!-- ── SITIO ── -->
       <div class="page" id="page-sitio">
         <div class="card">
@@ -722,6 +756,7 @@
   // ─── STATE ───────────────────────────────────────
   let SESSION = null;
   let fechas = [], inscriptos = [], faqs = [], descuentos = [], galeria = [];
+  let cartaCategorias = [], cartaItems = [], editingItemId = null;
   let precios = { general:'$120.000', efectivo:'$100.000', grupo:'$500.000', club:'10' };
   let wspMensaje = '';
   let filterFechaId = 'all';
@@ -808,7 +843,7 @@
 
   // ─── LOAD ALL ────────────────────────────────────
   async function loadAll() {
-    const [fData, iData, faqData, pData, cData, cfgData, dData, gData] = await Promise.all([
+    const [fData, iData, faqData, pData, cData, cfgData, dData, gData, ccData, ciData] = await Promise.all([
       api('curso_fechas?order=date.asc'),
       api('curso_inscriptos?order=created_at.desc'),
       api('curso_faqs?order=orden.asc'),
@@ -817,12 +852,16 @@
       api('sitio_config?id=eq.1'),
       api('curso_descuentos?order=orden.asc'),
       api('taller_galeria?order=orden.asc'),
+      api('carta_categorias?order=orden.asc'),
+      api('carta_items?order=orden.asc'),
     ]);
     fechas      = Array.isArray(fData)   ? fData   : [];
     inscriptos  = Array.isArray(iData)   ? iData   : [];
     faqs        = Array.isArray(faqData) ? faqData : [];
     descuentos  = Array.isArray(dData)   ? dData   : [];
-    galeria     = Array.isArray(gData)   ? gData   : [];
+    galeria        = Array.isArray(gData)   ? gData   : [];
+    cartaCategorias = Array.isArray(ccData)  ? ccData  : [];
+    cartaItems      = Array.isArray(ciData)  ? ciData  : [];
     // Merge precios — no pisar con null
     if (Array.isArray(pData) && pData.length) {
       Object.entries(pData[0]).forEach(([k,v]) => { if (v !== null && v !== undefined) precios[k] = v; });
@@ -840,6 +879,7 @@
     renderFaqsAdmin();
     loadPreciosFields();
     renderGaleriaAdmin();
+    renderCartaAdmin();
     document.getElementById('wsp-msg').value = wspMensaje;
     updateWspPreview();
     updateBadge();
@@ -1580,6 +1620,100 @@
     toast('✓ Menú admin actualizado');
   }
 
+  // ─── CARTA ADMIN ─────────────────────────────────
+  function fmtP(n) { return n ? '$' + Number(n).toLocaleString('es-AR') : '—'; }
+
+  function renderCartaAdmin() {
+    const el = document.getElementById('carta-admin-content');
+    if (!el) return;
+    if (!cartaCategorias.length) { el.innerHTML = '<p style="color:var(--humo)">No hay categorías cargadas.</p>'; return; }
+
+    el.innerHTML = cartaCategorias.sort((a,b)=>a.orden-b.orden).map(cat => {
+      const catItems = cartaItems.filter(it=>it.categoria_id===cat.id).sort((a,b)=>a.orden-b.orden);
+      return `
+        <div class="carta-cat-block">
+          <div class="carta-cat-header">
+            <span class="carta-cat-title">${cat.icono} ${escHtml(cat.nombre)}</span>
+            <div style="display:flex;gap:.5rem;align-items:center;">
+              <label class="disponible-toggle">
+                <input type="checkbox" ${cat.visible?'checked':''} onchange="toggleCatVisible('${cat.id}',this.checked)" />
+                Visible
+              </label>
+            </div>
+          </div>
+          ${catItems.map(it => `
+            <div class="carta-item-row" id="crow-${it.id}">
+              <div>
+                <div class="carta-item-nombre">${escHtml(it.nombre)}</div>
+                ${it.descripcion?`<div class="carta-item-desc">${escHtml(it.descripcion)}</div>`:''}
+              </div>
+              <div class="carta-item-precio">
+                ${fmtP(it.precio)}
+                ${it.precio_alt?`<small>❄️ ${fmtP(it.precio_alt)}</small>`:''}
+              </div>
+              <label class="disponible-toggle">
+                <input type="checkbox" ${it.disponible?'checked':''} onchange="toggleItemDisponible('${it.id}',this.checked)" />
+                <span>${it.disponible?'Disponible':'Agotado'}</span>
+              </label>
+              <button class="btn btn-ghost" style="font-size:.65rem;" onclick="toggleEditItem('${it.id}')">Editar</button>
+            </div>
+            <div class="carta-edit-panel" id="edit-${it.id}">
+              <div class="carta-edit-grid">
+                <div class="field-group span2" style="margin:0;"><label>Nombre</label><input id="ei-nombre-${it.id}" value="${escHtml(it.nombre)}" /></div>
+                <div class="field-group span2" style="margin:0;"><label>Descripción</label><input id="ei-desc-${it.id}" value="${escHtml(it.descripcion||'')}" /></div>
+                <div class="field-group" style="margin:0;"><label>Precio</label><input type="number" id="ei-precio-${it.id}" value="${it.precio||''}" /></div>
+                <div class="field-group" style="margin:0;"><label>Precio alternativo (ej: congelada)</label><input type="number" id="ei-palt-${it.id}" value="${it.precio_alt||''}" /></div>
+                <div class="field-group" style="margin:0;"><label>Etiqueta precio alt</label><input id="ei-paltlabel-${it.id}" value="${escHtml(it.precio_alt_label||'')}" placeholder="Ej: Congelada" /></div>
+                <div class="field-group" style="margin:0;"><label>Badge</label><input id="ei-badge-${it.id}" value="${escHtml(it.badge||'')}" placeholder="Ej: PICANTE 🌶️" /></div>
+              </div>
+              <div style="display:flex;gap:.5rem;">
+                <button class="btn btn-primary" onclick="saveCartaItem('${it.id}')">Guardar</button>
+                <button class="btn btn-ghost" onclick="toggleEditItem('${it.id}')">Cancelar</button>
+              </div>
+            </div>`).join('')}
+        </div>`;
+    }).join('');
+  }
+
+  function toggleEditItem(id) {
+    document.querySelectorAll('.carta-edit-panel.open').forEach(el => { if (el.id !== `edit-${id}`) el.classList.remove('open'); });
+    document.getElementById(`edit-${id}`)?.classList.toggle('open');
+  }
+
+  async function toggleItemDisponible(id, val) {
+    await api(`carta_items?id=eq.${id}`, 'PATCH', { disponible: val });
+    const it = cartaItems.find(x=>x.id===id);
+    if (it) it.disponible = val;
+    toast(val ? '✓ Disponible' : 'Marcado como agotado');
+  }
+
+  async function toggleCatVisible(id, val) {
+    await api(`carta_categorias?id=eq.${id}`, 'PATCH', { visible: val });
+    const cat = cartaCategorias.find(x=>x.id===id);
+    if (cat) cat.visible = val;
+    toast(val ? '✓ Categoría visible' : 'Categoría oculta');
+  }
+
+  async function saveCartaItem(id) {
+    const get = field => document.getElementById(`ei-${field}-${id}`)?.value.trim();
+    const updates = {
+      nombre:           get('nombre')    || undefined,
+      descripcion:      get('desc'),
+      precio:           parseFloat(get('precio'))  || null,
+      precio_alt:       parseFloat(get('palt'))    || null,
+      precio_alt_label: get('paltlabel'),
+      badge:            get('badge'),
+    };
+    // Limpiar undefined
+    Object.keys(updates).forEach(k => updates[k] === undefined && delete updates[k]);
+    await api(`carta_items?id=eq.${id}`, 'PATCH', updates);
+    const it = cartaItems.find(x=>x.id===id);
+    if (it) Object.assign(it, updates);
+    document.getElementById(`edit-${id}`)?.classList.remove('open');
+    renderCartaAdmin();
+    toast('✓ Item actualizado');
+  }
+
   // ─── GALERÍA ─────────────────────────────────────
   const BUCKET_URL = `${SB_URL}/storage/v1/object/public/taller-fotos`;
 
@@ -1640,6 +1774,7 @@
     stat.textContent = `✓ ${done} foto${done!==1?'s':''} procesada${done!==1?'s':''}`;
     setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 2000);
     renderGaleriaAdmin();
+    renderCartaAdmin();
     toast('✓ Galería actualizada');
   }
 
@@ -1662,6 +1797,7 @@
     [galeria[idx],galeria[ni]] = [galeria[ni],galeria[idx]];
     await Promise.all(galeria.map((f,i)=>api(`taller_galeria?id=eq.${f.id}`,'PATCH',{orden:i})));
     renderGaleriaAdmin();
+    renderCartaAdmin();
   }
 
   async function deleteGaleria(id) {
@@ -1678,6 +1814,7 @@
     }
     galeria = galeria.filter(x=>x.id!==id);
     renderGaleriaAdmin();
+    renderCartaAdmin();
     toast('Foto eliminada', 'var(--brasa)');
   }
 
