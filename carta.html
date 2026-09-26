@@ -16,18 +16,20 @@
     html { scroll-behavior: smooth; }
     body { background: var(--nero); color: var(--crema); font-family: var(--sans); font-weight: 300; line-height: 1.6; }
 
-    /* NAV */
     nav { position: sticky; top: 0; z-index: 100; background: rgba(13,10,8,.97); border-bottom: 1px solid rgba(200,67,10,.15); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
     .nav-logo { font-family: var(--serif); font-size: 1.2rem; font-weight: 900; color: var(--oro); text-decoration: none; }
     .nav-back { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--humo); text-decoration: none; transition: color .2s; }
     .nav-back:hover { color: var(--oro); }
 
-    /* HERO */
     .carta-hero { padding: 3.5rem 2rem 2rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,.05); }
     .carta-hero h1 { font-family: var(--serif); font-size: clamp(2.2rem,6vw,4rem); font-weight: 900; color: var(--crema); margin-bottom: .4rem; }
     .carta-hero p { font-size: .82rem; color: var(--humo); letter-spacing: .05em; }
+    .hero-btns { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; margin-top: 1.2rem; }
+    .btn-primary { background: var(--brasa); color: var(--crema); padding: .75rem 2rem; font-family: var(--sans); font-size: .75rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; text-decoration: none; transition: background .2s; display: inline-block; }
+    .btn-primary:hover { background: #e04d10; }
+    .btn-outline { background: transparent; color: var(--oro); border: 1px solid var(--oro); padding: .75rem 2rem; font-family: var(--sans); font-size: .75rem; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; text-decoration: none; transition: all .2s; display: inline-block; }
+    .btn-outline:hover { background: var(--oro); color: var(--nero); }
 
-    /* TABS DE CATEGORÍA */
     .cat-tabs-wrap { position: sticky; top: 57px; z-index: 90; background: var(--carbone); border-bottom: 1px solid rgba(255,255,255,.05); overflow-x: auto; }
     .cat-tabs-wrap::-webkit-scrollbar { display: none; }
     .cat-tabs { display: flex; padding: 0 1rem; }
@@ -35,41 +37,32 @@
     .cat-tab:hover { color: var(--crema); }
     .cat-tab.active { color: var(--oro); border-bottom-color: var(--brasa); }
 
-    /* CONTENIDO */
     .carta-body { max-width: 900px; margin: 0 auto; padding: 0 1.5rem 4rem; }
 
-    /* SECCIÓN */
     .cat-section { padding-top: 3rem; }
     .cat-section-header { display: flex; align-items: center; gap: .8rem; margin-bottom: .5rem; }
     .cat-icon { font-size: 1.4rem; }
     .cat-nombre { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--crema); }
     .cat-divider { height: 1px; background: linear-gradient(to right, var(--brasa), transparent); margin-bottom: 1.8rem; }
 
-    /* GRID PIZZAS */
+    /* Grid productos */
     .items-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-    .item-card {
-      background: var(--carbone); padding: 1.2rem 1.4rem;
-      display: flex; flex-direction: column; gap: .4rem;
-      transition: background .15s; position: relative;
-    }
+    .item-card { background: var(--carbone); padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: .4rem; transition: background .15s; position: relative; }
     .item-card:hover { background: var(--ceniza); }
-    .item-card.agotado { opacity: .45; pointer-events: none; }
-    .item-card.agotado::after { content: 'No disponible'; position: absolute; top: .7rem; right: .8rem; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--humo); border: 1px solid rgba(138,122,106,.3); padding: .15rem .5rem; }
-
+    .item-card.agotado { opacity: .45; }
+    .item-card.agotado::after { content: 'Agotado hoy'; position: absolute; top: .7rem; right: .8rem; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--humo); border: 1px solid rgba(138,122,106,.3); padding: .15rem .5rem; }
+    .item-foto { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 1px; margin-bottom: .3rem; }
     .item-nombre { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--crema); line-height: 1.2; }
     .item-desc { font-size: .78rem; color: var(--humo); line-height: 1.5; }
     .item-footer { display: flex; align-items: center; justify-content: space-between; margin-top: .3rem; flex-wrap: wrap; gap: .4rem; }
     .item-precio { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--oro); }
-    .item-precio-alt { display: flex; align-items: center; gap: .4rem; }
-    .item-precio-alt .alt-label { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--humo); }
-    .item-precio-alt .alt-val { font-family: var(--serif); font-size: .95rem; font-weight: 700; color: rgba(138,122,106,.8); }
     .item-badge { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; padding: .2rem .55rem; border-radius: 2px; font-weight: 600; }
-    .badge-congelada { background: rgba(100,160,220,.15); color: #7ab8e8; border: 1px solid rgba(100,160,220,.25); }
     .badge-picante { background: rgba(200,67,10,.15); color: var(--brasa); border: 1px solid rgba(200,67,10,.3); }
-    .badge-sinqueso { background: rgba(212,168,71,.12); color: var(--oro); border: 1px solid rgba(212,168,71,.25); }
     .badge-stock { background: rgba(138,122,106,.15); color: var(--humo); border: 1px solid rgba(138,122,106,.25); }
+    .badge-sinqueso { background: rgba(212,168,71,.12); color: var(--oro); border: 1px solid rgba(212,168,71,.25); }
+    .badge-congelada { background: rgba(100,160,220,.15); color: #7ab8e8; border: 1px solid rgba(100,160,220,.25); }
 
-    /* LISTA simple (bebidas, toppings, etc.) */
+    /* Lista simple */
     .items-list { display: flex; flex-direction: column; gap: 2px; }
     .item-row { background: var(--carbone); padding: .85rem 1.2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
     .item-row:hover { background: var(--ceniza); }
@@ -79,32 +72,25 @@
     .item-row-desc { font-size: .75rem; color: var(--humo); margin-top: .1rem; }
     .item-row-precio { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--oro); white-space: nowrap; }
 
-    /* COMBOS */
-    .combos-list { display: flex; flex-direction: column; gap: 2px; }
-    .combo-card { background: var(--carbone); padding: 1.1rem 1.4rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-left: 3px solid var(--brasa); }
-    .combo-card:hover { background: var(--ceniza); }
-    .combo-nombre { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--crema); }
-    .combo-desc { font-size: .78rem; color: var(--humo); margin-top: .2rem; }
-    .combo-precio { font-family: var(--serif); font-size: 1.3rem; font-weight: 900; color: var(--oro); white-space: nowrap; }
-
-    /* NOTAS */
     .carta-notas { background: rgba(200,67,10,.07); border: 1px solid rgba(200,67,10,.2); padding: 1.2rem 1.5rem; margin-top: 2rem; }
     .carta-notas p { font-size: .82rem; color: var(--humo); line-height: 1.7; }
     .carta-notas p + p { margin-top: .4rem; }
     .carta-notas strong { color: var(--crema); }
 
-    /* FOOTER INFO */
     .carta-footer-info { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; padding: 2rem 1.5rem; border-top: 1px solid rgba(255,255,255,.05); margin-top: 2rem; }
     .footer-info-item { text-align: center; }
     .footer-info-label { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--brasa); margin-bottom: .3rem; }
     .footer-info-val { font-size: .88rem; color: var(--crema); }
 
-    /* LOADING */
     .loading { padding: 4rem 2rem; text-align: center; color: var(--humo); }
     .loading .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--brasa); margin: 0 3px; animation: bounce .8s infinite alternate; }
     .loading .dot:nth-child(2) { animation-delay: .2s; }
     .loading .dot:nth-child(3) { animation-delay: .4s; }
     @keyframes bounce { from { transform: translateY(0); opacity: .4; } to { transform: translateY(-8px); opacity: 1; } }
+
+    .sync-badge { display: inline-flex; align-items: center; gap: .4rem; font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(74,124,89,.7); margin-top: .6rem; }
+    .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #6fbf85; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:.4}50%{opacity:1} }
 
     @media (max-width: 600px) {
       nav { padding: .8rem 1.2rem; }
@@ -112,7 +98,7 @@
       .carta-body { padding: 0 1rem 3rem; }
       .items-grid { grid-template-columns: 1fr; }
       .cat-tab { padding: .8rem .9rem; font-size: .68rem; }
-      .combo-precio { font-size: 1.1rem; }
+      .hero-btns { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
@@ -126,10 +112,14 @@
   <div class="carta-hero">
     <h1>Nuestra Carta</h1>
     <p>Francia 3285, Santa Fe · Todos los días desde las 19:30hs · Envío a domicilio $2.500</p>
-    <a id="btn-pedir" href="https://www.pedidosya.com.ar" target="_blank"
-      style="display:inline-block;margin-top:1.2rem;background:var(--brasa);color:var(--crema);padding:.75rem 2rem;font-family:var(--sans);font-size:.75rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;transition:background .2s;">
-      🛵 Pedir ahora
-    </a>
+    <div class="hero-btns">
+      <a id="btn-pedir" href="https://www.pedidosya.com.ar" target="_blank" class="btn-primary">🛵 Pedir ahora</a>
+      <a href="index.html" class="btn-outline">← Volver al inicio</a>
+    </div>
+    <div class="sync-badge">
+      <span class="sync-dot"></span>
+      Precios en tiempo real
+    </div>
   </div>
 
   <div class="cat-tabs-wrap">
@@ -143,7 +133,7 @@
       <p><strong>Pomodoro</strong> es la salsa de tomate, elaborada con tomate perita italiano y albahaca.</p>
       <p>Las pizzas son de tamaño normal, aproximadamente 28cm (excepto la individual).</p>
       <p>Se pueden hacer mitad y mitad, excepto Burrata. Se cobra el valor de la pizza más cara.</p>
-      <p>❄️ Las pizzas con este ícono también están disponibles <strong>congeladas para llevar y guardar en el freezer</strong>.</p>
+      <p>❄️ Algunas pizzas también están disponibles <strong>congeladas para llevar y guardar en el freezer</strong>.</p>
     </div>
 
     <div class="carta-footer-info">
@@ -159,162 +149,233 @@
         <div class="footer-info-label">Instagram</div>
         <div class="footer-info-val">@vesuviopizzeria.sf</div>
       </div>
-      <div class="footer-info-item">
-        <div class="footer-info-label">Web</div>
-        <div class="footer-info-val">vesuviopizzeria.ar</div>
-      </div>
     </div>
   </div>
 
   <script>
+    // ── FIREBASE CONFIG ──────────────────────────────
+    const FB_PROJECT = 'stock-vesuvio';
+    const FB_API_KEY = 'AIzaSyD2OTQTfyAE0RjuAQ2rjPDeKAiAuarjR6U'; // se reemplaza abajo
+    const FB_BASE    = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents`;
+
+    // ── SUPABASE (para link de pedir) ────────────────
     const SB_URL = 'https://ckivxhxbysimhxmyovuc.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNraXZ4aHhieXNpbWh4bXlvdnVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwOTY1MjMsImV4cCI6MjA5NzY3MjUyM30.w4pCLsQSf1sm2S8jwIF1imVrHgZ7nbEi5qGsQ6o_HzM';
 
-    let categorias = [], items = [];
+    // ── MAPEO DE CATEGORÍAS ──────────────────────────
+    // categoria (string de Firebase) → config visual
+    const CAT_CONFIG = {
+      'Pizza Roja':          { icono: '🍅', orden: 0 },
+      'Pizza Bianca':        { icono: '🧀', orden: 1 },
+      'Pizza Individual':    { icono: '🍕', orden: 2 },
+      'Combo':               { icono: '🎯', orden: 3 },
+      'Topping':             { icono: '✨', orden: 4 },
+      'Bebida con alcohol':  { icono: '🍺', orden: 5 },
+      'Bebida sin alcohol':  { icono: '🥤', orden: 6 },
+      'Postre':              { icono: '🍦', orden: 7 },
+      'Snack':               { icono: '🍟', orden: 8 },
+    };
+    const DEFAULT_ICONO = '🍽️';
 
-    async function sbGet(table) {
-      const res = await fetch(`${SB_URL}/rest/v1/${table}`, {
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Accept': 'application/json' }
+    // ── HELPERS ──────────────────────────────────────
+    function fmt(n) { return '$' + Number(n).toLocaleString('es-AR'); }
+    function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // Parsear documento Firestore REST → objeto plano
+    function parseDoc(doc) {
+      const fields = doc.fields || {};
+      const obj = { id: doc.name.split('/').pop() };
+      for (const [k, v] of Object.entries(fields)) {
+        if      ('stringValue'  in v) obj[k] = v.stringValue;
+        else if ('integerValue' in v) obj[k] = Number(v.integerValue);
+        else if ('doubleValue'  in v) obj[k] = Number(v.doubleValue);
+        else if ('booleanValue' in v) obj[k] = v.booleanValue;
+        else if ('nullValue'    in v) obj[k] = null;
+        else if ('arrayValue'   in v) obj[k] = (v.arrayValue.values||[]).map(parseVal);
+        else if ('mapValue'     in v) obj[k] = parseDoc({ name: '', fields: v.mapValue.fields||{} });
+      }
+      return obj;
+    }
+    function parseVal(v) {
+      if ('stringValue'  in v) return v.stringValue;
+      if ('integerValue' in v) return Number(v.integerValue);
+      if ('doubleValue'  in v) return Number(v.doubleValue);
+      if ('booleanValue' in v) return v.booleanValue;
+      return null;
+    }
+
+    // Disponibilidad según lógica de la app
+    function isDisponible(p) {
+      return p.agotadoHoy !== true && p.showInPedidos !== false;
+    }
+
+    // Determinar si mostrar en carta (showInDelivery o showInTakeaway)
+    function showInCarta(p) {
+      const enDelivery  = p.showInDelivery  !== false;
+      const enTakeaway  = p.showInTakeaway  !== false;
+      return enDelivery || enTakeaway;
+    }
+
+    // ── FETCH FIREBASE ───────────────────────────────
+    async function fetchProductos() {
+      // Firestore REST API — leer colección completa
+      let allDocs = [];
+      let pageToken = null;
+      do {
+        const url = `${FB_BASE}/productos?pageSize=300${pageToken ? `&pageToken=${pageToken}` : ''}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.documents) allDocs = allDocs.concat(data.documents.map(parseDoc));
+        pageToken = data.nextPageToken || null;
+      } while (pageToken);
+      return allDocs;
+    }
+
+    async function fetchOrdenCategorias() {
+      try {
+        const res  = await fetch(`${FB_BASE}/config/delivery`);
+        const data = await res.json();
+        const doc  = parseDoc(data);
+        return doc.ordenCategorias || [];
+      } catch { return []; }
+    }
+
+    // ── RENDER ───────────────────────────────────────
+    let ordenCats = [];
+
+    function renderCarta(productos) {
+      // Filtrar productos válidos
+      const validos = productos.filter(p => showInCarta(p) && p.nombre && p.precio);
+
+      // Agrupar por categoría
+      const grupos = {};
+      validos.forEach(p => {
+        const cat = p.categoria || 'Otros';
+        if (!grupos[cat]) grupos[cat] = [];
+        grupos[cat].push(p);
       });
-      try { return await res.json(); } catch { return []; }
-    }
 
-    function fmt(n) {
-      if (!n && n !== 0) return '';
-      return '$' + Number(n).toLocaleString('es-AR');
-    }
+      // Ordenar categorías según config de la app, luego alfabético
+      // Orden viene de Firebase config/delivery.ordenCategorias
+      // Fallback hardcodeado si no carga
+      const ORDEN_DEFAULT = ['Pizza Bianca','Pizza Roja','Congeladas','Combos','Bebida con alcohol','Bebida sin alcohol'];
+      const orden = ordenCats.length ? ordenCats : ORDEN_DEFAULT;
 
-    function escHtml(s) {
-      return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    function getBadgeClass(badge) {
-      if (!badge) return '';
-      const b = badge.toLowerCase();
-      if (b.includes('congelada') || b.includes('❄')) return 'badge-congelada';
-      if (b.includes('picante') || b.includes('🌶')) return 'badge-picante';
-      if (b.includes('sin queso')) return 'badge-sinqueso';
-      return 'badge-stock';
-    }
-
-    function renderCarta() {
-      const tabs = document.getElementById('cat-tabs');
-      const content = document.getElementById('carta-content');
-
-      const cats = categorias.filter(c => c.visible).sort((a,b) => a.orden - b.orden);
+      const cats = Object.keys(grupos).sort((a, b) => {
+        const oa = orden.indexOf(a) >= 0 ? orden.indexOf(a) : 999;
+        const ob = orden.indexOf(b) >= 0 ? orden.indexOf(b) : 999;
+        if (oa !== ob) return oa - ob;
+        return (a||'').localeCompare(b||'');
+      });
 
       // Tabs
-      tabs.innerHTML = cats.map((c, i) => `
-        <button class="cat-tab ${i===0?'active':''}" onclick="scrollTocat('${c.id}', this)">
-          ${c.icono} ${escHtml(c.nombre)}
-        </button>`).join('');
+      const tabsEl = document.getElementById('cat-tabs');
+      tabsEl.innerHTML = cats.map((cat, i) => {
+        const cfg = CAT_CONFIG[cat] || {};
+        return `<button class="cat-tab ${i===0?'active':''}" onclick="scrollToCat('${cat}', this)">
+          ${cfg.icono||DEFAULT_ICONO} ${escHtml(cat)}
+        </button>`;
+      }).join('');
 
-      // Contenido
-      content.innerHTML = cats.map(c => {
-        const catItems = items
-          .filter(it => it.categoria_id === c.id)
-          .sort((a,b) => a.orden - b.orden);
+      // Secciones
+      const isPizzaCat = cat => /pizza/i.test(cat) || /combo/i.test(cat);
 
-        if (!catItems.length) return '';
+      document.getElementById('carta-content').innerHTML = cats.map(cat => {
+        const items = grupos[cat].sort((a,b) => (a.nombre||'').localeCompare(b.nombre||''));
+        const cfg   = CAT_CONFIG[cat] || {};
+        const grid  = isPizzaCat(cat);
 
-        const isPizzas = c.id === 'cat_pizzas';
-        const isCombos = c.id === 'cat_combos';
-        const isList   = !isPizzas && !isCombos;
-
-        let itemsHtml = '';
-
-        if (isPizzas) {
-          itemsHtml = `<div class="items-grid">${catItems.map(it => {
-            const tieneAlt = it.precio_alt && it.precio_alt_label;
-            return `
-              <div class="item-card ${!it.disponible?'agotado':''}">
-                <div class="item-nombre">${escHtml(it.nombre)}</div>
-                ${it.descripcion ? `<div class="item-desc">${escHtml(it.descripcion)}</div>` : ''}
-                <div class="item-footer">
-                  <span class="item-precio">${fmt(it.precio)}</span>
-                  ${tieneAlt ? `<div class="item-precio-alt">
-                    <span class="alt-label">❄️ ${escHtml(it.precio_alt_label)}</span>
-                    <span class="alt-val">${fmt(it.precio_alt)}</span>
-                  </div>` : ''}
-                  ${it.badge ? `<span class="item-badge ${getBadgeClass(it.badge)}">${escHtml(it.badge)}</span>` : ''}
-                </div>
-              </div>`;
-          }).join('')}</div>`;
-        } else if (isCombos) {
-          itemsHtml = `<div class="combos-list">${catItems.map(it => `
-            <div class="combo-card ${!it.disponible?'agotado':''}">
-              <div>
-                <div class="combo-nombre">${escHtml(it.nombre)}</div>
-                ${it.descripcion ? `<div class="combo-desc">${escHtml(it.descripcion)}</div>` : ''}
-              </div>
-              <span class="combo-precio">${fmt(it.precio)}</span>
-            </div>`).join('')}</div>`;
-        } else {
-          itemsHtml = `<div class="items-list">${catItems.map(it => `
-            <div class="item-row ${!it.disponible?'agotado':''}">
-              <div class="item-row-left">
-                <div class="item-row-nombre">${escHtml(it.nombre)}</div>
-                ${it.descripcion ? `<div class="item-row-desc">${escHtml(it.descripcion)}</div>` : ''}
-              </div>
-              <span class="item-row-precio">${fmt(it.precio)}</span>
-            </div>`).join('')}</div>`;
-        }
+        const itemsHtml = grid
+          ? `<div class="items-grid">${items.map(p => renderItemCard(p)).join('')}</div>`
+          : `<div class="items-list">${items.map(p => renderItemRow(p)).join('')}</div>`;
 
         return `
-          <div class="cat-section" id="section-${c.id}" data-cat="${c.id}">
+          <div class="cat-section" id="section-${CSS.escape(cat)}" data-cat="${escHtml(cat)}">
             <div class="cat-section-header">
-              <span class="cat-icon">${c.icono}</span>
-              <h2 class="cat-nombre">${escHtml(c.nombre)}</h2>
+              <span class="cat-icon">${cfg.icono||DEFAULT_ICONO}</span>
+              <h2 class="cat-nombre">${escHtml(cat)}</h2>
             </div>
             <div class="cat-divider"></div>
             ${itemsHtml}
           </div>`;
       }).join('');
 
-      // Scroll spy
-      setupScrollSpy();
+      setupScrollSpy(cats);
     }
 
-    function scrollTocat(catId, btn) {
-      const el = document.getElementById(`section-${catId}`);
+    function renderItemCard(p) {
+      const agotado = !isDisponible(p);
+      return `
+        <div class="item-card ${agotado?'agotado':''}">
+          ${p.fotoUrl ? `<img class="item-foto" src="${escHtml(p.fotoUrl)}" alt="${escHtml(p.nombre)}" loading="lazy" />` : ''}
+          <div class="item-nombre">${escHtml(p.nombre)}</div>
+          ${p.descripcion ? `<div class="item-desc">${escHtml(p.descripcion)}</div>` : ''}
+          <div class="item-footer">
+            <span class="item-precio">${fmt(p.precio)}</span>
+          </div>
+        </div>`;
+    }
+
+    function renderItemRow(p) {
+      const agotado = !isDisponible(p);
+      return `
+        <div class="item-row ${agotado?'agotado':''}">
+          <div class="item-row-left">
+            <div class="item-row-nombre">${escHtml(p.nombre)}</div>
+            ${p.descripcion ? `<div class="item-row-desc">${escHtml(p.descripcion)}</div>` : ''}
+          </div>
+          <span class="item-row-precio">${fmt(p.precio)}</span>
+        </div>`;
+    }
+
+    function scrollToCat(cat, btn) {
+      const el = document.getElementById(`section-${CSS.escape(cat)}`);
       if (!el) return;
-      const navH = document.querySelector('nav').offsetHeight;
+      const navH  = document.querySelector('nav').offsetHeight;
       const tabsH = document.querySelector('.cat-tabs-wrap').offsetHeight;
-      const top = el.getBoundingClientRect().top + window.scrollY - navH - tabsH - 12;
-      window.scrollTo({ top, behavior: 'smooth' });
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navH - tabsH - 12, behavior: 'smooth' });
       document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
     }
 
-    function setupScrollSpy() {
+    function setupScrollSpy(cats) {
       const observer = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
-            const id = e.target.dataset.cat;
-            document.querySelectorAll('.cat-tab').forEach((t, i) => {
-              const catId = categorias.filter(c=>c.visible).sort((a,b)=>a.orden-b.orden)[i]?.id;
-              t.classList.toggle('active', catId === id);
+            const cat = e.target.dataset.cat;
+            document.querySelectorAll('.cat-tab').forEach(t => {
+              t.classList.toggle('active', t.textContent.includes(cat));
             });
           }
         });
       }, { rootMargin: '-30% 0px -60% 0px' });
-
       document.querySelectorAll('.cat-section').forEach(el => observer.observe(el));
     }
 
+    // ── INIT ─────────────────────────────────────────
     async function init() {
-      const [cData, iData, cfgData] = await Promise.all([
-        sbGet('carta_categorias?order=orden.asc'),
-        sbGet('carta_items?order=orden.asc'),
-        sbGet('sitio_config?id=eq.1'),
-      ]);
-      categorias = Array.isArray(cData) ? cData : [];
-      items      = Array.isArray(iData) ? iData : [];
-      // Aplicar link de pedir ahora desde config
-      if (Array.isArray(cfgData) && cfgData.length && cfgData[0].pedir_url) {
-        document.getElementById('btn-pedir').href = cfgData[0].pedir_url;
+      try {
+        const [productos, orden, sbData] = await Promise.all([
+          fetchProductos(),
+          fetchOrdenCategorias(),
+          fetch(`${SB_URL}/rest/v1/sitio_config?id=eq.1`, {
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+          }).then(r=>r.json()).catch(()=>[])
+        ]);
+
+        ordenCats = orden;
+
+        // Link pedir ahora
+        if (Array.isArray(sbData) && sbData[0]?.pedir_url) {
+          document.getElementById('btn-pedir').href = sbData[0].pedir_url;
+        }
+
+        renderCarta(productos);
+      } catch(e) {
+        console.error('Error cargando carta:', e);
+        document.getElementById('carta-content').innerHTML =
+          '<p style="color:var(--humo);text-align:center;padding:3rem;">Error cargando la carta. Intentá de nuevo en unos segundos.</p>';
       }
-      renderCarta();
     }
 
     init();
