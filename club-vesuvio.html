@@ -194,88 +194,7 @@
               <th>Precio / mes</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>
-                <div class="nivel-row-header">
-                  <span class="nivel-tag t1">I</span>
-                  <div>
-                    <span class="nivel-name">Margherita</span>
-                    <span class="nivel-desc">Pizza más icónica de Nápoles, en honor a la reina Margarita de Saboya.</span>
-                  </div>
-                </div>
-              </td>
-              <td>0</td>
-              <td class="val-highlight">100%</td>
-              <td class="val-highlight">5%</td>
-              <td class="val-dash">—</td>
-              <td><span class="nivel-precio">$11.750</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="nivel-row-header">
-                  <span class="nivel-tag t2">II</span>
-                  <div>
-                    <span class="nivel-name">Pulcinella</span>
-                    <span class="nivel-desc">Emblemático personaje napolitano, conocido por su alegría y adaptación.</span>
-                  </div>
-                </div>
-              </td>
-              <td class="val-highlight">1</td>
-              <td class="val-highlight">100%</td>
-              <td class="val-highlight">5%</td>
-              <td class="val-dash">—</td>
-              <td><span class="nivel-precio">$23.500</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="nivel-row-header">
-                  <span class="nivel-tag t3">III</span>
-                  <div>
-                    <span class="nivel-name">Spaccanapoli</span>
-                    <span class="nivel-desc">Legendaria calle que divide Nápoles en dos. La membresía refleja esa dualidad.</span>
-                  </div>
-                </div>
-              </td>
-              <td class="val-highlight">2</td>
-              <td class="val-highlight">100%</td>
-              <td class="val-highlight">10%</td>
-              <td class="val-highlight" style="color:var(--humo);">10% ó<sup>(4)</sup></td>
-              <td><span class="nivel-precio">$47.000</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="nivel-row-header">
-                  <span class="nivel-tag t4">IV</span>
-                  <div>
-                    <span class="nivel-name">Posillipo</span>
-                    <span class="nivel-desc">Famoso barrio costero de Nápoles, que evoca serenidad y belleza.</span>
-                  </div>
-                </div>
-              </td>
-              <td class="val-highlight">3</td>
-              <td class="val-highlight">100%</td>
-              <td class="val-highlight">10%</td>
-              <td class="val-highlight">5%</td>
-              <td><span class="nivel-precio">$70.500</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="nivel-row-header">
-                  <span class="nivel-tag t5">V</span>
-                  <div>
-                    <span class="nivel-name">Vesuvio</span>
-                    <span class="nivel-desc">Volcán activo en la bahía de Nápoles. Conocido por sepultar Pompeya en el 79 d.C.</span>
-                  </div>
-                </div>
-              </td>
-              <td class="val-highlight">4</td>
-              <td class="val-highlight">100%</td>
-              <td class="val-highlight">10%</td>
-              <td class="val-highlight">10%</td>
-              <td><span class="nivel-precio">$94.000</span></td>
-            </tr>
-          </tbody>
+          <tbody id="niveles-tbody"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--humo);">Cargando niveles...</td></tr></tbody>
         </table>
       </div>
 
@@ -427,6 +346,93 @@
         item.querySelector('.sit-a').style.maxHeight = item.querySelector('.sit-a').scrollHeight + 'px';
       }
     }
+  </script>
+
+  <script>
+    const FB_BASE = 'https://firestore.googleapis.com/v1/projects/stock-vesuvio/databases/(default)/documents';
+
+    // Parsear valor Firestore
+    function parseVal(v) {
+      if (!v) return null;
+      if ('stringValue'   in v) return v.stringValue;
+      if ('integerValue'  in v) return Number(v.integerValue);
+      if ('doubleValue'   in v) return Number(v.doubleValue);
+      if ('booleanValue'  in v) return v.booleanValue;
+      if ('arrayValue'    in v) return (v.arrayValue.values || []).map(parseVal);
+      if ('mapValue'      in v) return parseMapFields(v.mapValue.fields || {});
+      return null;
+    }
+    function parseMapFields(fields) {
+      const obj = {};
+      for (const [k, v] of Object.entries(fields)) obj[k] = parseVal(v);
+      return obj;
+    }
+
+    function fmt(n) {
+      return '$' + Number(n).toLocaleString('es-AR');
+    }
+
+    // Números romanos
+    const ROMANOS = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
+
+    async function loadNiveles() {
+      try {
+        const res  = await fetch(`${FB_BASE}/config/clubNiveles`);
+        const data = await res.json();
+        const fields = data.fields || {};
+        const niveles = parseVal(fields.niveles);
+        if (!Array.isArray(niveles) || !niveles.length) throw new Error('sin niveles');
+        renderNiveles(niveles.sort((a,b) => (a.num||0) - (b.num||0)));
+      } catch(e) {
+        console.error('Error cargando niveles:', e);
+        document.getElementById('niveles-tbody').innerHTML =
+          '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--humo);">No se pudieron cargar los niveles.</td></tr>';
+      }
+    }
+
+    function renderNiveles(niveles) {
+      const tbody = document.getElementById('niveles-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = niveles.map((n, idx) => {
+        const romano = ROMANOS[idx] || String(idx + 1);
+        // Color del nivel para el tag
+        const tagColor = n.color || '#8a7a6a';
+        const tagStyle = `background:${tagColor};color:${isLight(tagColor)?'#111':'#fff'};`;
+
+        const pizzas   = n.pizzasLibres || 0;
+        const descDel  = n.descDelivery || 0;
+        const descSal  = n.descSalon    || 0;
+
+        return `
+          <tr>
+            <td>
+              <div class="nivel-row-header">
+                <span class="nivel-tag" style="${tagStyle}">${romano}</span>
+                <div>
+                  <span class="nivel-name">${n.emoji || ''} ${n.nombre || ''}</span>
+                </div>
+              </div>
+            </td>
+            <td class="${pizzas > 0 ? 'val-highlight' : 'val-dash'}">${pizzas > 0 ? pizzas : '—'}</td>
+            <td class="val-highlight">100%</td>
+            <td class="${descDel > 0 ? 'val-highlight' : 'val-dash'}">${descDel > 0 ? descDel + '%' : '—'}</td>
+            <td class="${descSal > 0 ? 'val-highlight' : 'val-dash'}">${descSal > 0 ? descSal + '%' : '—'}</td>
+            <td><span class="nivel-precio">${fmt(n.precio)}</span></td>
+          </tr>`;
+      }).join('');
+    }
+
+    // Determinar si un color hex es claro u oscuro
+    function isLight(hex) {
+      const c = hex.replace('#','');
+      const r = parseInt(c.substr(0,2),16);
+      const g = parseInt(c.substr(2,2),16);
+      const b = parseInt(c.substr(4,2),16);
+      return (r*299 + g*587 + b*114) / 1000 > 128;
+    }
+
+    loadNiveles();
   </script>
 
 </body>
