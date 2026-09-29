@@ -548,7 +548,7 @@
 
     // ── SUBMIT FORMULARIO ──────────────────────────
     // ENDPOINT — reemplazar con la URL real cuando esté lista en la app
-    const SUSCRIPCION_ENDPOINT = 'PENDIENTE'; // ← se reemplaza cuando esté el endpoint
+    const SUSCRIPCION_ENDPOINT = 'https://us-central1-stock-vesuvio.cloudfunctions.net/crearSuscripcionClub';
 
     function showError(msg) {
       const el = document.getElementById('form-error');
@@ -594,7 +594,7 @@ Nivel: ${nivel.emoji} ${nivel.nombre} (${fmt(nivel.precio)}/mes)`
         return;
       }
 
-      // Con endpoint real
+      // Llamar al endpoint
       setLoading(true);
       try {
         const res = await fetch(SUSCRIPCION_ENDPOINT, {
@@ -603,20 +603,34 @@ Nivel: ${nivel.emoji} ${nivel.nombre} (${fmt(nivel.precio)}/mes)`
           body: JSON.stringify({
             nombre, apellido,
             dni: dni.replace(/\./g,''),
-            celular: cel, email,
+            celular: cel,
+            email,
             nivel_id: nivel.id,
             nivel_nombre: nivel.nombre,
             precio: nivel.precio,
           })
         });
+
         const data = await res.json();
-        if (data.init_point || data.url) {
-          window.location.href = data.init_point || data.url;
+
+        if (data.ok && data.init_point) {
+          // Redirigir a MercadoPago
+          window.location.href = data.init_point;
+        } else if (!data.ok && data.error) {
+          // Error del servidor
+          if (res.status === 400) {
+            showError('Datos incompletos o inválidos. Revisá el formulario.');
+          } else if (res.status === 502) {
+            showError('Error al conectar con MercadoPago. Intentá de nuevo en unos minutos.');
+          } else {
+            showError(data.error || 'Error inesperado. Contactanos por WhatsApp.');
+          }
         } else {
-          showError('Error al generar la suscripción. Intentá de nuevo o contactanos por WhatsApp.');
+          showError('Respuesta inesperada del servidor. Contactanos por WhatsApp.');
         }
       } catch(e) {
-        showError('Error de conexión. Intentá de nuevo.');
+        console.error('Error:', e);
+        showError('Error de conexión. Verificá tu internet e intentá de nuevo.');
       } finally {
         setLoading(false);
       }
